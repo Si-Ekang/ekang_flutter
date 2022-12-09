@@ -1,3 +1,4 @@
+import 'package:ekang_flutter/generated/assets.dart';
 import 'package:ekang_flutter/ui/main/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    Future.delayed(const Duration(milliseconds: 3500), () {
       setState(() {
         // Here you can write your code for open new view
         Navigator.pushReplacement(
@@ -60,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'This is a splashcreen',
             ),*/
             Image(
-                image: AssetImage("images/si_ekang_logo.png"),
+                image: AssetImage(Assets.imagesSiEkangLogo),
                 width: 120,
                 height: 96),
           ],
