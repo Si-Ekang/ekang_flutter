@@ -8,7 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts_web.dart';
+
+import '../../core/texttospeech/ttsstate.dart';
 
 class LibraryWidget extends StatefulWidget {
   const LibraryWidget({super.key});
@@ -56,6 +57,10 @@ class _LibraryState extends State<LibraryWidget> {
   }
 
   void initTTS() async {
+    if (kDebugMode) {
+      log("initTTS()");
+    }
+
     flutterTts = TextToSpeechUtils().getInstance();
 
     flutterTts.setStartHandler(() {
@@ -150,5 +155,11 @@ class _LibraryState extends State<LibraryWidget> {
             );
           }),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _stop();
   }
 }

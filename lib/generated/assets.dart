@@ -4,5 +4,4 @@ class Assets {
 
   static const String csvTest = 'assets/csv/test.csv';
   static const String imagesSiEkangLogo = 'assets/images/si_ekang_logo.png';
-
 }

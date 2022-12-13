@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:ekang_flutter/ui/home/home.dart';
 import 'package:ekang_flutter/ui/library/library.dart';
 import 'package:ekang_flutter/ui/notification/notification.dart';
 import 'package:ekang_flutter/ui/profile/profile.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Main extends StatelessWidget {
   const Main({super.key});

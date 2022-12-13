@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter_tts/flutter_tts_web.dart';
+
 
 class TextToSpeechUtils {
-
   FlutterTts? flutterTts;
   late List<dynamic> languages;
 
@@ -14,7 +13,7 @@ class TextToSpeechUtils {
   }
 
   void initTextToSpeech() async {
-    languages =  await flutterTts?.getLanguages;
+    languages = await flutterTts?.getLanguages;
     await flutterTts?.setSharedInstance(true);
     await flutterTts?.awaitSpeakCompletion(true);
 
@@ -33,7 +32,8 @@ class TextToSpeechUtils {
     await flutterTts?.pause();
 
     // iOS, macOS, and Android only
-    await flutterTts?.synthesizeToFile("Hello World", Platform.isAndroid ? "tts.wav" : "tts.caf");
+    await flutterTts?.synthesizeToFile(
+        "Hello World", Platform.isAndroid ? "tts.wav" : "tts.caf");
 
     await flutterTts?.setVoice({"name": "Karen", "locale": "en-AU"});
 

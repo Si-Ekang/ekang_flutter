@@ -1,8 +1,6 @@
-import 'package:ekang_flutter/core/texttospeech/texttospeechutils.dart';
 import 'package:ekang_flutter/ui/splashscreen/splashscreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 
 void main() => runApp(const SiEkangApp());
 
@@ -23,19 +21,8 @@ class SiEkangApp extends StatefulWidget {
 }
 
 class _SiEkangAppState extends State<SiEkangApp> {
-
-  late FlutterTts flutterTts;
-
-  @override
-  void initState() {
-    super.initState();
-
-    flutterTts = TextToSpeechUtils().getInstance();
-  }
-
   @override
   Widget build(BuildContext context) {
-
     return const MaterialApp(
       home: SplashScreen(),
     );

@@ -1,6 +1,6 @@
+import 'package:ekang_flutter/ui/quiz/quiz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ekang_flutter/ui/quiz/quiz.dart';
 
 class HomeWidget extends StatelessWidget {
   const HomeWidget({super.key});
@@ -13,7 +13,8 @@ class HomeWidget extends StatelessWidget {
           child: const Text('Home route'),
           onPressed: () {
             // Navigate to second route when tapped.
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const QuizWidget()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const QuizWidget()));
           },
         ),
       ),
