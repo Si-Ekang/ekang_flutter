@@ -42,8 +42,8 @@ class _LibraryState extends State<LibraryWidget> {
       log("loadCsvFromAssets()");
     }
 
-    final input = await rootBundle.loadString(Assets.csvTest);
-    final fields = const CsvToListConverter().convert(input);
+    final input = await rootBundle.loadString(Assets.csvVocabulary);
+    final fields = const CsvToListConverter(fieldDelimiter: ';').convert(input);
 
     if (null != fields) {
       if (kDebugMode) {
@@ -132,6 +132,12 @@ class _LibraryState extends State<LibraryWidget> {
           shrinkWrap: true,
           itemCount: _data.length,
           itemBuilder: (context, index) {
+            var francais = _data[index][0];
+            var fang = _data[index][1];
+            var fang2 = _data[index][2];
+            var fang3 = _data[index][3];
+            var fang4 = _data[index][4];
+
             return GestureDetector(
               onTap: () {
                 textToSpeak = _data[index][1].toString();
@@ -145,9 +151,11 @@ class _LibraryState extends State<LibraryWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${_data[index][0]}'),
-                      Text(_data[index][1]),
-                      Text(_data[index][2]),
+                      Text('$francais = $fang'),
+                      Text(
+                          '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
+                              '${null != fang3  && fang3.toString().isNotEmpty? ', $fang3' : ''}'
+                              '${null != fang4  && fang4.toString().isNotEmpty? ', $fang4' : ''}'),
                     ],
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:ekang_flutter/ui/home/home.dart';
 import 'package:ekang_flutter/ui/library/library.dart';
 import 'package:ekang_flutter/ui/notification/notification.dart';
 import 'package:ekang_flutter/ui/profile/profile.dart';
+import 'package:ekang_flutter/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -56,25 +57,25 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
+        title: const Text(Constants.appName),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: Constants.homeTitle),
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
-            label: 'Library',
+            label: Constants.libraryTitle,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
-            label: 'Notifications',
+            label: Constants.notificationsTitle,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Profile',
+            label: Constants.profileTitle,
           ),
         ],
         currentIndex: _selectedIndex,
