@@ -2,6 +2,7 @@
 class Assets {
   Assets._();
 
+  // Audios
   static const String audioAkang = 'assets/audio/akang.mp3';
   static const String audioAkung = 'assets/audio/akung.mp3';
   static const String audioAngbang = 'assets/audio/angbang.mp3';
@@ -41,11 +42,16 @@ class Assets {
   static const String audioViok = 'assets/audio/viok.mp3';
   static const String audioZum = 'assets/audio/zum.mp3';
   static const String audioElat = 'assets/audio/élat.mp3';
+
+  // CSV
   static const String csvQuizBibouma = 'assets/csv/quiz_bibouma.csv';
   static const String csvQuizz = 'assets/csv/quizz.csv';
   static const String csvQuizzOiseaux = 'assets/csv/quizz_oiseaux.csv';
   static const String csvTest = 'assets/csv/test.csv';
   static const String csvVocabulary = 'assets/csv/vocabulary.csv';
+
+  // Images
+  static const String imagesGooglegColor = 'assets/images/googleg_color.png';
   static const String imagesSiEkangLogo = 'assets/images/si_ekang_logo.png';
 
 }
