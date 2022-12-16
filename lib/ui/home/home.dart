@@ -38,9 +38,8 @@ class HomeWidget extends StatelessWidget {
                                   padding:
                                       MaterialStateProperty.all<EdgeInsets>(
                                           const EdgeInsets.all(16)),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          SiEkangColors.primaryDark)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      SiEkangColors.primary)),
                               onPressed: () {
                                 // Navigate to second route when tapped.
                                 Navigator.of(context).push(MaterialPageRoute(

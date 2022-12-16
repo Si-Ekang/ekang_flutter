@@ -25,6 +25,10 @@ class ProfileWidget extends StatelessWidget {
                           // Content of row
                           ElevatedButton(
                             style: ButtonStyle(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
+                                  const EdgeInsets.all(16)),
+                              backgroundColor: MaterialStateProperty.all(
+                                  SiEkangColors.primary),
                               shape: MaterialStateProperty.all<
                                       RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
