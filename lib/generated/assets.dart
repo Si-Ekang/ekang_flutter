@@ -54,4 +54,11 @@ class Assets {
   static const String imagesGooglegColor = 'assets/images/googleg_color.png';
   static const String imagesSiEkangLogo = 'assets/images/si_ekang_logo.png';
 
+  // Lottie
+  static const String lottieDelete = 'assets/lottie/delete.json';
+  static const String lottieDownload = 'assets/lottie/download.json';
+  static const String lottieError404 = 'assets/lottie/error_404.json';
+  static const String lottieLoadingSablier = 'assets/lottie/loading_sablier.json';
+  static const String lottieLottieQuiz = 'assets/lottie/lottie_quiz.json';
+
 }
