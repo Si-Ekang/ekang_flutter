@@ -25,6 +25,11 @@ class _LibraryState extends State<LibraryWidget> {
   String? _currentWord;
   String? textToSpeak;
 
+  ///////////////////////////
+  //
+  // OVERRIDE
+  //
+  ///////////////////////////
   @override
   void initState() {
     super.initState();
@@ -37,6 +42,57 @@ class _LibraryState extends State<LibraryWidget> {
     loadCsvFromAssets();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ListView.builder(
+          shrinkWrap: true,
+          itemCount: _data.length,
+          itemBuilder: (context, index) {
+            var francais = _data[index][0];
+            var fang = _data[index][1];
+            var fang2 = _data[index][2];
+            var fang3 = _data[index][3];
+            var fang4 = _data[index][4];
+
+            return GestureDetector(
+              onTap: () {
+                textToSpeak = _data[index][1].toString();
+                log("onTap() | $textToSpeak");
+                _speak(textToSpeak!);
+              },
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('$francais = $fang'),
+                      Text(
+                          '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
+                          '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
+                          '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _stop();
+  }
+
+  ///////////////////////////
+  //
+  // CLASS METHODS
+  //
+  ///////////////////////////
   void loadCsvFromAssets() async {
     if (kDebugMode) {
       log("loadCsvFromAssets()");
@@ -123,51 +179,5 @@ class _LibraryState extends State<LibraryWidget> {
   Future _stop() async {
     var result = await flutterTts.stop();
     if (result == 1) setState(() => ttsState = TtsState.stopped);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-          shrinkWrap: true,
-          itemCount: _data.length,
-          itemBuilder: (context, index) {
-            var francais = _data[index][0];
-            var fang = _data[index][1];
-            var fang2 = _data[index][2];
-            var fang3 = _data[index][3];
-            var fang4 = _data[index][4];
-
-            return GestureDetector(
-              onTap: () {
-                textToSpeak = _data[index][1].toString();
-                log("onTap() | $textToSpeak");
-                _speak(textToSpeak!);
-              },
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('$francais = $fang'),
-                      Text(
-                          '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
-                              '${null != fang3  && fang3.toString().isNotEmpty? ', $fang3' : ''}'
-                              '${null != fang4  && fang4.toString().isNotEmpty? ', $fang4' : ''}'),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _stop();
   }
 }

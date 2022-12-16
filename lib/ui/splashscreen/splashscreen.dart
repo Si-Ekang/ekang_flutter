@@ -22,12 +22,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 3500), () {
+    Future.delayed(const Duration(milliseconds: 2500), () {
       setState(() {
         // Here you can write your code for open new view
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Main()));
       });
+
+      dispose();
     });
 
     // This method is rerun every time setState is called, for instance as done

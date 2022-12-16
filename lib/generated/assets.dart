@@ -13,31 +13,31 @@ class Assets {
   static const String audioElong = 'assets/audio/elong.mp3';
   static const String audioElum = 'assets/audio/elum.mp3';
   static const String audioEsua = 'assets/audio/esua.mp3';
-  static const String audioFa_a = 'assets/audio/fa_a.mp3';
+  static const String audioFaA = 'assets/audio/fa_a.mp3';
   static const String audioKisin = 'assets/audio/kisin.mp3';
   static const String audioKokos = 'assets/audio/kokös.mp3';
   static const String audioKuleyebe = 'assets/audio/kuleyebe.mp3';
   static const String audioKunegh = 'assets/audio/kunegh.mp3';
-  static const String audioMba_to_o = 'assets/audio/mba_to_o.mp3';
+  static const String audioMbaToO = 'assets/audio/mba_to_o.mp3';
   static const String audioMiam = 'assets/audio/miam.mp3';
   static const String audioMvekum = 'assets/audio/mvekum.mp3';
   static const String audioMwanKu = 'assets/audio/mwan-ku.mp3';
   static const String audioMwanSwa = 'assets/audio/mwan-swa.mp3';
+  static const String audioNYoman = 'assets/audio/n_yoman.mp3';
   static const String audioNduan = 'assets/audio/nduan.mp3';
   static const String audioNduin = 'assets/audio/ndüin.mp3';
   static const String audioNgia = 'assets/audio/ngia.mp3';
   static const String audioNkang = 'assets/audio/nkang.mp3';
   static const String audioNnomKu = 'assets/audio/nnom-ku.mp3';
   static const String audioNtum = 'assets/audio/ntum.mp3';
-  static const String audioN_yoman = 'assets/audio/n_yoman.mp3';
   static const String audioObam = 'assets/audio/obam.mp3';
   static const String audioObeng = 'assets/audio/obeng.mp3';
   static const String audioOkeng = 'assets/audio/okeng.mp3';
   static const String audioOnoan = 'assets/audio/onoan.mp3';
   static const String audioOtua = 'assets/audio/otua.mp3';
-  static const String audioOtua2 = 'assets/audio/otüa.mp3';
+  static const String audioOtua1 = 'assets/audio/otüa.mp3';
   static const String audioSosoo = 'assets/audio/Sosoo.mp3';
-  static const String audioTo_o = 'assets/audio/to_o.mp3';
+  static const String audioToO = 'assets/audio/to_o.mp3';
   static const String audioViok = 'assets/audio/viok.mp3';
   static const String audioZum = 'assets/audio/zum.mp3';
   static const String audioElat = 'assets/audio/élat.mp3';
@@ -47,4 +47,5 @@ class Assets {
   static const String csvTest = 'assets/csv/test.csv';
   static const String csvVocabulary = 'assets/csv/vocabulary.csv';
   static const String imagesSiEkangLogo = 'assets/images/si_ekang_logo.png';
+
 }

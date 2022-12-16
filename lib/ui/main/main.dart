@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
 import 'package:ekang_flutter/ui/home/home.dart';
 import 'package:ekang_flutter/ui/library/library.dart';
 import 'package:ekang_flutter/ui/notification/notification.dart';
@@ -5,6 +8,7 @@ import 'package:ekang_flutter/ui/profile/profile.dart';
 import 'package:ekang_flutter/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Main extends StatelessWidget {
   const Main({super.key});
@@ -35,10 +39,29 @@ class MainPageWidget extends StatefulWidget {
 }
 
 class _MainPageWidgetState extends State<MainPageWidget> {
-  int _selectedIndex = 0;
+  ///////////////////////////
+  // Widgets
+  ///////////////////////////
+  static SiEkangToolbar toolbar = SiEkangToolbar(
+    onPageChanged: (RouteSettings routeSettings, bool isLibrary) {},
+  );
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<BottomNavigationBarItem> _bottomNavigationList =
+      <BottomNavigationBarItem>[
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: Constants.homeTitle),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.menu_book),
+      label: Constants.libraryTitle,
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.notifications),
+      label: Constants.notificationsTitle,
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person),
+      label: Constants.profileTitle,
+    ),
+  ];
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeWidget(),
@@ -47,42 +70,58 @@ class _MainPageWidgetState extends State<MainPageWidget> {
     ProfileWidget(),
   ];
 
+  // Index variable used to navigate
+  int _selectedIndex = 0;
+
+  ///////////////////////////
+  //
+  // OVERRIDE
+  //
+  ///////////////////////////
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: toolbar,
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: _bottomNavigationList,
+        currentIndex: _selectedIndex,
+        unselectedItemColor: Colors.black,
+        selectedItemColor: Colors.amber[800],
+        onTap: (index) {
+          log('onTap()');
+          _onItemTapped(index);
+          _updateToolbarWithIndex(index);
+        },
+      ),
+    );
+  }
+
+  ///////////////////////////
+  //
+  // CLASS METHODS
+  //
+  ///////////////////////////
   void _onItemTapped(int index) {
+    log('_onItemTapped() | index : $index');
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(Constants.appName),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: Constants.homeTitle),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: Constants.libraryTitle,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: Constants.notificationsTitle,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: Constants.profileTitle,
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        unselectedItemColor: Colors.black,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
-    );
+  void _updateToolbarWithIndex(int index) {
+    log('_updateToolbarWithIndex() | index : $index');
+    // current page
+    var currentPage = _bottomNavigationList.elementAt(index);
+    var pageName = currentPage.label;
+
+    // Check state nullability
+    if (null != key.currentState) {
+      log('Check state nullability');
+      key.currentState!.updateRoute(pageName!,
+          Constants.libraryTitle == ModalRoute.of(context)?.settings.name);
+    }
   }
 }
