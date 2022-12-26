@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter_tts/flutter_tts.dart';
 
-
 class TextToSpeechUtils {
   FlutterTts? flutterTts;
   late List<dynamic> languages;

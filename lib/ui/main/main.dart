@@ -7,6 +7,7 @@ import 'package:ekang_flutter/ui/notification/notification.dart';
 import 'package:ekang_flutter/ui/profile/profile.dart';
 import 'package:ekang_flutter/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -91,7 +92,7 @@ class _MainPageWidgetState extends State<MainPageWidget> {
         unselectedItemColor: Colors.black,
         selectedItemColor: Colors.amber[800],
         onTap: (index) {
-          log('onTap()');
+          if (kDebugMode) log('onTap()');
           _onItemTapped(index);
           _updateToolbarWithIndex(index);
         },
@@ -105,21 +106,21 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   //
   ///////////////////////////
   void _onItemTapped(int index) {
-    log('_onItemTapped() | index : $index');
+    if (kDebugMode) log('_onItemTapped() | index : $index');
     setState(() {
       _selectedIndex = index;
     });
   }
 
   void _updateToolbarWithIndex(int index) {
-    log('_updateToolbarWithIndex() | index : $index');
+    if (kDebugMode) log('_updateToolbarWithIndex() | index : $index');
     // current page
     var currentPage = _bottomNavigationList.elementAt(index);
     var pageName = currentPage.label;
 
     // Check state nullability
     if (null != key.currentState) {
-      log('Check state nullability');
+      if (kDebugMode) log('Check state nullability');
       key.currentState!.updateRoute(pageName!,
           Constants.libraryTitle == ModalRoute.of(context)?.settings.name);
     }

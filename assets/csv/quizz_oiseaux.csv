@@ -1,11 +1,11 @@
-question_id;question;image_url;answer1 ;answer2    ;answer3 ;answer4
-1          ;�pervier;         ;obeng   ;kok�s      ;sosoo   ;obam
-2          ;kok�s   ;         ;pigeon  ;perroquet  ;nd�in   ;otua
-3          ;�lat    ;         ;canard  ;mouette    ;oie     ;pigeon
-4          ;nkang   ;         ;pigeon  ;pintade    ;poule   ;aigle
-5          ;oiseau  ;         ;anoan   ;onoan      ;an      ;any�an
-6          ;caneton ;         ;mwan-ku ;akung      ;mwan-swa;obeng
-7          ;okw�    ;         ;pie     ;colibri    ;perdrix ;aigle
-8          ;nd�in   ;         ;�pervier;pigeon     ;aigle   ;corbeau
-9          ;obeng   ;         ;perdrix ;oie        ;toucan  ;pigeon
-10         ;zum     ;         ;coq     ;tourterelle;akung   ;pie
+﻿question_id;question;image_url;possible_answers;correct_answer
+1;épervier;;obeng|kokös|sosoo|obam;obam
+2;kokös;;pigeon|perroquet|ndüin|otua;perroquet
+3;élat;;canard|mouette|oie|pigeon;oie
+4;nkang;;pigoen|pintade|poule|aigle;pintade
+5;oiseau;;anoan|oanan|an|anyüan;onoan
+6;caneton;;mwan-ku|akung|mwan-swa|obeng;mwan-swa
+7;okwè;;pie|colibri|perdrix|aigle;perdrix
+8;ndüin;;épervier|pigeon|aigle|corbeau;aigle
+9;obeng;;perdrix|oie|toucan|pigeon;pigeon
+10;zum;;coq|tourterelle|akung|pie;tourterelle

@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:ekang_flutter/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 typedef PageChangedCallback = Function(
@@ -21,11 +21,11 @@ class SiEkangToolbar extends StatefulWidget with PreferredSizeWidget {
   SiEkangToolbar({required this.onPageChanged})
       : preferredSize = const Size.fromHeight(128.0),
         super(key: key) {
-    log('route : $onPageChanged');
+    if (kDebugMode) log('route : $onPageChanged');
   }
 
   @override
-  State<SiEkangToolbar> createState() =>  _SiEkangToolbarState();
+  State<SiEkangToolbar> createState() => _SiEkangToolbarState();
 }
 
 class _SiEkangToolbarState extends State<SiEkangToolbar> {
@@ -41,7 +41,8 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
   final String searchField = 'Recherche impossible';
 
   void updateRoute(String currentPageName, bool isLibrary) {
-    log('updateRoute() | name : $currentPageName, is library : $isLibrary');
+    if (kDebugMode)
+      log('updateRoute() | name : $currentPageName, is library : $isLibrary');
     currentPageName = currentPageName;
     this.isLibrary = isLibrary;
   }
@@ -98,7 +99,7 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
                           child: const Icon(Icons.clear,
                               size: 24, color: Colors.white),
                           onTap: () {
-                            log('clear icon pressed');
+                            if (kDebugMode) log('clear icon pressed');
 
                             // Unfocus all focus nodes
                             textFieldFocusNode.unfocus();

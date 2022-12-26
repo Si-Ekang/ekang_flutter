@@ -34,9 +34,7 @@ class _LibraryState extends State<LibraryWidget> {
   void initState() {
     super.initState();
 
-    if (kDebugMode) {
-      log("initState()");
-    }
+    if (kDebugMode) log("initState()");
 
     initTTS();
     loadCsvFromAssets();
@@ -58,7 +56,7 @@ class _LibraryState extends State<LibraryWidget> {
             return GestureDetector(
               onTap: () {
                 textToSpeak = _data[index][1].toString();
-                log("onTap() | $textToSpeak");
+                if (kDebugMode) log("onTap() | $textToSpeak");
                 _speak(textToSpeak!);
               },
               child: Card(
@@ -94,17 +92,13 @@ class _LibraryState extends State<LibraryWidget> {
   //
   ///////////////////////////
   void loadCsvFromAssets() async {
-    if (kDebugMode) {
-      log("loadCsvFromAssets()");
-    }
+    if (kDebugMode) log("loadCsvFromAssets()");
 
     final input = await rootBundle.loadString(Assets.csvVocabulary);
     final fields = const CsvToListConverter(fieldDelimiter: ';').convert(input);
 
     if (null != fields) {
-      if (kDebugMode) {
-        log("fields : $fields");
-      }
+      if (kDebugMode) log("fields : $fields");
     }
 
     setState(() {
@@ -113,9 +107,7 @@ class _LibraryState extends State<LibraryWidget> {
   }
 
   void initTTS() async {
-    if (kDebugMode) {
-      log("initTTS()");
-    }
+    if (kDebugMode) log("initTTS()");
 
     flutterTts = TextToSpeechUtils().getInstance();
 
