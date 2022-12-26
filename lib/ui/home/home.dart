@@ -1,6 +1,6 @@
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:ekang_flutter/ui/quiz/quiz.dart';
+import 'package:ekang_flutter/ui/quiz/quizz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
