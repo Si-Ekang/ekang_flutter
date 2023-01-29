@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/data/local/model/quizz.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart';
 
 int pageViewIndex = 1;
 
@@ -18,7 +20,8 @@ class QuizWidget extends StatefulWidget {
   State<QuizWidget> createState() => _QuizState();
 }
 
-class _QuizState extends State<QuizWidget> with TickerProviderStateMixin {
+class _QuizState extends State<QuizWidget>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   late AnimationController progressIndicatorController;
   final PageController controller = PageController();
   final animationDuration = const Duration(milliseconds: 500);
@@ -28,6 +31,8 @@ class _QuizState extends State<QuizWidget> with TickerProviderStateMixin {
   String choice = '';
 
   bool canGoNext = true;
+
+  final _player = AudioPlayer();
 
   @override
   void initState() {
@@ -44,6 +49,8 @@ class _QuizState extends State<QuizWidget> with TickerProviderStateMixin {
         setState(() {});
       });
 
+    // ambiguate(WidgetsBinding.instance)!.addObserver(this);
+    _initAudioPlayer();
     loadCsvFromAssets();
   }
 
@@ -107,19 +114,64 @@ class _QuizState extends State<QuizWidget> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     if (kDebugMode) log("dispose()");
 
     // reset view pager index
     pageViewIndex = 1;
     canGoNext = true;
+
+    //ambiguate(WidgetsBinding.instance)!.removeObserver(this);
+    // Release decoders and buffers back to the operating system making them
+    // available for other apps to use.
+    _player.dispose();
+    super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Release the player's resources when not in use. We use "stop" so that
+      // if the app resumes later, it will still remember what position to
+      // resume from.
+      _player.stop();
+    }
+  }
+
+  /// Collects the data useful for displaying in a seek bar, using a handy
+  /// feature of rx_dart to combine the 3 streams of interest into one.
+  /*Stream<PositionData> get _positionDataStream =>
+      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+          _player.positionStream,
+          _player.bufferedPositionStream,
+          _player.durationStream,
+              (position, bufferedPosition, duration) => PositionData(
+              position, bufferedPosition, duration ?? Duration.zero));*/
   ///////////////////////////
   //
   // CLASS METHODS
   //
   ///////////////////////////
+  Future<void> _initAudioPlayer() async {
+    // Inform the operating system of our app's audio attributes etc.
+    // We pick a reasonable default for an app that plays speech.
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.speech());
+    // Listen to errors during playback.
+    _player.playbackEventStream.listen((event) {
+      if (kDebugMode) log("event : $event");
+    }, onError: (Object e, StackTrace stackTrace) {
+      if (kDebugMode) log('A stream error occurred: $e');
+    });
+    // Try to load audio from a source and catch any errors.
+    try {
+      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      await _player.setAsset(Assets.audioEsua);
+      await _player.play();
+    } catch (e) {
+      if (kDebugMode) log("Error loading audio source: $e");
+    }
+  }
+
   void loadCsvFromAssets() async {
     if (kDebugMode) log("loadCsvFromAssets()");
 

@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.siekang.ekang_flutter">
+
    <application
         android:label="ekang_flutter"
         android:name="${applicationName}"
