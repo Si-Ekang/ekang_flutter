@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:audio_session/audio_session.dart';
 import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
+import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
 import 'package:ekang_flutter/data/local/model/quizz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,7 +33,7 @@ class _QuizState extends State<QuizWidget>
 
   bool canGoNext = true;
 
-  final _player = AudioPlayer();
+  AudioPlayer? _player;
 
   @override
   void initState() {
@@ -49,8 +50,7 @@ class _QuizState extends State<QuizWidget>
         setState(() {});
       });
 
-    // ambiguate(WidgetsBinding.instance)!.addObserver(this);
-    _initAudioPlayer();
+    initAudioPlayer();
     loadCsvFromAssets();
   }
 
@@ -75,7 +75,7 @@ class _QuizState extends State<QuizWidget>
                 height: 32.0,
                 child: Center(
                   child: Container(
-                    margin: EdgeInsets.all(8.0),
+                    margin: const EdgeInsets.all(8.0),
                     // source : https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
                     child: LinearProgressIndicator(
                       minHeight: 4.0,
@@ -113,28 +113,27 @@ class _QuizState extends State<QuizWidget>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // Release the player's resources when not in use. We use "stop" so that
+      // if the app resumes later, it will still remember what position to
+      // resume from.
+      _player?.stop();
+    }
+  }
+
+  @override
   void dispose() {
+    super.dispose();
     if (kDebugMode) log("dispose()");
 
     // reset view pager index
     pageViewIndex = 1;
     canGoNext = true;
 
-    //ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     // Release decoders and buffers back to the operating system making them
     // available for other apps to use.
-    _player.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      // Release the player's resources when not in use. We use "stop" so that
-      // if the app resumes later, it will still remember what position to
-      // resume from.
-      _player.stop();
-    }
+    _player?.dispose();
   }
 
   /// Collects the data useful for displaying in a seek bar, using a handy
@@ -151,24 +150,24 @@ class _QuizState extends State<QuizWidget>
   // CLASS METHODS
   //
   ///////////////////////////
-  Future<void> _initAudioPlayer() async {
-    // Inform the operating system of our app's audio attributes etc.
-    // We pick a reasonable default for an app that plays speech.
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.speech());
-    // Listen to errors during playback.
-    _player.playbackEventStream.listen((event) {
-      if (kDebugMode) log("event : $event");
-    }, onError: (Object e, StackTrace stackTrace) {
-      if (kDebugMode) log('A stream error occurred: $e');
-    });
-    // Try to load audio from a source and catch any errors.
+  Future<void> initAudioPlayer() async {
+    if (kDebugMode) log("initAudioPlayer()");
+
+    _player = AudioPlayer();
+
     try {
-      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      await _player.setAsset(Assets.audioEsua);
-      await _player.play();
+      // Inform the operating system of our app's audio attributes etc.
+      // We pick a reasonable default for an app that plays speech.
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.speech());
+      // Listen to errors during playback.
+      _player?.playbackEventStream.listen((event) {
+        if (kDebugMode) log("event : $event");
+      }, onError: (Object e, StackTrace stackTrace) {
+        if (kDebugMode) log('A stream error occurred: $e');
+      });
     } catch (e) {
-      if (kDebugMode) log("Error loading audio source: $e");
+      log("Error loading audio source: $e");
     }
   }
 
@@ -190,11 +189,55 @@ class _QuizState extends State<QuizWidget>
     });
   }
 
+  playWord(String audioAsset) async {
+    log("playWord() | audioAsset : $audioAsset");
+    // var data = await player!.setAsset(audioAsset);
+
+    // Try to load audio from a source and catch any errors.
+    try {
+      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
+      // await _player.setAudioSource(AudioSource.uri(Uri.parse("https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
+      var data = await _player?.setAsset(audioAsset).then((value) => null);
+      _player?.play();
+    } catch (e) {
+      log("Error loading audio source: $e");
+    }
+  }
+
   topQuestionWidget(String question) {
-    return Text(
-      "$question ?",
-      style: Theme.of(context).textTheme.headline5,
-    );
+    WordTextToSpeech? element = WordTextToSpeech.values.firstWhere(
+        (element) => element.word.trim() == question,
+        orElse: () => WordTextToSpeech.NONE);
+    bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
+    var audioAsset =
+        (element != WordTextToSpeech.NONE) ? element.audioAsset : null;
+
+    return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "$question ?",
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            Visibility(
+                visible: isVisible,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: InkWell(
+                      child: const Icon(Icons.surround_sound_rounded,
+                          size: 24, color: SiEkangColors.primary),
+                      onTap: () {
+                        if (kDebugMode) log("onTap()");
+
+                        if (null != audioAsset) {
+                          playWord(audioAsset);
+                        }
+                      }),
+                ))
+          ],
+        ));
   }
 
   possibleAnswersWidget(List<String> possibleAnswers) {
@@ -222,8 +265,8 @@ class _QuizState extends State<QuizWidget>
           });
         },
         selectedColor: SiEkangColors.quizItemSelectedTextColor,
-        shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0)),
+        shape:
+            ContinuousRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       )),
     );
   }
