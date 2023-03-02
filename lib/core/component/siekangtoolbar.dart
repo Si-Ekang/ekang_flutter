@@ -5,6 +5,7 @@ import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 
 typedef PageChangedCallback = Function(
     RouteSettings routeSettings, bool isLibrary);
@@ -79,47 +80,54 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                 child: TextFormField(
-                  autocorrect: false,
-                  controller: textController,
-                  style: const TextStyle(color: Colors.white),
-                  // Set Focus Node
-                  focusNode: textFieldFocusNode,
-                  decoration: InputDecoration(
-                      border: const UnderlineInputBorder(),
-                      // Hint color and style
-                      labelText: 'Rechercher...',
-                      labelStyle: const TextStyle(color: Colors.white),
-                      hintMaxLines: 1,
-                      isDense: true,
-                      suffixIconConstraints: const BoxConstraints(
-                        minWidth: 2,
-                        minHeight: 2,
-                      ),
-                      suffixIcon: InkWell(
-                          child: const Icon(Icons.clear,
-                              size: 24, color: Colors.white),
-                          onTap: () {
-                            if (kDebugMode) log('clear icon pressed');
+                    autocorrect: false,
+                    controller: textController,
+                    style: const TextStyle(color: Colors.white),
+                    // Set Focus Node
+                    focusNode: textFieldFocusNode,
+                    decoration: InputDecoration(
+                        border: const UnderlineInputBorder(),
+                        // Hint color and style
+                        labelText: 'Rechercher...',
+                        labelStyle: const TextStyle(color: Colors.white),
+                        hintMaxLines: 1,
+                        isDense: true,
+                        suffixIconConstraints: const BoxConstraints(
+                          minWidth: 2,
+                          minHeight: 2,
+                        ),
+                        suffixIcon: InkWell(
+                            child: const Icon(Icons.clear,
+                                size: 24, color: Colors.white),
+                            onTap: () {
+                              if (kDebugMode) log('clear icon pressed');
 
-                            // Unfocus all focus nodes
-                            textFieldFocusNode.unfocus();
+                              // Unfocus all focus nodes
+                              textFieldFocusNode.unfocus();
 
-                            // Disable text field's focus node request
-                            textFieldFocusNode.canRequestFocus = false;
+                              // Disable text field's focus node request
+                              textFieldFocusNode.canRequestFocus = false;
 
-                            // Do your stuff
-                            textController.clear();
+                              // Do your stuff
+                              textController.clear();
 
-                            //Enable the text field's focus node request after some delay
-                            Future.delayed(const Duration(milliseconds: 100),
-                                () {
-                              textFieldFocusNode.canRequestFocus = true;
-                            });
-                          }),
-                      suffixIconColor: Colors.white
-                      // Clear button icon
-                      ),
-                ),
+                              //Enable the text field's focus node request after some delay
+                              Future.delayed(const Duration(milliseconds: 100),
+                                  () {
+                                textFieldFocusNode.canRequestFocus = true;
+                              });
+                            }),
+                        suffixIconColor: Colors.white
+                        // Clear button icon
+                        ),
+                    onChanged: (String newText) {
+                      if (newText.isNotEmpty) {
+                        if (kDebugMode) log('newText : $newText');
+
+                        SemanticsService.announce(
+                            '\$$newText', Directionality.of(context));
+                      }
+                    }),
               ),
             )
           ],

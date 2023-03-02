@@ -67,49 +67,64 @@ class _QuizState extends State<QuizWidget>
               onPressed: () => {Navigator.of(context).pop()},
               icon: const Icon(Icons.arrow_back)),
         ),
-        body: Column(
-          children: [
-            // Top Progress Bar
-            SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 32.0,
-                child: Center(
-                  child: Container(
-                    margin: const EdgeInsets.all(8.0),
-                    // source : https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
-                    child: LinearProgressIndicator(
-                      minHeight: 4.0,
-                      color: SiEkangColors.quizItemSelectedTextColor,
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          SiEkangColors.quizItemSelectedTextColor),
-                      value: progressIndicatorController.value + 0.1,
-                      semanticsLabel: 'Linear progress indicator',
-                    ),
-                  ),
-                )),
+        body: LayoutBuilder(
+            builder: (context, constraints) => Center(
+                    child: Row(children: [
+                  Container(
+                      constraints: BoxConstraints(
+                          maxWidth: constraints.maxWidth >= 500
+                              ? 500
+                              : constraints.maxWidth),
+                      child: Column(
+                        children: [
+                          // Top Progress Bar
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 32.0,
+                              child: Center(
+                                child: Container(
+                                  margin: const EdgeInsets.all(8.0),
+                                  // source : https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
+                                  child: LinearProgressIndicator(
+                                    minHeight: 4.0,
+                                    color:
+                                        SiEkangColors.quizItemSelectedTextColor,
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                            SiEkangColors
+                                                .quizItemSelectedTextColor),
+                                    value:
+                                        progressIndicatorController.value + 0.1,
+                                    semanticsLabel: 'Linear progress indicator',
+                                  ),
+                                ),
+                              )),
 
-            // PageView quizz
-            Expanded(
-                child: PageView.builder(
-                    controller: controller,
-                    onPageChanged: (page) {
-                      getCurrentPage(page);
+                          // PageView quizz
+                          Expanded(
+                              child: PageView.builder(
+                                  controller: controller,
+                                  onPageChanged: (page) {
+                                    getCurrentPage(page);
 
-                      if (page == _quizzList.length - 1) {
-                        canGoNext = false;
-                      }
-                    },
-                    itemCount: _quizzList.length,
-                    itemBuilder: (context, position) {
-                      return Container(
-                        child: createPage(position, _quizzList[position]),
-                      );
-                    },
-                    scrollDirection: Axis.horizontal,
-                    // Disable scroll functionality
-                    physics: const NeverScrollableScrollPhysics()))
-          ],
-        ));
+                                    if (page == _quizzList.length - 1) {
+                                      canGoNext = false;
+                                    }
+                                  },
+                                  itemCount: _quizzList.length,
+                                  itemBuilder: (context, position) {
+                                    return Container(
+                                      child: createPage(
+                                          position, _quizzList[position]),
+                                    );
+                                  },
+                                  scrollDirection: Axis.horizontal,
+                                  // Disable scroll functionality
+                                  physics:
+                                      const NeverScrollableScrollPhysics()))
+                        ],
+                      ))
+                ]))));
   }
 
   @override
