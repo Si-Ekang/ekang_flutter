@@ -6,10 +6,8 @@ import 'package:ekang_flutter/ui/library/library.dart';
 import 'package:ekang_flutter/ui/notification/notification.dart';
 import 'package:ekang_flutter/ui/profile/profile.dart';
 import 'package:ekang_flutter/utils/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class Main extends StatelessWidget {
   const Main({super.key});
@@ -44,8 +42,16 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   // Widgets
   ///////////////////////////
   static SiEkangToolbar toolbar = SiEkangToolbar(
-    onPageChanged: (RouteSettings routeSettings, bool isLibrary) {},
-  );
+      onPageChanged: (RouteSettings routeSettings, bool isLibrary) {
+    if (kDebugMode) {
+      log('_MainPageWidgetState | SiEkangToolbar.onPageChanged | isLibrary : $isLibrary');
+    }
+  }, onTextChanged: (String newText) {
+    if (kDebugMode) {
+      log('_MainPageWidgetState | SiEkangToolbar.onTextChanged | newText : $newText');
+    }
+    _updateLibraryList(newText);
+  });
 
   static const List<BottomNavigationBarItem> _bottomNavigationList =
       <BottomNavigationBarItem>[
@@ -64,11 +70,11 @@ class _MainPageWidgetState extends State<MainPageWidget> {
     ),
   ];
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    HomeWidget(),
+  final List<Widget> _widgetOptions = <Widget>[
+    const HomeWidget(),
     LibraryWidget(),
-    NotificationWidget(),
-    ProfileWidget(),
+    const NotificationWidget(),
+    const ProfileWidget(),
   ];
 
   // Index variable used to navigate
@@ -120,10 +126,17 @@ class _MainPageWidgetState extends State<MainPageWidget> {
     var pageName = currentPage.label;
 
     // Check state nullability
-    if (null != key.currentState) {
-      if (kDebugMode) log('Check state nullability');
-      key.currentState!.updateRoute(pageName!,
+    if (null != toolbarKey.currentState) {
+      toolbarKey.currentState!.updateRoute(pageName!,
           Constants.libraryTitle == ModalRoute.of(context)?.settings.name);
+    }
+  }
+
+  static void _updateLibraryList(String newText) {
+
+    // Check state nullability
+    if (null != libraryKey.currentState) {
+      libraryKey.currentState!.onTextChanged(newText);
     }
   }
 }

@@ -2,35 +2,36 @@ import 'dart:developer';
 
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
 typedef PageChangedCallback = Function(
     RouteSettings routeSettings, bool isLibrary);
+typedef TextChangedCallback = Function(String inputText);
 
-final key = GlobalKey<_SiEkangToolbarState>();
+final toolbarKey = GlobalKey<_SiEkangToolbarState>();
 
 class SiEkangToolbar extends StatefulWidget {
-  @override
-  final Size preferredSize;
+  final Size preferredSize = const Size.fromHeight(128.0);
 
   final PageChangedCallback onPageChanged;
+  final TextChangedCallback onTextChanged;
 
   // Constructor
-  SiEkangToolbar({required this.onPageChanged})
-      : preferredSize = const Size.fromHeight(128.0),
-        super(key: key) {
+  SiEkangToolbar({required this.onPageChanged, required this.onTextChanged})
+      : super(key: toolbarKey) {
     if (kDebugMode) log('route : $onPageChanged');
+    if (kDebugMode) log('onTextChanged : $onTextChanged');
   }
 
   @override
-  State<SiEkangToolbar> createState() => _SiEkangToolbarState();
+  State<SiEkangToolbar> createState() => _SiEkangToolbarState(onTextChanged);
 }
 
 class _SiEkangToolbarState extends State<SiEkangToolbar> {
   final TextEditingController textController = TextEditingController();
+  final TextChangedCallback onTextChanged;
 
   // Focus nodes are necessary
   final textFieldFocusNode = FocusNode();
@@ -40,6 +41,8 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
   final double toolbarHeight = 128.0;
   bool isLibrary = false;
   final String searchField = 'Recherche impossible';
+
+  _SiEkangToolbarState(TextChangedCallback this.onTextChanged);
 
   void updateRoute(String currentPageName, bool isLibrary) {
     if (kDebugMode) {
@@ -111,6 +114,7 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
 
                               // Do your stuff
                               textController.clear();
+                              onTextChanged('');
 
                               //Enable the text field's focus node request after some delay
                               Future.delayed(const Duration(milliseconds: 100),
@@ -122,12 +126,12 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
                         // Clear button icon
                         ),
                     onChanged: (String newText) {
-                      if (newText.isNotEmpty) {
-                        if (kDebugMode) log('newText : $newText');
+                      if (kDebugMode) log('onChanged | newText : $newText');
 
-                        SemanticsService.announce(
-                            '\$$newText', Directionality.of(context));
-                      }
+                      SemanticsService.announce(
+                          '\$$newText', Directionality.of(context));
+
+                      onTextChanged(newText);
                     }),
               ),
             )

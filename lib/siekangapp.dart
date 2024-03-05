@@ -1,5 +1,6 @@
 import 'package:ekang_flutter/ui/splashscreen/splashscreen.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fimber/fimber.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const SiEkangApp());
@@ -21,6 +22,12 @@ class SiEkangApp extends StatefulWidget {
 }
 
 class _SiEkangAppState extends State<SiEkangApp> {
+  _SiEkangAppState() {
+    if (kDebugMode) {
+      Fimber.plantTree(DebugTree(useColors: true));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
