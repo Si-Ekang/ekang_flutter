@@ -1,7 +1,7 @@
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:ekang_flutter/ui/main/main.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,7 +38,8 @@ class _SplashScreenState extends State<SplashScreen> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
+    return const SafeArea(
+        child: Scaffold(
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -58,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
+          children: <Widget>[
             /*Text(
               'This is a splashcreen',
             ),*/
@@ -69,6 +70,6 @@ class _SplashScreenState extends State<SplashScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

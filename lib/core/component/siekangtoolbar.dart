@@ -12,7 +12,7 @@ typedef PageChangedCallback = Function(
 
 final key = GlobalKey<_SiEkangToolbarState>();
 
-class SiEkangToolbar extends StatefulWidget with PreferredSizeWidget {
+class SiEkangToolbar extends StatefulWidget {
   @override
   final Size preferredSize;
 
@@ -42,8 +42,9 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
   final String searchField = 'Recherche impossible';
 
   void updateRoute(String currentPageName, bool isLibrary) {
-    if (kDebugMode)
+    if (kDebugMode) {
       log('updateRoute() | name : $currentPageName, is library : $isLibrary');
+    }
     currentPageName = currentPageName;
     this.isLibrary = isLibrary;
   }

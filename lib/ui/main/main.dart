@@ -82,7 +82,8 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: toolbar,
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(128.0), child: toolbar),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
