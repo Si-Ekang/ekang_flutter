@@ -3,7 +3,19 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(const SiEkangApp());
+// TODO: Add Firebase support
+// TODO : Implement Authentication
+
+Future<void> main() async {
+  if (kDebugMode) {
+    Fimber.plantTree(DebugTree(useColors: true));
+  }
+
+  // required when using any plugin. In our case, it's shared_preferences
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(const SiEkangApp());
+}
 
 class SiEkangApp extends StatefulWidget {
   const SiEkangApp({super.key});
@@ -22,12 +34,6 @@ class SiEkangApp extends StatefulWidget {
 }
 
 class _SiEkangAppState extends State<SiEkangApp> {
-  _SiEkangAppState() {
-    if (kDebugMode) {
-      Fimber.plantTree(DebugTree(useColors: true));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
