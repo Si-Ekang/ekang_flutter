@@ -38,8 +38,8 @@ class ProfileWidget extends StatelessWidget {
                                           BorderRadius.circular(16.0))),
                             ),
                             // Button content
-                            child: Row(
-                              children: const [
+                            child: const Row(
+                              children: [
                                 // Display Goggle Image
                                 Image(
                                   image: AssetImage(Assets.imagesGooglegColor),
@@ -58,7 +58,9 @@ class ProfileWidget extends StatelessWidget {
                                 )
                               ],
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              throw Exception("Test crashlytics exception");
+                            },
                           ),
                         ],
                       ),

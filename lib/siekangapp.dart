@@ -2,7 +2,8 @@ import 'package:ekang_flutter/ui/splashscreen/splashscreen.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 // TODO: Add Firebase support
 // TODO : Implement Authentication
 
@@ -13,6 +14,10 @@ Future<void> main() async {
 
   // required when using any plugin. In our case, it's shared_preferences
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const SiEkangApp());
 }

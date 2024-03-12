@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473333502274",
+    "project_id": "siekang",
+    "storage_bucket": "siekang.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473333502274:android:57d7d02bb153f131bf38db",
+        "android_client_info": {
+          "package_name": "com.siekang.ekang_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz3Jio5eh-J2BJCvBu1e3Sm7wMeJCR8EY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
