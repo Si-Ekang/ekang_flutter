@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
+import 'package:ekang_flutter/core/network/connectvity_controller.dart';
 import 'package:ekang_flutter/ui/home/home.dart';
 import 'package:ekang_flutter/ui/library/library.dart';
 import 'package:ekang_flutter/ui/notification/notification.dart';
 import 'package:ekang_flutter/ui/profile/profile.dart';
 import 'package:ekang_flutter/utils/constants.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +40,8 @@ class MainPageWidget extends StatefulWidget {
 }
 
 class _MainPageWidgetState extends State<MainPageWidget> {
+  ConnectivityController connectivityController = ConnectivityController();
+
   ///////////////////////////
   // Widgets
   ///////////////////////////
@@ -86,25 +90,42 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   //
   ///////////////////////////
   @override
+  void initState() {
+    super.initState();
+    connectivityController.init();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(128.0), child: toolbar),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: _bottomNavigationList,
-        currentIndex: _selectedIndex,
-        unselectedItemColor: Colors.black,
-        selectedItemColor: Colors.amber[800],
-        onTap: (index) {
-          if (kDebugMode) log('onTap()');
-          _onItemTapped(index);
-          _updateToolbarWithIndex(index);
-        },
-      ),
-    );
+    return ValueListenableBuilder(
+        valueListenable: connectivityController.isConnected,
+        builder: (context, value, child) {
+          if (!value) {
+            Fimber.e('Not connected');
+          } else {
+            Fimber.d('connected');
+          }
+
+          return SafeArea(
+              child: Scaffold(
+            appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(128.0), child: toolbar),
+            body: Center(
+              child: _widgetOptions.elementAt(_selectedIndex),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              items: _bottomNavigationList,
+              currentIndex: _selectedIndex,
+              unselectedItemColor: Colors.black,
+              selectedItemColor: Colors.amber[800],
+              onTap: (index) {
+                if (kDebugMode) log('onTap()');
+                _onItemTapped(index);
+                _updateToolbarWithIndex(index);
+              },
+            ),
+          ));
+        });
   }
 
   ///////////////////////////
@@ -133,7 +154,6 @@ class _MainPageWidgetState extends State<MainPageWidget> {
   }
 
   static void _updateLibraryList(String newText) {
-
     // Check state nullability
     if (null != libraryKey.currentState) {
       libraryKey.currentState!.onTextChanged(newText);

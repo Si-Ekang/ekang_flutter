@@ -1,9 +1,12 @@
 import 'package:ekang_flutter/ui/splashscreen/splashscreen.dart';
 import 'package:fimber/fimber.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'firebase_options.dart';
+
 // TODO: Add Firebase support
 // TODO : Implement Authentication
 
@@ -12,14 +15,37 @@ Future<void> main() async {
     Fimber.plantTree(DebugTree(useColors: true));
   }
 
+  initPlugins();
+  initFirebase();
+
+  runApp(const SiEkangApp());
+}
+
+void initPlugins() {
   // required when using any plugin. In our case, it's shared_preferences
   WidgetsFlutterBinding.ensureInitialized();
+}
 
+void initFirebase() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const SiEkangApp());
+  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  FirebaseCrashlytics.instance.setUserIdentifier('mike_dev');
+
+  // Pass all uncaught errors from the framework to Crashlytics.
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 }
 
 class SiEkangApp extends StatefulWidget {
