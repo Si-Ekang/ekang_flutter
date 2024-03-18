@@ -1,12 +1,16 @@
 import 'dart:developer';
 
+import 'package:audio_session/audio_session.dart';
 import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/texttospeech/texttospeechutils.dart';
+import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
 import 'package:ekang_flutter/generated/assets.dart';
+import 'package:ekang_flutter/utils/audio_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../core/texttospeech/ttsstate.dart';
 
@@ -24,6 +28,7 @@ class LibraryWidget extends StatefulWidget {
 class _LibraryState extends State<LibraryWidget> {
   List<List<dynamic>> _fields = [];
   List<List<dynamic>> _data = [];
+  AudioPlayer? _player;
   late FlutterTts flutterTts;
   TtsState? ttsState;
   String _currentWord = '';
@@ -41,6 +46,7 @@ class _LibraryState extends State<LibraryWidget> {
     if (kDebugMode) log("initState()");
 
     initTTS();
+    initAudioPlayer();
     loadCsvFromAssets();
   }
 
@@ -73,9 +79,32 @@ class _LibraryState extends State<LibraryWidget> {
                                 '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
                                 '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
                             onTap: () {
+                              WordTextToSpeech? element =
+                                  WordTextToSpeech.values.firstWhere(
+                                      (element) =>
+                                          element.word.trim() ==
+                                          _data[index][1].toString(),
+                                      orElse: () => WordTextToSpeech.NONE);
+
+                              // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
+
+                              var audioAsset =
+                                  (element != WordTextToSpeech.NONE)
+                                      ? element.audioAsset
+                                      : null;
+
                               textToSpeak = _data[index][1].toString();
-                              if (kDebugMode) log("onTap() | $textToSpeak");
-                              _speak(textToSpeak!);
+
+                              if (kDebugMode) {
+                                log("onTap() | $textToSpeak");
+                                log("onTap() | $audioAsset");
+                              }
+                              // _speak(textToSpeak!);
+
+                              if (null != audioAsset ||
+                                  true == audioAsset?.isNotEmpty) {
+                                AudioUtils.playWord(audioAsset!);
+                              }
                             },
                             trailing: const Icon(Icons.surround_sound_rounded),
                           )));
@@ -95,6 +124,27 @@ class _LibraryState extends State<LibraryWidget> {
   // CLASS METHODS
   //
   ///////////////////////////
+  Future<void> initAudioPlayer() async {
+    if (kDebugMode) log("initAudioPlayer()");
+
+    _player = AudioPlayer();
+
+    try {
+      // Inform the operating system of our app's audio attributes etc.
+      // We pick a reasonable default for an app that plays speech.
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.speech());
+      // Listen to errors during playback.
+      _player?.playbackEventStream.listen((event) {
+        if (kDebugMode) log("event : $event");
+      }, onError: (Object e, StackTrace stackTrace) {
+        if (kDebugMode) log('A stream error occurred: $e');
+      });
+    } catch (e) {
+      log("Error loading audio source: $e");
+    }
+  }
+
   void loadCsvFromAssets() async {
     if (kDebugMode) log("loadCsvFromAssets()");
 

@@ -6,7 +6,7 @@ import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
 import 'package:ekang_flutter/data/local/model/quizz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:ekang_flutter/utils/audio_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -204,21 +204,6 @@ class _QuizState extends State<QuizWidget>
     });
   }
 
-  playWord(String audioAsset) async {
-    log("playWord() | audioAsset : $audioAsset");
-    // var data = await player!.setAsset(audioAsset);
-
-    // Try to load audio from a source and catch any errors.
-    try {
-      // AAC example: https://dl.espressif.com/dl/audio/ff-16b-2c-44100hz.aac
-      // await _player.setAudioSource(AudioSource.uri(Uri.parse("https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
-      var data = await _player?.setAsset(audioAsset).then((value) => null);
-      _player?.play();
-    } catch (e) {
-      log("Error loading audio source: $e");
-    }
-  }
-
   topQuestionWidget(String question) {
     WordTextToSpeech? element = WordTextToSpeech.values.firstWhere(
         (element) => element.word.trim() == question,
@@ -247,7 +232,7 @@ class _QuizState extends State<QuizWidget>
                         if (kDebugMode) log("onTap()");
 
                         if (null != audioAsset) {
-                          playWord(audioAsset);
+                          AudioUtils.playWord(audioAsset);
                         }
                       }),
                 ))
