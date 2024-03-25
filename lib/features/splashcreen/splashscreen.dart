@@ -1,7 +1,7 @@
 import 'package:ekang_flutter/features/main/presentation/widgets/main_widget.dart';
 import 'package:ekang_flutter/generated/assets.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,15 +21,27 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 2500), () {
-      setState(() {
-        // Here you can write your code for open new view
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const MainWidget()));
-      });
+      // Here you can write your code for open new view
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const MainWidget()));
 
-      dispose();
+      try {
+        dispose();
+      } catch (exception) {
+        Fimber.e('Error caught: ${exception.toString()}');
+      }
     });
 
     // This method is rerun every time setState is called, for instance as done

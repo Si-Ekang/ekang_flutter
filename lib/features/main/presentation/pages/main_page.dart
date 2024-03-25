@@ -8,14 +8,14 @@ import 'package:ekang_flutter/core/utils/constants.dart';
 import 'package:ekang_flutter/features/home/presentation/widgets/home_widget.dart';
 import 'package:ekang_flutter/features/library/presentation/pages/library_page.dart';
 import 'package:ekang_flutter/features/library/presentation/widgets/library_widget.dart';
+import 'package:ekang_flutter/features/main/presentation/bloc/main_bloc.dart';
 import 'package:ekang_flutter/features/notifications/presentation/widgets/notification_widget.dart';
 import 'package:ekang_flutter/features/profile/presentation/widgets/profile_widget.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -149,9 +149,56 @@ class _MainPage extends State<MainPage> {
               child: Scaffold(
             appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(128.0), child: toolbar),
-            body: Center(
-              child: _widgetOptions.elementAt(_selectedIndex),
-            ),
+            body: BlocBuilder<MainBloc, MainState>(
+                buildWhen: (previous, current) =>
+                    previous.idSelected != current.idSelected,
+                builder: (context, state) {
+                  switch (state.idSelected) {
+                    case 0:
+                      {
+                        if (kDebugMode) {
+                          Fimber.d(
+                              '_MainPage | BlocBuilder | state is HomeState');
+                        }
+                      }
+                      break;
+                    case 1:
+                      {
+                        if (kDebugMode) {
+                          Fimber.d(
+                              '_MainPage | BlocBuilder | state is LibraryState');
+                        }
+                      }
+                      break;
+                    case 2:
+                      {
+                        if (kDebugMode) {
+                          Fimber.d(
+                              '_MainPage | BlocBuilder | state is NotificationState');
+                        }
+                      }
+                      break;
+                    case 3:
+                      {
+                        if (kDebugMode) {
+                          Fimber.d(
+                              '_MainPage | BlocBuilder | state is ProfileState');
+                        }
+                      }
+                      break;
+                    default:
+                      {
+                        if (kDebugMode) {
+                          Fimber.e(
+                              '_MainPage | BlocBuilder | default case | $state');
+                        }
+                      }
+                      break;
+                  }
+                  return Center(
+                    child: _widgetOptions.elementAt(_selectedIndex),
+                  );
+                }),
             bottomNavigationBar: BottomNavigationBar(
               items: _bottomNavigationList,
               currentIndex: _selectedIndex,
@@ -177,6 +224,9 @@ class _MainPage extends State<MainPage> {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Update MainBloc state
+    context.read<MainBloc>().add(SelectCategory(idSelected: _selectedIndex));
   }
 
   void _updateToolbarWithIndex(int index) {

@@ -1,26 +1,24 @@
 import 'dart:developer';
-import 'package:ekang_flutter/core/texttospeech/ttsstate.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/texttospeech/texttospeechutils.dart';
+import 'package:ekang_flutter/core/texttospeech/ttsstate.dart';
+import 'package:ekang_flutter/core/utils/audio_utils.dart';
 import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:ekang_flutter/core/utils/audio_utils.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 
-
 typedef TextChangedCallback = Function(String inputText);
 
-final libraryKey = GlobalKey<_LibraryPage>();
-class LibraryPage extends StatefulWidget {
+const libraryKey = GlobalObjectKey<_LibraryPage>(1);
 
+class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -66,67 +64,69 @@ class _LibraryPage extends State<LibraryPage> {
     return Scaffold(
         body: LayoutBuilder(
             builder: (context, constraints) => Row(children: [
-              Container(
-                constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth >= 500
-                        ? 500
-                        : constraints.maxWidth),
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _data.length,
-                    itemBuilder: (context, index) {
-                      var francais = _data[index][0];
-                      var fang = _data[index][1];
-                      var fang2 = _data[index][2];
-                      var fang3 = _data[index][3];
-                      var fang4 = _data[index][4];
+                  Container(
+                    constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth >= 500
+                            ? 500
+                            : constraints.maxWidth),
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _data.length,
+                        itemBuilder: (context, index) {
+                          var francais = _data[index][0];
+                          var fang = _data[index][1];
+                          var fang2 = _data[index][2];
+                          var fang3 = _data[index][3];
+                          var fang4 = _data[index][4];
 
-                      return Material(
-                          child: Card(
-                              child: ListTile(
-                                title: Text('$francais = $fang'),
-                                subtitle: Text(
-                                    '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
-                                        '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
-                                        '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
-                                onTap: () {
-                                  WordTextToSpeech? element =
+                          return Material(
+                              child: Card(
+                                  child: ListTile(
+                            title: Text('$francais = $fang'),
+                            subtitle: Text(
+                                '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
+                                '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
+                                '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
+                            onTap: () {
+                              WordTextToSpeech? element =
                                   WordTextToSpeech.values.firstWhere(
-                                          (element) =>
-                                      element.word.trim() ==
+                                      (element) =>
+                                          element.word.trim() ==
                                           _data[index][1].toString(),
                                       orElse: () => WordTextToSpeech.NONE);
 
-                                  // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
+                              // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
 
-                                  var audioAsset =
+                              var audioAsset =
                                   (element != WordTextToSpeech.NONE)
                                       ? element.audioAsset
                                       : null;
 
-                                  textToSpeak = _data[index][1].toString();
+                              textToSpeak = _data[index][1].toString();
 
-                                  if (kDebugMode) {
-                                    log("onTap() | $textToSpeak");
-                                    log("onTap() | $audioAsset");
-                                  }
-                                  // _speak(textToSpeak!);
+                              if (kDebugMode) {
+                                log("onTap() | $textToSpeak");
+                                log("onTap() | $audioAsset");
+                              }
+                              // _speak(textToSpeak!);
 
-                                  if (null != audioAsset ||
-                                      true == audioAsset?.isNotEmpty) {
-                                    AudioUtils.playWord(audioAsset!);
-                                  }
-                                },
-                                trailing: const Icon(Icons.surround_sound_rounded),
-                              )));
-                    }),
-              )
-            ])));
+                              if (null != audioAsset ||
+                                  true == audioAsset?.isNotEmpty) {
+                                AudioUtils.playWord(audioAsset!);
+                              }
+                            },
+                            trailing: const Icon(Icons.surround_sound_rounded),
+                          )));
+                        }),
+                  )
+                ])));
   }
 
   @override
   void dispose() {
-    _stop();
+    if (TtsState.playing == ttsState) {
+      _stop();
+    }
     super.dispose();
   }
 
@@ -190,11 +190,11 @@ class _LibraryPage extends State<LibraryPage> {
     });
 
     flutterTts.setProgressHandler(
-            (String text, int startOffset, int endOffset, String word) {
-          setState(() {
-            _currentWord = word;
-          });
-        });
+        (String text, int startOffset, int endOffset, String word) {
+      setState(() {
+        _currentWord = word;
+      });
+    });
 
     flutterTts.setErrorHandler((msg) {
       setState(() {
@@ -223,13 +223,21 @@ class _LibraryPage extends State<LibraryPage> {
   }
 
   Future _speak(String text) async {
-    var result = await flutterTts.speak(text);
-    if (result == 1) setState(() => ttsState = TtsState.playing);
+    try {
+      var result = await flutterTts.speak(text);
+      if (result == 1) setState(() => ttsState = TtsState.playing);
+    } catch (exception) {
+      Fimber.e('Error caught: ${exception.toString()}');
+    }
   }
 
   Future _stop() async {
-    var result = await flutterTts.stop();
-    if (result == 1) setState(() => ttsState = TtsState.stopped);
+    try {
+      var result = await flutterTts.stop();
+      if (result == 1) setState(() => ttsState = TtsState.stopped);
+    } catch (exception) {
+      Fimber.e('Error caught: ${exception.toString()}');
+    }
   }
 
   void onTextChanged(String query) {

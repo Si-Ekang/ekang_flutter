@@ -10,7 +10,7 @@ typedef PageChangedCallback = Function(
     RouteSettings routeSettings, bool isLibrary);
 typedef TextChangedCallback = Function(String inputText);
 
-final toolbarKey = GlobalKey<_SiEkangToolbarState>();
+const toolbarKey = GlobalObjectKey<_SiEkangToolbarState>(0);
 
 class SiEkangToolbar extends StatefulWidget {
   final Size preferredSize = const Size.fromHeight(128.0);
