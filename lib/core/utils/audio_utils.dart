@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../../core/texttospeech/ttsstate.dart';
+import '../../../core/texttospeech/ttsstate.dart';
 
 class AudioUtils {
   static AudioPlayer? _player;

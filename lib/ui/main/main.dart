@@ -8,7 +8,7 @@ import 'package:ekang_flutter/ui/home/home.dart';
 import 'package:ekang_flutter/ui/library/library.dart';
 import 'package:ekang_flutter/ui/notification/notification.dart';
 import 'package:ekang_flutter/ui/profile/profile.dart';
-import 'package:ekang_flutter/utils/constants.dart';
+import 'package:ekang_flutter/core/utils/constants.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

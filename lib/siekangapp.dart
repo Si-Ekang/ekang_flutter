@@ -1,4 +1,4 @@
-import 'package:ekang_flutter/ui/splashscreen/splashscreen.dart';
+import 'package:ekang_flutter/features/splashcreen/splashscreen.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';

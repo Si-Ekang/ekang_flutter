@@ -5,7 +5,7 @@ import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/texttospeech/texttospeechutils.dart';
 import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:ekang_flutter/utils/audio_utils.dart';
+import 'package:ekang_flutter/core/utils/audio_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
