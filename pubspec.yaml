@@ -40,17 +40,23 @@ dependencies:
   # Fimber: a logging library for Flutter
   fimber: ^0.7.0
 
+
   # Flutter BLOC (Business Logic Of Components)
-  flutter_bloc: ^8.1.4
+  flutter_bloc: ^8.1.5
   bloc_pattern: ^3.0.1
   equatable: ^2.0.5
+  # generator
+  dartz: ^0.10.1
+
+  # Dependency injection
+  get_it: ^7.6.7
 
   # Shared Preferences
   shared_preferences: ^2.2.2
 
   # Google
   # Fonts
-  google_fonts: ^6.1.0
+  google_fonts: ^6.2.1
   # Sign-In
   google_sign_in: ^6.2.1
 
@@ -62,6 +68,9 @@ dependencies:
   # Connectivity
   connectivity_plus: ^5.0.2
 
+  # Connectivity checker
+  # internet_connection_checker_plus: ^2.3.0
+
   # Firebase
   firebase_core: ^2.27.1
 #  firebase_auth: ^4.17.8
@@ -72,6 +81,7 @@ dependencies:
 #  cloud_firestore: ^4.15.8
 
   formz: ^0.7.0
+  email_validator: ^2.1.17
 
   csv: ^6.0.0
   http: ^1.2.1
@@ -81,11 +91,10 @@ dependencies:
   web: ^0.5.1
 
   # Text-To-Speech
-  flutter_tts: ^3.8.5
+  flutter_tts: ^4.0.2
 
   # Lottie
   lottie: ^3.1.0
-
 
 
 dev_dependencies:

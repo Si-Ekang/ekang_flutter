@@ -209,13 +209,6 @@ class _LibraryState extends State<LibraryWidget> {
         ttsState = TtsState.continued;
       });
     });
-
-    // Android only
-    flutterTts.setInitHandler(() {
-      setState(() {
-        ttsState = TtsState.stopped;
-      });
-    });
   }
 
   Future _speak(String text) async {

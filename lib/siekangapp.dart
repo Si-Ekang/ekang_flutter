@@ -7,10 +7,9 @@ import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
 
-// TODO: Add Firebase support
 // TODO : Implement Authentication
 
-Future<void> main() async {
+void main() {
   if (kDebugMode) {
     Fimber.plantTree(DebugTree(useColors: true));
   }
