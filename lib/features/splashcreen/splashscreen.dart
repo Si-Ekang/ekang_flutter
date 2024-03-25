@@ -1,5 +1,5 @@
+import 'package:ekang_flutter/features/main/presentation/widgets/main_widget.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:ekang_flutter/ui/main/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         // Here you can write your code for open new view
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const Main()));
+            context, MaterialPageRoute(builder: (context) => const MainWidget()));
       });
 
       dispose();

@@ -4,30 +4,21 @@ import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
 import 'package:ekang_flutter/core/network/connectvity_controller.dart';
-import 'package:ekang_flutter/ui/home/home.dart';
-import 'package:ekang_flutter/ui/library/library.dart';
-import 'package:ekang_flutter/ui/notification/notification.dart';
-import 'package:ekang_flutter/ui/profile/profile.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
+import 'package:ekang_flutter/features/home/presentation/widgets/home_widget.dart';
+import 'package:ekang_flutter/features/library/presentation/pages/library_page.dart';
+import 'package:ekang_flutter/features/library/presentation/widgets/library_widget.dart';
+import 'package:ekang_flutter/features/notifications/presentation/widgets/notification_widget.dart';
+import 'package:ekang_flutter/features/profile/presentation/widgets/profile_widget.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-class Main extends StatelessWidget {
-  const Main({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MainPageWidget(),
-    );
-  }
-}
-
-class MainPageWidget extends StatefulWidget {
-  const MainPageWidget({super.key});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -39,10 +30,10 @@ class MainPageWidget extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<MainPageWidget> createState() => _MainPageWidgetState();
+  State<MainPage> createState() => _MainPage();
 }
 
-class _MainPageWidgetState extends State<MainPageWidget> {
+class _MainPage extends State<MainPage> {
   ConnectivityController connectivityController = ConnectivityController();
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
@@ -82,7 +73,7 @@ class _MainPageWidgetState extends State<MainPageWidget> {
 
   final List<Widget> _widgetOptions = <Widget>[
     const HomeWidget(),
-    LibraryWidget(),
+    const LibraryWidget(),
     const NotificationWidget(),
     const ProfileWidget(),
   ];
@@ -142,6 +133,7 @@ class _MainPageWidgetState extends State<MainPageWidget> {
       _connectionStatus = result;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(

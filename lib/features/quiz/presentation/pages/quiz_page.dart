@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:audio_session/audio_session.dart';
 import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
-import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
-import 'package:ekang_flutter/data/local/model/quizz.dart';
-import 'package:ekang_flutter/generated/assets.dart';
 import 'package:ekang_flutter/core/utils/audio_utils.dart';
+import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
+import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
+import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,14 +14,14 @@ import 'package:just_audio/just_audio.dart';
 
 int pageViewIndex = 1;
 
-class QuizWidget extends StatefulWidget {
-  const QuizWidget({super.key});
+class QuizPage extends StatefulWidget {
+  const QuizPage({super.key});
 
   @override
-  State<QuizWidget> createState() => _QuizState();
+  State<QuizPage> createState() => _QuizState();
 }
 
-class _QuizState extends State<QuizWidget>
+class _QuizState extends State<QuizPage>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   late AnimationController progressIndicatorController;
   final PageController controller = PageController();
@@ -219,7 +219,7 @@ class _QuizState extends State<QuizWidget>
           children: [
             Text(
               "$question ?",
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headlineSmall,
             ),
             Visibility(
                 visible: isVisible,
