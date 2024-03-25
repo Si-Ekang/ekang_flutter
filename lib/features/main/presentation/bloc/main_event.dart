@@ -9,10 +9,11 @@ class MainEvent extends Equatable {
 class GetCategories extends MainEvent {}
 
 class SelectCategory extends MainEvent {
+  final int idSelected;
+
   SelectCategory({
     required this.idSelected,
   });
-  final int idSelected;
 
   @override
   List<Object?> get props => [idSelected];
