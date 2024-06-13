@@ -13,8 +13,10 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _mapGetMainEventToState(
-      GetCategories event, Emitter<MainState> emit) async {
-    if(kDebugMode) {
+    GetCategories event,
+    Emitter<MainState> emit,
+  ) async {
+    if (kDebugMode) {
       Fimber.d('_mapGetMainEventToState()');
     }
     emit(state.copyWith(idSelected: 0));
@@ -22,9 +24,12 @@ class MainBloc extends Bloc<MainEvent, MainState> {
   }
 
   void _mapSelectMainEventToState(
-      SelectCategory event, Emitter<MainState> emit) async {
-    if(kDebugMode) {
-      Fimber.d('_mapSelectMainEventToState() | idSelected: ${event.idSelected}');
+    SelectCategory event,
+    Emitter<MainState> emit,
+  ) async {
+    if (kDebugMode) {
+      Fimber.d(
+          '_mapSelectMainEventToState() | idSelected: ${event.idSelected}');
     }
     emit(state.copyWith(idSelected: event.idSelected));
     /*switch (event.idSelected) {
