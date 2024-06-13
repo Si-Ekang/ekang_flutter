@@ -2,15 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
 import 'package:ekang_flutter/core/network/connectvity_controller.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
-import 'package:ekang_flutter/features/home/presentation/widgets/home_widget.dart';
-import 'package:ekang_flutter/features/library/presentation/pages/library_page.dart';
-import 'package:ekang_flutter/features/library/presentation/widgets/library_widget.dart';
+import 'package:ekang_flutter/features/home/home.dart';
+import 'package:ekang_flutter/features/library/library.dart';
 import 'package:ekang_flutter/features/main/presentation/bloc/main_bloc.dart';
-import 'package:ekang_flutter/features/notifications/presentation/widgets/notification_widget.dart';
-import 'package:ekang_flutter/features/profile/presentation/widgets/profile_widget.dart';
+import 'package:ekang_flutter/features/notifications/notifications.dart';
+import 'package:ekang_flutter/features/settings/settings.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,32 +40,23 @@ class _MainWidgetState extends State<MainWidget> {
   ///////////////////////////
   // Widgets
   ///////////////////////////
-  static SiEkangToolbar toolbar = SiEkangToolbar(
-      onPageChanged: (RouteSettings routeSettings, bool isLibrary) {
-    if (kDebugMode) {
-      log('_MainPageWidgetState | SiEkangToolbar.onPageChanged | isLibrary : $isLibrary');
-    }
-  }, onTextChanged: (String newText) {
-    if (kDebugMode) {
-      log('_MainPageWidgetState | SiEkangToolbar.onTextChanged | newText : $newText');
-    }
-    _updateLibraryList(newText);
-  });
-
   static const List<BottomNavigationBarItem> _bottomNavigationList =
       <BottomNavigationBarItem>[
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: Constants.homeTitle),
     BottomNavigationBarItem(
-      icon: Icon(Icons.menu_book),
+      icon: Icon(Icons.home_rounded),
+      label: Constants.homeTitle,
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.menu_book_rounded),
       label: Constants.libraryTitle,
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.notifications),
+      icon: Icon(Icons.notifications_rounded),
       label: Constants.notificationsTitle,
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.person),
-      label: Constants.profileTitle,
+      icon: Icon(Icons.settings_rounded),
+      label: Constants.settingsTitle,
     ),
   ];
 
@@ -76,7 +65,6 @@ class _MainWidgetState extends State<MainWidget> {
     const LibraryPage(),
     const NotificationPage(),
     const SettingsPage(),
-    const ProfilePage(),
   ];
 
   // Index variable used to navigate
@@ -148,8 +136,6 @@ class _MainWidgetState extends State<MainWidget> {
 
           return SafeArea(
               child: Scaffold(
-            appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(128.0), child: toolbar),
             body: BlocBuilder<MainBloc, MainState>(
                 buildWhen: (previous, current) =>
                     previous.idSelected != current.idSelected,
@@ -208,7 +194,6 @@ class _MainWidgetState extends State<MainWidget> {
               onTap: (index) {
                 if (kDebugMode) log('onTap()');
                 _onItemTapped(index);
-                _updateToolbarWithIndex(index);
               },
             ),
           ));
@@ -228,19 +213,6 @@ class _MainWidgetState extends State<MainWidget> {
 
     // Update MainBloc state
     context.read<MainBloc>().add(SelectCategory(idSelected: _selectedIndex));
-  }
-
-  void _updateToolbarWithIndex(int index) {
-    if (kDebugMode) log('_updateToolbarWithIndex() | index : $index');
-    // current page
-    var currentPage = _bottomNavigationList.elementAt(index);
-    var pageName = currentPage.label;
-
-    // Check state nullability
-    if (null != toolbarKey.currentState) {
-      toolbarKey.currentState!.updateRoute(pageName!,
-          Constants.libraryTitle == ModalRoute.of(context)?.settings.name);
-    }
   }
 
   static void _updateLibraryList(String newText) {

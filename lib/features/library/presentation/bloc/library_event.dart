@@ -8,10 +8,10 @@ class LibraryEvent extends Equatable {
 class GetCsvLibrary extends LibraryEvent {}
 
 class SearchWord extends LibraryEvent {
-  final String word;
+  final String wordToSearch;
 
-  SearchWord(this.word);
+  SearchWord({required this.wordToSearch});
 
   @override
-  List<Object?> get props => [word];
+  List<Object?> get props => [wordToSearch];
 }
