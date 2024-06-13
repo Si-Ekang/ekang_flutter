@@ -1,13 +1,14 @@
 import 'dart:developer';
 
-import 'package:ekang_flutter/core/theme/siekangcolors.dart';
+import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 
 typedef PageChangedCallback = Function(
-    RouteSettings routeSettings, bool isLibrary);
+  RouteSettings routeSettings,
+  bool isLibrary,
+);
 typedef TextChangedCallback = Function(String inputText);
 
 const toolbarKey = GlobalObjectKey<_SiEkangToolbarState>(0);
@@ -15,23 +16,21 @@ const toolbarKey = GlobalObjectKey<_SiEkangToolbarState>(0);
 class SiEkangToolbar extends StatefulWidget {
   final Size preferredSize = const Size.fromHeight(128.0);
 
-  final PageChangedCallback onPageChanged;
-  final TextChangedCallback onTextChanged;
+  final String? title;
+  final TextChangedCallback? onTextChanged;
 
   // Constructor
-  SiEkangToolbar({required this.onPageChanged, required this.onTextChanged})
+  SiEkangToolbar({required this.onTextChanged, this.title})
       : super(key: toolbarKey) {
-    if (kDebugMode) log('route : $onPageChanged');
     if (kDebugMode) log('onTextChanged : $onTextChanged');
   }
 
   @override
-  State<SiEkangToolbar> createState() => _SiEkangToolbarState(onTextChanged);
+  State<SiEkangToolbar> createState() => _SiEkangToolbarState();
 }
 
 class _SiEkangToolbarState extends State<SiEkangToolbar> {
   final TextEditingController textController = TextEditingController();
-  final TextChangedCallback onTextChanged;
 
   // Focus nodes are necessary
   final textFieldFocusNode = FocusNode();
@@ -41,8 +40,6 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
   final double toolbarHeight = 128.0;
   bool isLibrary = false;
   final String searchField = 'Recherche impossible';
-
-  _SiEkangToolbarState(TextChangedCallback this.onTextChanged);
 
   void updateRoute(String currentPageName, bool isLibrary) {
     if (kDebugMode) {
@@ -83,56 +80,73 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: TextFormField(
-                    autocorrect: false,
-                    controller: textController,
-                    style: const TextStyle(color: Colors.white),
-                    // Set Focus Node
-                    focusNode: textFieldFocusNode,
-                    decoration: InputDecoration(
-                        border: const UnderlineInputBorder(),
-                        // Hint color and style
-                        labelText: 'Rechercher...',
-                        labelStyle: const TextStyle(color: Colors.white),
-                        hintMaxLines: 1,
-                        isDense: true,
-                        suffixIconConstraints: const BoxConstraints(
-                          minWidth: 2,
-                          minHeight: 2,
-                        ),
-                        suffixIcon: InkWell(
-                            child: const Icon(Icons.clear,
-                                size: 24, color: Colors.white),
-                            onTap: () {
-                              if (kDebugMode) log('clear icon pressed');
+                child: null == widget.onTextChanged && null != widget.title
+                    ? Text(widget.title!, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18),)
+                    : TextFormField(
+                        autocorrect: false,
+                        controller: textController,
+                        style: const TextStyle(color: Colors.white),
+                        // Set Focus Node
+                        focusNode: textFieldFocusNode,
+                        decoration: InputDecoration(
+                            border: const UnderlineInputBorder(),
+                            // Hint color and style
+                            labelText: 'Rechercher...',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            hintMaxLines: 1,
+                            isDense: true,
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 2,
+                              minHeight: 2,
+                            ),
+                            suffixIcon: null == widget.onTextChanged
+                                ? null
+                                : textController.value.text.isEmpty
+                                    ? const Icon(
+                                        Icons.search_rounded,
+                                        size: 24,
+                                        color: Colors.white,
+                                      )
+                                    : InkWell(
+                                        child: const Icon(
+                                          Icons.clear_rounded,
+                                          size: 24,
+                                          color: Colors.white,
+                                        ),
+                                        onTap: () {
+                                          if (kDebugMode)
+                                            log('clear icon pressed');
 
-                              // Unfocus all focus nodes
-                              textFieldFocusNode.unfocus();
+                                          // Unfocus all focus nodes
+                                          textFieldFocusNode.unfocus();
 
-                              // Disable text field's focus node request
-                              textFieldFocusNode.canRequestFocus = false;
+                                          // Disable text field's focus node request
+                                          textFieldFocusNode.canRequestFocus =
+                                              false;
 
-                              // Do your stuff
-                              textController.clear();
-                              onTextChanged('');
+                                          // Do your stuff
+                                          textController.clear();
+                                          widget.onTextChanged!('');
 
-                              //Enable the text field's focus node request after some delay
-                              Future.delayed(const Duration(milliseconds: 100),
-                                  () {
-                                textFieldFocusNode.canRequestFocus = true;
-                              });
-                            }),
-                        suffixIconColor: Colors.white
-                        // Clear button icon
-                        ),
-                    onChanged: (String newText) {
-                      if (kDebugMode) log('onChanged | newText : $newText');
+                                          //Enable the text field's focus node request after some delay
+                                          Future.delayed(
+                                              const Duration(milliseconds: 100),
+                                              () {
+                                            textFieldFocusNode.canRequestFocus =
+                                                true;
+                                          });
+                                        }),
+                            suffixIconColor: Colors.white
+                            // Clear button icon
+                            ),
+                        onChanged: (String newText) {
+                          if (kDebugMode) log('onChanged | newText : $newText');
 
-                      SemanticsService.announce(
-                          '\$$newText', Directionality.of(context));
+                          SemanticsService.announce(
+                              '\$$newText', Directionality.of(context));
 
-                      onTextChanged(newText);
-                    }),
+                          widget.onTextChanged!(newText);
+                        }),
               ),
             )
           ],
