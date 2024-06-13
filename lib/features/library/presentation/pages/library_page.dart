@@ -6,11 +6,13 @@ import 'package:ekang_flutter/core/texttospeech/texttospeechutils.dart';
 import 'package:ekang_flutter/core/texttospeech/ttsstate.dart';
 import 'package:ekang_flutter/core/utils/audio_utils.dart';
 import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
+import 'package:ekang_flutter/features/library/presentation/bloc/library_bloc.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -35,8 +37,8 @@ class LibraryPage extends StatefulWidget {
 }
 
 class _LibraryPage extends State<LibraryPage> {
-  List<List<dynamic>> _fields = [];
-  List<List<dynamic>> _data = [];
+/*  List<List<dynamic>> _fields = [];
+  List<List<dynamic>> _data = [];*/
   AudioPlayer? _player;
   late FlutterTts flutterTts;
   TtsState? ttsState;
@@ -56,70 +58,90 @@ class _LibraryPage extends State<LibraryPage> {
 
     initTTS();
     initAudioPlayer();
-    loadCsvFromAssets();
+    // loadCsvFromAssets();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: LayoutBuilder(
-            builder: (context, constraints) => Row(children: [
-                  Container(
-                    constraints: BoxConstraints(
-                        maxWidth: constraints.maxWidth >= 500
-                            ? 500
-                            : constraints.maxWidth),
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _data.length,
-                        itemBuilder: (context, index) {
-                          var francais = _data[index][0];
-                          var fang = _data[index][1];
-                          var fang2 = _data[index][2];
-                          var fang3 = _data[index][3];
-                          var fang4 = _data[index][4];
+      body: BlocConsumer<LibraryBloc, LibraryState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          switch (state) {
+            case Idle _:
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            case Loaded _:
+              return LayoutBuilder(
+                  builder: (context, constraints) => Row(children: [
+                        Container(
+                          constraints: BoxConstraints(
+                              maxWidth: constraints.maxWidth >= 500
+                                  ? 500
+                                  : constraints.maxWidth),
+                          child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: state.data.length,
+                              itemBuilder: (context, index) {
+                                var francais = state.data[index][0];
+                                var fang = state.data[index][1];
+                                var fang2 = state.data[index][2];
+                                var fang3 = state.data[index][3];
+                                var fang4 = state.data[index][4];
 
-                          return Material(
-                              child: Card(
-                                  child: ListTile(
-                            title: Text('$francais = $fang'),
-                            subtitle: Text(
-                                '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
-                                '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
-                                '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
-                            onTap: () {
-                              WordTextToSpeech? element =
-                                  WordTextToSpeech.values.firstWhere(
-                                      (element) =>
-                                          element.word.trim() ==
-                                          _data[index][1].toString(),
-                                      orElse: () => WordTextToSpeech.NONE);
+                                return Material(
+                                    child: Card(
+                                        child: ListTile(
+                                  title: Text('$francais = $fang'),
+                                  subtitle: Text(
+                                      '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
+                                      '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
+                                      '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
+                                  onTap: () {
+                                    WordTextToSpeech? element =
+                                        WordTextToSpeech.values.firstWhere(
+                                            (element) =>
+                                                element.word.trim() ==
+                                                state.data[index][1].toString(),
+                                            orElse: () =>
+                                                WordTextToSpeech.NONE);
 
-                              // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
+                                    // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
 
-                              var audioAsset =
-                                  (element != WordTextToSpeech.NONE)
-                                      ? element.audioAsset
-                                      : null;
+                                    var audioAsset =
+                                        (element != WordTextToSpeech.NONE)
+                                            ? element.audioAsset
+                                            : null;
 
-                              textToSpeak = _data[index][1].toString();
+                                    textToSpeak =
+                                        state.data[index][1].toString();
 
-                              if (kDebugMode) {
-                                log("onTap() | $textToSpeak");
-                                log("onTap() | $audioAsset");
-                              }
-                              // _speak(textToSpeak!);
+                                    if (kDebugMode) {
+                                      log("onTap() | $textToSpeak");
+                                      log("onTap() | $audioAsset");
+                                    }
+                                    // _speak(textToSpeak!);
 
-                              if (null != audioAsset ||
-                                  true == audioAsset?.isNotEmpty) {
-                                AudioUtils.playWord(audioAsset!);
-                              }
-                            },
-                            trailing: const Icon(Icons.surround_sound_rounded),
-                          )));
-                        }),
-                  )
-                ])));
+                                    if (null != audioAsset ||
+                                        true == audioAsset?.isNotEmpty) {
+                                      AudioUtils.playWord(audioAsset!);
+                                    }
+                                  },
+                                  trailing:
+                                      const Icon(Icons.surround_sound_rounded),
+                                )));
+                              }),
+                        )
+                      ]));
+            default:
+              return Center(
+                child: Container(),
+              );
+          }
+        },
+      ),
+    );
   }
 
   @override
@@ -164,12 +186,12 @@ class _LibraryPage extends State<LibraryPage> {
 
     /*if (null != fields) {
       if (kDebugMode) log("fields : $fields");
-    }*/
+    }
 
     setState(() {
       _fields = fields;
       _data = fields;
-    });
+    });*/
   }
 
   void initTTS() async {
@@ -248,11 +270,11 @@ class _LibraryPage extends State<LibraryPage> {
     if ('' == _currentWord) {
       _currentWord = '';
 
-      setState(() {
+      /*setState(() {
         _data = _fields;
-      });
+      });*/
     } else {
-      final suggestions = _fields.where((element) {
+      /*final suggestions = _fields.where((element) {
         var frenchWord = element[0].toString().toLowerCase();
         var ekangWord = element[1].toString().toLowerCase();
 
@@ -262,7 +284,7 @@ class _LibraryPage extends State<LibraryPage> {
 
       setState(() {
         _data = suggestions;
-      });
+      });*/
     }
   }
 }
