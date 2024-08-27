@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 
 // TODO : Implement Authentication
+// TODO : Implement IndexedStack widget
+// TODO : Implement Toolbar in page directly
+// TODO : Refactor whole project with clean architecture + bloc pattern
 
 void main() {
   if (kDebugMode) {
@@ -67,7 +70,8 @@ class _SiEkangAppState extends State<SiEkangApp> {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: SplashScreen(),
+      debugShowCheckedModeBanner: true,
+      home: SplashScreenPage(),
     );
   }
 }
