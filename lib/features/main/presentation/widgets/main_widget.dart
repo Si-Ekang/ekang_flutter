@@ -75,20 +75,20 @@ class _MainWidgetState extends State<MainWidget> {
   // OVERRIDE
   //
   ///////////////////////////
-  /*@override
-  void initState() {
-    super.initState();
-    connectivityController.init();
-  }*/
-
   @override
+  void initState() {
+    connectivityController.init();
+    super.initState();
+  }
+
+  /*@override
   void initState() {
     super.initState();
     initConnectivity();
 
     _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-  }
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus as void Function(List<ConnectivityResult> event)?) as StreamSubscription<ConnectivityResult>;
+  }*/
 
   @override
   void dispose() {
@@ -101,7 +101,7 @@ class _MainWidgetState extends State<MainWidget> {
     late ConnectivityResult result;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      result = await _connectivity.checkConnectivity();
+      result = (await _connectivity.checkConnectivity()) as ConnectivityResult;
     } on PlatformException catch (e) {
       log('Couldn\'t check connectivity status', error: e);
       return;

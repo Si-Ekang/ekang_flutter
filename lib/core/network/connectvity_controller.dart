@@ -10,14 +10,14 @@ class ConnectivityController {
       Fimber.d('init | await Connectivity().checkConnectivity()');
     }
 
-    ConnectivityResult result = await Connectivity().checkConnectivity();
+    ConnectivityResult result = (await Connectivity().checkConnectivity()) as ConnectivityResult;
     isInternetConnected(result);
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       if (kDebugMode) {
         Fimber.d('onConnectivityChanged | listen | $result');
       }
       isInternetConnected(result);
-    });
+    } as void Function(List<ConnectivityResult> event)?);
   }
 
   bool isInternetConnected(ConnectivityResult? result) {
