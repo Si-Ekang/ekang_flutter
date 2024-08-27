@@ -35,66 +35,68 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.8
 
   # Fimber: a logging library for Flutter
   fimber: ^0.7.0
 
 
   # Flutter BLOC (Business Logic Of Components)
-  flutter_bloc: ^8.1.5
+  flutter_bloc: ^8.1.6
   bloc_pattern: ^3.0.1
   equatable: ^2.0.5
   # generator
   dartz: ^0.10.1
 
   # Dependency injection
-  get_it: ^7.6.7
+  get_it: ^7.7.0
 
   # Shared Preferences
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.3.2
 
   # Google
   # Fonts
   google_fonts: ^6.2.1
   # Sign-In
   google_sign_in: ^6.2.1
-
   flutter_signin_button: ^2.0.0
 
   # Work Manager
   workmanager: ^0.5.2
 
   # Connectivity
-  connectivity_plus: ^5.0.2
+  connectivity_plus: ^6.0.5
 
   # Connectivity checker
   # internet_connection_checker_plus: ^2.3.0
 
   # Firebase
-  firebase_core: ^2.27.1
-  firebase_auth: ^4.17.8
-#  firebase_auth_oauth: ^1.2.2
+  firebase_core: ^3.3.0
+  firebase_auth: ^5.1.4
+#  firebase_auth_oauth: ^1.1.0
+#  firebase_ui_auth: ^1.15.0
 #  firebase_auth_web: ^5.9.8
-#  firebase_crashlytics: ^3.4.18
-  firebase_crashlytics: ^3.4.19
-#  cloud_firestore: ^4.15.8
+  firebase_crashlytics: ^4.0.4
+  cloud_firestore: ^5.2.1
 
   formz: ^0.7.0
-  email_validator: ^2.1.17
+  email_validator: ^3.0.0
+
+  freezed_annotation: ^2.4.4
+  flow_builder: ^0.0.6
 
   csv: ^6.0.0
-  http: ^1.2.1
-  js: ^0.6.3
-  just_audio: ^0.9.36
-  rxdart: ^0.27.7
+  http: ^1.2.2
+  js: ^0.7.1
+  just_audio: ^0.9.40
+  rxdart: ^0.28.0
   web: ^0.5.1
 
   # Text-To-Speech
   flutter_tts: ^4.0.2
 
   # Lottie
-  lottie: ^3.1.0
+  lottie: ^3.1.2
 
 
 dev_dependencies:
@@ -106,7 +108,10 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
+
+  freezed: ^2.5.7
+  build_runner: ^2.4.12
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
