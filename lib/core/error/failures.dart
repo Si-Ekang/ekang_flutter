@@ -1,45 +1,50 @@
 import 'package:equatable/equatable.dart';
 
-abstract class Failure extends Equatable {}
+class Failure extends Equatable {
+  final String message;
+
+  const Failure(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
 
 class OfflineFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+  const OfflineFailure(super.message);
 }
+
 class ServerFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+  const ServerFailure(super.message);
 }
+
 class WeekPassFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+  const WeekPassFailure(super.message);
 }
+
 class ExistedAccountFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+  const ExistedAccountFailure(super.message);
 }
 
 class NoUserFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+  const NoUserFailure(super.message);
 }
+
 class WrongPasswordFailure extends Failure {
-  @override
-  List<Object?> get props => [];
+  const WrongPasswordFailure(super.message);
 }
-class UnmatchedPassFailure extends Failure{
-  @override
-  List<Object?> get props => throw UnimplementedError();
+
+class UnmatchedPassFailure extends Failure {
+  const UnmatchedPassFailure(super.message);
 }
-class NotLoggedInFailure extends Failure{
-  @override
-  List<Object?> get props => throw UnimplementedError();
+
+class NotLoggedInFailure extends Failure {
+  const NotLoggedInFailure(super.message);
 }
-class EmailVerifiedFailure extends Failure{
-  @override
-  List<Object?> get props => throw UnimplementedError();
+
+class EmailVerifiedFailure extends Failure {
+  const EmailVerifiedFailure(super.message);
 }
-class TooManyRequestsFailure extends Failure{
-  @override
-  List<Object?> get props => throw UnimplementedError();
+
+class TooManyRequestsFailure extends Failure {
+  const TooManyRequestsFailure(super.message);
 }

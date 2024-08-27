@@ -5,4 +5,5 @@ class Constants {
   static const libraryTitle = 'Library';
   static const notificationsTitle = 'Notifications';
   static const profileTitle = 'Profile';
+  static const settingsTitle = 'Paramètres';
 }
