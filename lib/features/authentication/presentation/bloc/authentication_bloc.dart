@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:ekang_flutter/data/data_sources/remote_data_source.dart';
-import 'package:ekang_flutter/data/models/user_model.dart';
+import 'package:ekang_flutter/features/authentication/data/model/user_model.dart';
 import 'package:ekang_flutter/features/authentication/domain/use_cases/authentication_use_case.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,16 +16,16 @@ part 'authentication_state.dart';
 /// It also interacts with the Firebase service we created directly.
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  late AuthenticationUseCase authService;
+  final AuthenticationUseCase useCase;
 
-  AuthenticationBloc(
-    RemoteDataSource remoteDataSource,
-  ) : super(AuthenticationInitialState()) {
-    authService = AuthenticationUseCase(remoteDataSource);
-
+  AuthenticationBloc({
+    required this.useCase,
+  }) : super(AuthenticationInitialState()) {
     on<AuthenticationEvent>((event, emit) {});
+
     on<SignUpUser>(_signUp);
     on<SignInWithGoogle>(_signInWithGoogle);
+    on<IsLoggedIn>(_isLoggedIn);
     on<SignOut>(_signOut);
     on<ResetState>(_resetState);
   }
@@ -39,7 +38,7 @@ class AuthenticationBloc
 
     emit(AuthenticationLoadingState(isLoading: true));
     try {
-      final result = await authService.signUpUser(
+      final result = await useCase.signUpUser(
         email: event.email,
         password: event.password,
       );
@@ -68,30 +67,24 @@ class AuthenticationBloc
   ) async {
     Fimber.d("_signInWithGoogle()");
 
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    final GoogleSignInAuthentication? googleAuth =
-        await googleUser?.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
-
-    emit(AuthenticationLoadingState(isLoading: true));
-
     try {
-      final result = await authService.signInWithCredential(credential);
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      emit(AuthenticationLoadingState(isLoading: true));
+      final result = await useCase.signInWithCredential(credential);
 
       result.fold((failure) {
         emit(AuthenticationFailureState(failure.message));
       }, (user) {
-        UserModel userModel = UserModel(
-          id: user.user?.uid,
-          email: user.user?.email,
-          displayName: user.user?.displayName,
-        );
-        emit(AuthenticationSuccessState(userModel));
+        emit(AuthenticationSuccessState(user.toUserModel()));
       });
     } on FirebaseAuthException catch (error, stacktrace) {
       if (kDebugMode) {
@@ -117,6 +110,21 @@ class AuthenticationBloc
     // emit(AuthenticationLoadingState(isLoading: false));
   }
 
+  Future<void> _isLoggedIn(
+    IsLoggedIn event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    try {
+      final result = await useCase.isLoggedIn();
+      Fimber.d("_isLoggedIn() | is user logged in: $result");
+    } catch (exception, stacktrace) {
+      if (kDebugMode) {
+        Fimber.e(
+            "_isLoggedIn() | exception: $exception (stacktrace: ${stacktrace.toString()})");
+      }
+    }
+  }
+
   Future<void> _signOut(
     SignOut event,
     Emitter<AuthenticationState> emit,
@@ -125,7 +133,7 @@ class AuthenticationBloc
 
     emit(AuthenticationLoadingState(isLoading: true));
     try {
-      await authService.signOutUser();
+      await useCase.signOutUser();
     } catch (exception, stacktrace) {
       if (kDebugMode) {
         Fimber.e(

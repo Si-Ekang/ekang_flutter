@@ -37,6 +37,9 @@ class SignInWithGoogle extends AuthenticationEvent {
   List<Object> get props => [];
 }
 
+
+class IsLoggedIn extends AuthenticationEvent {}
+
 /// This class's instances will signal the Bloc that a user is trying to sign out. The bloc can respond by initiating the sign-out process and updating the authentication state accordingly.
 class SignOut extends AuthenticationEvent {}
 class Retry extends AuthenticationEvent {}

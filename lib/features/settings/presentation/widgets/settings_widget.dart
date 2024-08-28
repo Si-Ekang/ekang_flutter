@@ -23,7 +23,24 @@ class SettingsWidget extends StatefulWidget {
   State<SettingsWidget> createState() => _SettingsState();
 }
 
-class _SettingsState extends State<SettingsWidget> {
+class _SettingsState extends State<SettingsWidget> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AuthenticationBloc>().add(IsLoggedIn());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +76,8 @@ class _SettingsState extends State<SettingsWidget> {
                           AuthenticationSuccessState _ => UserLoggedWidget(
                               user: state.user,
                             ),
-                          AuthenticationFailureState _ => SignInOrSignUpError(message: state.errorMessage),
+                          AuthenticationFailureState _ =>
+                            SignInOrSignUpError(message: state.errorMessage),
 
                           // TODO: Handle this case.
                           AuthenticationState() => Container(),
