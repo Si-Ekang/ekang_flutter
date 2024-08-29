@@ -1,6 +1,6 @@
 import 'package:ekang_flutter/core/utils/constants.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
-import 'package:ekang_flutter/features/authentication/presentation/bloc/authentication_bloc.dart';
+import 'package:ekang_flutter/features/authentication/authentication.dart';
 import 'package:ekang_flutter/features/settings/presentation/widgets/settings_text_title.dart';
 import 'package:ekang_flutter/features/settings/presentation/widgets/sign_in_or_sign_up.dart';
 import 'package:ekang_flutter/features/settings/presentation/widgets/sign_in_or_sign_up_error.dart';

@@ -1,10 +1,10 @@
-import 'package:bloc/bloc.dart';
 import 'package:ekang_flutter/features/authentication/data/model/user_model.dart';
 import 'package:ekang_flutter/features/authentication/domain/use_cases/authentication_use_case.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 part 'authentication_event.dart';
