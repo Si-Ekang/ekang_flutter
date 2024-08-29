@@ -71,19 +71,19 @@ dependencies:
   # internet_connection_checker_plus: ^2.3.0
 
   # Firebase
-  firebase_core: ^3.3.0
-  firebase_auth: ^5.1.4
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.2.0
 #  firebase_auth_oauth: ^1.1.0
 #  firebase_ui_auth: ^1.15.0
 #  firebase_auth_web: ^5.9.8
-  firebase_crashlytics: ^4.0.4
-  cloud_firestore: ^5.2.1
+  firebase_crashlytics: ^4.1.0
+  cloud_firestore: ^5.3.0
 
   formz: ^0.7.0
   email_validator: ^3.0.0
 
   freezed_annotation: ^2.4.4
-  flow_builder: ^0.0.6
+  flow_builder: ^0.1.0
 
   csv: ^6.0.0
   http: ^1.2.2
