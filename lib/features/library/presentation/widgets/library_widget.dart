@@ -15,7 +15,7 @@ import 'package:just_audio/just_audio.dart';
 
 typedef TextChangedCallback = Function(String inputText);
 
-const libraryKey = GlobalObjectKey<_LibraryState>(1);
+const libraryKey = GlobalObjectKey<_LibraryWidgetState>(1);
 
 class LibraryWidget extends StatefulWidget {
   const LibraryWidget({super.key});
@@ -30,10 +30,10 @@ class LibraryWidget extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<LibraryWidget> createState() => _LibraryState();
+  State<LibraryWidget> createState() => _LibraryWidgetState();
 }
 
-class _LibraryState extends State<LibraryWidget> {
+class _LibraryWidgetState extends State<LibraryWidget> {
 /*  List<List<dynamic>> _fields = [];
   List<List<dynamic>> _data = [];*/
   AudioPlayer? _player;
@@ -65,7 +65,7 @@ class _LibraryState extends State<LibraryWidget> {
             title: null,
             onTextChanged: (newValue) {
               if (kDebugMode) {
-                log('_MainPageWidgetState | SiEkangToolbar.onTextChanged | new value : $newValue');
+                log('_LibraryWidgetState | SiEkangToolbar.onTextChanged | new value : $newValue');
               }
 
               context

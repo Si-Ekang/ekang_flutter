@@ -1,6 +1,7 @@
 import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
+import 'package:ekang_flutter/features/quiz/presentation/pages/quiz_page.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_widget.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class HomePage extends StatelessWidget {
                               onPressed: () {
                                 // Navigate to second route when tapped.
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const QuizWidget()));
+                                    builder: (context) => const QuizPage()));
                               },
                               child: const Text('Start a new Quizz'),
                             ),

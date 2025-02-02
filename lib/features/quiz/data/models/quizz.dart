@@ -10,11 +10,7 @@ class Quizz {
   List<String> possibleAnswers = List.empty();
   String correctAnswer = "";
 
-  @override
-  String toString() {
-    return 'Quizz{id: $id, question: $question, quizzImage: $quizzImage, possibleAnswers: $possibleAnswers, correctAnswer: $correctAnswer}';
-  } ////////////////////////////////////
-
+  ////////////////////////////////////
   //
   // Constructor
   //
@@ -25,6 +21,11 @@ class Quizz {
       this.correctAnswer) {
     id = questionId;
     this.possibleAnswers = (possibleAnswers as String).split('|').toList();
+  }
+
+  @override
+  String toString() {
+    return 'Quizz{id: $id, question: $question, quizzImage: $quizzImage, possibleAnswers: $possibleAnswers, correctAnswer: $correctAnswer}';
   }
 
   ////////////////////////////////////
@@ -39,7 +40,7 @@ class Quizz {
 
     try {
       for (var element in fields) {
-        if ('question_id' != element[0]) {
+        if (!element[0].contains('question_id') || element[1].contains('question')  ) {
           if (kDebugMode) log("list.add() | element : $element");
           list.add(Quizz.withData(
               // questionId

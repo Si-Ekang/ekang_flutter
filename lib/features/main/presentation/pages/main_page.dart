@@ -12,10 +12,7 @@ class MainPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MainBloc>(
-          create: (context) => MainBloc()
-            ..add(
-              GetCategories(),
-            ),
+          create: (context) => MainBloc()..add(GetCategories()),
         ),
       ],
       child: const MaterialApp(home: MainWidget()),

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'library_event.dart';
+
 part 'library_state.dart';
 
 class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
@@ -20,18 +21,21 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     final input = await rootBundle.loadString(Assets.csvVocabulary);
     final fields = const CsvToListConverter(fieldDelimiter: ';').convert(input);
 
-    emit(state.copyWithState(
+    emit(
+      state.copyWithState(
         newState: Loaded(
-      loaded: fields.isNotEmpty,
-      fields: fields,
-      data: fields,
-    )));
+          loaded: fields.isNotEmpty,
+          fields: fields,
+          data: fields,
+        ),
+      ),
+    );
   }
 
   void _searchWord(SearchWord event, Emitter<LibraryState> emit) {
     Fimber.d("searchWord()");
 
-    var words = (event, emit) => (eventStream, mapper) => eventStream
+    words(event, emit) => (eventStream, mapper) => eventStream
         .debounceTime(const Duration(milliseconds: 550))
         .distinct()
         .switchMap(mapper);
