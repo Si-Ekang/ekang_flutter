@@ -1,8 +1,7 @@
 import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
 import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
-import 'package:ekang_flutter/features/quiz/presentation/pages/quiz_page.dart';
-import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_widget.dart';
+import 'package:ekang_flutter/features/quiz/quiz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -43,10 +42,9 @@ class HomePage extends StatelessWidget {
 
                             ElevatedButton(
                               style: ButtonStyle(
-                                  padding:
-                                      MaterialStateProperty.all<EdgeInsets>(
-                                          const EdgeInsets.all(16)),
-                                  backgroundColor: MaterialStateProperty.all(
+                                  padding: WidgetStateProperty.all<EdgeInsets>(
+                                      const EdgeInsets.all(16)),
+                                  backgroundColor: WidgetStateProperty.all(
                                       SiEkangColors.primary)),
                               onPressed: () {
                                 // Navigate to second route when tapped.
