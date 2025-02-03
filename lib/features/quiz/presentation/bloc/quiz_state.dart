@@ -41,7 +41,7 @@ final class QuizEnded extends QuizState {
   final Double score;
   final Int successPercentage;
 
-  QuizEnded(this.score, this.successPercentage);
+  const QuizEnded(this.score, this.successPercentage);
 
   @override
   List<Object?> get props => [score, successPercentage];

@@ -1,29 +1,11 @@
-import 'dart:developer';
-
-import 'package:audio_session/audio_session.dart';
-import 'package:csv/csv.dart';
-import 'package:ekang_flutter/core/theme/siekangcolors.dart';
-import 'package:ekang_flutter/core/utils/audio_utils.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
-import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
-import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:ekang_flutter/features/quiz/presentation/widgets/possible_answers_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_widget.dart';
-import 'package:ekang_flutter/features/quiz/presentation/widgets/top_question_widget.dart';
-import 'package:ekang_flutter/generated/assets.dart';
-import 'package:fimber/fimber.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:just_audio/just_audio.dart';
-
-import '../widgets/bottom_validate_widget.dart';
 
 int pageViewIndex = 1;
 
 class QuizPage extends StatelessWidget {
-
   const QuizPage({super.key});
 
   @override
@@ -178,13 +160,13 @@ class _QuizState extends State<QuizPage>
 
   /// Collects the data useful for displaying in a seek bar, using a handy
   /// feature of rx_dart to combine the 3 streams of interest into one.
-  *//*Stream<PositionData> get _positionDataStream =>
+  */ /*Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
           _player.positionStream,
           _player.bufferedPositionStream,
           _player.durationStream,
               (position, bufferedPosition, duration) => PositionData(
-              position, bufferedPosition, duration ?? Duration.zero));*//*
+              position, bufferedPosition, duration ?? Duration.zero));*/ /*
   ///////////////////////////
   //
   // CLASS METHODS

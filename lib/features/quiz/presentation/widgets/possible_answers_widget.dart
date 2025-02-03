@@ -1,6 +1,4 @@
-import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
-
 
 typedef OnAnswerChangedCallback = Function(String newChosenAnswer);
 
@@ -24,25 +22,32 @@ class PossibleAnswersWidget extends StatelessWidget {
         crossAxisCount: 2,
       ),
       itemCount: possibleAnswers.length,
-      itemBuilder: (context, index) => Center(
-          child: ChoiceChip(
-        label: Text(
-          possibleAnswers[index],
-          style: TextStyle(
-              color: (chosenAnswer == possibleAnswers[index])
-                  ? Colors.white
-                  : Colors.black),
-        ),
-        labelPadding: const EdgeInsets.symmetric(horizontal: 64),
-        selected: chosenAnswer == possibleAnswers[index],
-        onSelected: (bool selected) {
-          // setState(() { chosenAnswer = possibleAnswers[index]; });
-          onAnswerChanged(possibleAnswers[index]);
-        },
-        selectedColor: SiEkangColors.quizItemSelectedTextColor,
-        shape:
-            ContinuousRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      )),
+      itemBuilder: (context, index) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+              flex: 1,
+              child: ChoiceChip(
+                avatar: null,
+                label: Container(child:Text(
+                  possibleAnswers[index],
+                  style: TextStyle(
+                      color: (chosenAnswer == possibleAnswers[index])
+                          ? Colors.white
+                          : Colors.black),
+                )),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+                selected: chosenAnswer == possibleAnswers[index],
+                onSelected: (bool selected) {
+                  onAnswerChanged(possibleAnswers[index]);
+                },
+                selectedColor: SiEkangColors.quizItemSelectedTextColor,
+                shape: ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+              ))
+        ],
+      ),
     );
   }
 }

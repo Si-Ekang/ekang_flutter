@@ -1,7 +1,6 @@
 import 'package:ekang_flutter/core/widgets/loading/loading_widget.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:ekang_flutter/features/quiz/presentation/pages/quiz_page.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_loading_error_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_started_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

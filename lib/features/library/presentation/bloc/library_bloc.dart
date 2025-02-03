@@ -1,4 +1,5 @@
 import 'package:csv/csv.dart';
+import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fimber/fimber.dart';
@@ -18,15 +19,18 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   void _loadLibrary(GetCsvLibrary event, Emitter<LibraryState> emit) async {
     Fimber.d("loadLibrary()");
 
-    final input = await rootBundle.loadString(Assets.csvVocabulary);
-    final fields = const CsvToListConverter(fieldDelimiter: ';').convert(input);
+    final vocabulary =  await AssetsUtils.loadCsv(Assets.csvVocabulary);
+
+    if(null != vocabulary){
+      Fimber.d("$vocabulary");
+    }
 
     emit(
       state.copyWithState(
         newState: Loaded(
-          loaded: fields.isNotEmpty,
-          fields: fields,
-          data: fields,
+          loaded: vocabulary?.isNotEmpty ?? false,
+          fields: vocabulary?? List.empty(),
+          data: vocabulary ?? List.empty(),
         ),
       ),
     );

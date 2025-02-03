@@ -40,7 +40,7 @@ class Quizz {
 
     try {
       for (var element in fields) {
-        if (!element[0].contains('question_id') || element[1].contains('question')  ) {
+        if (element[0] != 'question_id') {
           if (kDebugMode) log("list.add() | element : $element");
           list.add(Quizz.withData(
               // questionId

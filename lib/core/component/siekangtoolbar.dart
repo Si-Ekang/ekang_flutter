@@ -114,8 +114,9 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
                                           color: Colors.white,
                                         ),
                                         onTap: () {
-                                          if (kDebugMode)
+                                          if (kDebugMode) {
                                             log('clear icon pressed');
+                                          }
 
                                           // Unfocus all focus nodes
                                           textFieldFocusNode.unfocus();

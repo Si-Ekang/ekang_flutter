@@ -42,30 +42,30 @@ dependencies:
 
 
   # Flutter BLOC (Business Logic Of Components)
-  flutter_bloc: ^8.1.6
+  flutter_bloc: ^9.0.0
   bloc_pattern: ^3.0.1
-  equatable: ^2.0.5
+  equatable: ^2.0.7
   # generator
   dartz: ^0.10.1
 
   # Dependency injection
-  get_it: ^8.0.0
+  get_it: ^8.0.3
 
   # Shared Preferences
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.5.1
 
   # Google
   # Fonts
   google_fonts: ^6.2.1
   # Sign-In
-  google_sign_in: ^6.2.1
+  google_sign_in: ^6.2.2
   flutter_signin_button: ^2.0.0
 
   # Work Manager
   workmanager: ^0.5.2
 
   # Connectivity
-  connectivity_plus: ^6.0.5
+  connectivity_plus: ^6.1.2
 
   # Connectivity checker
   # internet_connection_checker_plus: ^2.3.0
@@ -82,24 +82,24 @@ dependencies:
   firebase_crashlytics: ^4.1.3
   cloud_firestore: ^5.4.4
 
-  formz: ^0.7.0
+  formz: ^0.8.0
   email_validator: ^3.0.0
 
   freezed_annotation: ^2.4.4
   flow_builder: ^0.1.0
 
   csv: ^6.0.0
-  http: ^1.2.2
+  http: ^1.3.0
   js: ^0.7.1
-  just_audio: ^0.9.40
+  just_audio: ^0.9.45
   rxdart: ^0.28.0
   web: ^1.1.0
 
   # Text-To-Speech
-  flutter_tts: ^4.0.2
+  flutter_tts: ^4.2.2
 
   # Lottie
-  lottie: ^3.1.2
+  lottie: ^3.3.1
 
 
 dev_dependencies:
@@ -113,8 +113,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
 
-  freezed: ^2.5.7
-  build_runner: ^2.4.13
+  freezed: ^2.5.8
+  build_runner: ^2.4.14
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

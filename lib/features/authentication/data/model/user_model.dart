@@ -19,15 +19,15 @@ class UserModel {
 
 extension UserCredentialExtension on UserCredential {
   UserModel toUserModel() => UserModel(
-        id: this.user!.uid,
-        email: this.user!.email,
-        displayName: this.user!.displayName,
+        id: user!.uid,
+        email: user!.email,
+        displayName: user!.displayName,
       );
 
   UserModel toUserModelWithPhotoUrl() => UserModel.withPhotoUrl(
-        id: this.user!.uid,
-        email: this.user!.email,
-        displayName: this.user!.displayName,
-        photoURL: this.user!.photoURL,
+        id: user!.uid,
+        email: user!.email,
+        displayName: user!.displayName,
+        photoURL: user!.photoURL,
       );
 }

@@ -23,7 +23,7 @@ class ConnectivityController {
 
   bool isInternetConnected(ConnectivityResult? result) {
     if (kDebugMode) {
-      Fimber.d('isInternetConnected() | isInternetConnected: ${result}');
+      Fimber.d('isInternetConnected() | isInternetConnected: $result');
     }
 
     if (result == ConnectivityResult.none) {

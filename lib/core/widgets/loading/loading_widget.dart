@@ -1,4 +1,3 @@
-import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 
 class LoadingWidget extends StatelessWidget {

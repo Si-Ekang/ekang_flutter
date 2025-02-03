@@ -117,7 +117,7 @@ class _ProfilePage extends State<ProfilePage> {
     final String? namedContact = _pickFirstNamedContact(data);
 
     if (kDebugMode) {
-      Fimber.e(' namedContact : ${namedContact}');
+      Fimber.e(' namedContact : $namedContact');
     }
 
     setState(() {

@@ -1,13 +1,11 @@
 import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
-import 'package:csv/csv.dart';
 import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fimber/fimber.dart';
-import 'package:flutter/services.dart';
 
 part 'quiz_event.dart';
 
@@ -48,14 +46,5 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
   void _startQuiz(QuizEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_startQuiz()");
-
-    /*final input = await rootBundle.loadString(Assets.csvQuizzOiseaux);
-    final questions =
-        const CsvToListConverter(fieldDelimiter: ';').convert(input);
-
-    // Build quizz list items
-    List<Quizz> list = Quizz.toQuizzList(questions);
-
-    emit(state.copyWithState(newState: QuizStarted(quizzes: list)));*/
   }
 }
