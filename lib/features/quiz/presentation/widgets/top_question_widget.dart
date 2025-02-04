@@ -25,7 +25,7 @@ class TopQuestionWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "$question ?",
+              "What does \"$question\" mean ?",
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             Visibility(

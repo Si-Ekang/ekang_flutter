@@ -3,14 +3,14 @@ import 'dart:developer';
 import 'package:audio_session/audio_session.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
+import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/bottom_validate_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/possible_answers_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/top_question_widget.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
-
-int pageViewIndex = 1;
 
 class QuizStartedWidget extends StatefulWidget {
   final List<Quizz> quizzes;
@@ -26,8 +26,6 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
   late AnimationController progressIndicatorController;
   final PageController controller = PageController();
   final animationDuration = const Duration(milliseconds: 500);
-
-  String choice = '';
 
   bool canGoNext = true;
 
@@ -100,10 +98,13 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
                           Expanded(
                               child: PageView.builder(
                                   controller: controller,
-                                  onPageChanged: (page) {
-                                    getCurrentPage(page);
+                                  onPageChanged: (pageIndex) {
+                                    context
+                                        .read<QuizBloc>()
+                                        .updateQuizIndex(pageIndex);
 
-                                    if (page == widget.quizzes.length - 1) {
+                                    if (pageIndex ==
+                                        widget.quizzes.length - 1) {
                                       canGoNext = false;
                                     }
                                   },
@@ -111,7 +112,9 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
                                   itemBuilder: (context, position) {
                                     return Container(
                                       child: createPage(
-                                          position, widget.quizzes[position]),
+                                        position,
+                                        widget.quizzes[position],
+                                      ),
                                     );
                                   },
                                   scrollDirection: Axis.horizontal,
@@ -139,7 +142,7 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     if (kDebugMode) log("dispose()");
 
     // reset view pager index
-    pageViewIndex = 1;
+    this.context.read<QuizBloc>().resetBlocData();
     canGoNext = true;
 
     // Release decoders and buffers back to the operating system making them
@@ -175,6 +178,16 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
 
   createPage(int page, Quizz quizzItem) {
     log("createPage() | page : $page, quizz : ${quizzItem.toString()}");
+
+    canGoNext =
+        context.read<QuizBloc>().currentQuizIndex + 1 != widget.quizzes.length;
+
+    if (context.read<QuizCheckAnswerBloc>().state
+        is! QuizCheckAnswerInitialState) {
+      // Reset the state when the bloc is not in QuizCheckAnswerInitialState
+      context.read<QuizCheckAnswerBloc>().add(ResetCheckAnswerEvent());
+    }
+
     return Card(
         margin: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
         child: Column(
@@ -186,45 +199,81 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
             Expanded(
               flex: 10,
               child: PossibleAnswersWidget(
-                chosenAnswer: choice,
+                chosenAnswer: context.read<QuizBloc>().quizChoice,
                 possibleAnswers: quizzItem.possibleAnswers,
                 onAnswerChanged: (newAnswer) {
                   setState(() {
-                    choice = newAnswer;
+                    context.read<QuizBloc>().setQuizChoice(newAnswer);
                   });
                 },
               ),
             ),
             Expanded(
-              flex: 1,
+              flex: 3,
               child: BottomValidateWidget(
                 correctAnswer: quizzItem.correctAnswer,
+                onCheckAnswer: (newState) {
+                  Fimber.d(
+                      "onCheckAnswer() | chosen answer : ${context.read<QuizBloc>().quizChoice}, check answer state : $newState");
+
+                  // Update the state of check answer
+                  context.read<QuizCheckAnswerBloc>().add(
+                        CheckAnswerEvent(
+                          choice: context.read<QuizBloc>().quizChoice,
+                          correctAnswer: quizzItem.correctAnswer,
+                        ),
+                      );
+
+                  // Play the audio
+                  // playAudio(quizzItem.audioUrl);
+
+                  // Reset the choice
+                  // choice = '';
+                },
                 onNavigateToNextPage: () {
                   Fimber.d(
                       "onNavigateToNextPage() | correct answer : ${quizzItem.correctAnswer}");
-                  // update page index
-                  pageViewIndex += 1;
+
+                  // Check if current page is the last page
+                  if (context.read<QuizBloc>().currentQuizIndex + 1 ==
+                      widget.quizzes.length) {
+                    Fimber.i("onNavigateToNextPage() | Quiz finished!");
+
+                    if (kDebugMode) {
+                      Navigator.of(context).pop();
+                    } else {
+                      // TODO : Show a final screen
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => QuizFinishedScreen()));
+                    }
+
+                    return;
+                  }
+
+                  _navigateToNextPage();
 
                   // update progressbar
                   progressIndicatorController.value =
                       progressIndicatorController.value + 0.1;
-
-                  canGoNext = pageViewIndex + 1 != widget.quizzes.length;
                 },
-                canGoNext: canGoNext,
+                enabled: context.read<QuizBloc>().quizChoice.trim().isNotEmpty,
               ),
             ),
           ],
         ));
   }
 
-  void getCurrentPage(int page) {
-    pageViewIndex = page;
-  }
+  void _navigateToNextPage() {
+    // update page index
+    context.read<QuizBloc>().incrementQuizIndex();
 
-  void _navigateToPage(int index) {
-    Fimber.d("_navigateToPage() | index : $index");
-    controller.animateToPage(index,
-        duration: animationDuration, curve: Curves.decelerate);
+    Fimber.d(
+        "_navigateToPage() | index : ${context.read<QuizBloc>().currentQuizIndex}");
+
+    controller.animateToPage(
+      context.read<QuizBloc>().currentQuizIndex,
+      duration: animationDuration,
+      curve: Curves.decelerate,
+    );
   }
 }

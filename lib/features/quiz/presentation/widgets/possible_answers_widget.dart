@@ -28,23 +28,32 @@ class PossibleAnswersWidget extends StatelessWidget {
         children: [
           Expanded(
               flex: 1,
-              child: ChoiceChip(
-                avatar: null,
-                label: Container(child:Text(
-                  possibleAnswers[index],
-                  style: TextStyle(
-                      color: (chosenAnswer == possibleAnswers[index])
-                          ? Colors.white
-                          : Colors.black),
-                )),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-                selected: chosenAnswer == possibleAnswers[index],
-                onSelected: (bool selected) {
-                  onAnswerChanged(possibleAnswers[index]);
-                },
-                selectedColor: SiEkangColors.quizItemSelectedTextColor,
-                shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
+              child: Container(
+                decoration: BoxDecoration(border: Border.all()),
+                child: ChoiceChip(
+                  avatar: null,
+                  label: SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: Center(
+                      child: Text(
+                        possibleAnswers[index],
+                        style: TextStyle(
+                            color: (chosenAnswer == possibleAnswers[index])
+                                ? Colors.white
+                                : Colors.black),
+                      ),
+                    ),
+                  ),
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+                  selected: chosenAnswer == possibleAnswers[index],
+                  onSelected: (bool selected) {
+                    onAnswerChanged(possibleAnswers[index]);
+                  },
+                  selectedColor: SiEkangColors.quizItemSelectedTextColor,
+                  shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0)),
+                ),
               ))
         ],
       ),

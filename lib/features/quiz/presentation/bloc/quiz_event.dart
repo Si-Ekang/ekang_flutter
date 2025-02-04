@@ -10,6 +10,21 @@ class LoadQuizEvent extends QuizEvent {
   List<Object?> get props => [];
 }
 
+class CheckAnswerEvent extends QuizEvent {
+  final String choice;
+  final String correctAnswer;
+
+  CheckAnswerEvent({required this.choice, required this.correctAnswer});
+
+  @override
+  List<Object?> get props => [choice, correctAnswer];
+}
+
+class ResetCheckAnswerEvent extends QuizEvent {
+  @override
+  List<Object?> get props => [];
+}
+
 class QuizStartedEvent extends QuizEvent {
   final List<Quizz> quizzes;
   final int currentQuizIndex;

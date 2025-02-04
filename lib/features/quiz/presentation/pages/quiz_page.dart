@@ -3,8 +3,6 @@ import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-int pageViewIndex = 1;
-
 class QuizPage extends StatelessWidget {
   const QuizPage({super.key});
 
@@ -13,7 +11,11 @@ class QuizPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<QuizBloc>(
-            create: (context) => QuizBloc()..add(LoadQuizEvent()))
+          create: (context) => QuizBloc()..add(LoadQuizEvent()),
+        ),
+        BlocProvider<QuizCheckAnswerBloc>(
+          create: (context) => QuizCheckAnswerBloc()..add(QuizEvent()),
+        )
       ],
       child: const QuizWidget(),
     );

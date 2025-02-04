@@ -1,9 +1,7 @@
-import 'package:ekang_flutter/core/component/siekangtoolbar.dart';
-import 'package:ekang_flutter/core/theme/siekangcolors.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
+import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/quiz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
-import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class HomePage extends StatelessWidget {
@@ -51,7 +49,14 @@ class HomePage extends StatelessWidget {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const QuizPage()));
                               },
-                              child: const Text('Start a new Quizz'),
+                              child: Text(
+                                'Start a new Quizz',
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface,
+                                ),
+                              ),
                             ),
                           ],
                         ),

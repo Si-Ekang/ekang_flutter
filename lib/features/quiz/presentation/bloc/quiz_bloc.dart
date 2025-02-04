@@ -7,15 +7,14 @@ import 'package:ekang_flutter/generated/assets.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fimber/fimber.dart';
 
+part 'quiz_check_answer_state.dart';
 part 'quiz_event.dart';
-
 part 'quiz_state.dart';
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
-  int currentQuizIndex = -1;
+  int currentQuizIndex = 1;
   int totalQuestions = 0;
-  bool isLastQuestion = false;
-  bool isFirstQuestion = false;
+  String quizChoice = "".trim();
 
   // bool isFirstQuestion = this.currentQuizIndex  == this.totalQuestions - 1 ;
 
@@ -26,7 +25,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     on<QuizFinishEvent>((event, emit) {});
   }
 
-  void _loadQuiz(QuizEvent event, Emitter<QuizState> emit) async {
+  void _loadQuiz(LoadQuizEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_loadQuiz()");
 
     final questions = await AssetsUtils.loadCsv(Assets.csvQuizzOiseaux);
@@ -44,7 +43,63 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     emit(state.copyWithState(newState: QuizStarted(quizzes: list)));
   }
 
-  void _startQuiz(QuizEvent event, Emitter<QuizState> emit) async {
+  void _startQuiz(QuizStartedEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_startQuiz()");
+  }
+
+  void incrementQuizIndex() {
+    currentQuizIndex++;
+  }
+
+  void updateQuizIndex(int newIndex) {
+    currentQuizIndex = newIndex;
+  }
+
+  void resetChoice() {
+    quizChoice = "".trim();
+  }
+
+  void setQuizChoice(String newValue) {
+    quizChoice = newValue.trim();
+  }
+
+  void resetBlocData() {
+    resetChoice();
+    resetCurrentQuizIndex();
+  }
+
+  void resetCurrentQuizIndex() {
+    // reset view pager index
+    currentQuizIndex = 1;
+  }
+}
+
+class QuizCheckAnswerBloc extends Bloc<QuizEvent, QuizCheckAnswerState> {
+  QuizCheckAnswerBloc() : super(QuizCheckAnswerInitialState()) {
+    on<QuizEvent>((event, emit) {});
+    on<CheckAnswerEvent>(_checkAnswer);
+    on<ResetCheckAnswerEvent>(_resetState);
+  }
+
+  void _resetState(
+      ResetCheckAnswerEvent event, Emitter<QuizCheckAnswerState> emit) {
+    emit(state.copyWithState(newState: QuizCheckAnswerInitialState()));
+  }
+
+  void _checkAnswer(
+      CheckAnswerEvent event, Emitter<QuizCheckAnswerState> emit) async {
+    Fimber.d(
+        "_checkAnswer() | choice : ${event.choice}, correctAnswer : ${event.correctAnswer}");
+
+    emit(
+      state.copyWithState(
+        newState: event.choice != event.correctAnswer
+            ? QuizCheckAnswerErrorState(
+                errorMessage:
+                    "Wrong Answer!. The correct answer is ${event.correctAnswer}")
+            : QuizCheckAnswerSuccessState(
+                encouragementMessage: "Great! Continue like this!"),
+      ),
+    );
   }
 }
