@@ -19,18 +19,32 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   void _loadLibrary(GetCsvLibrary event, Emitter<LibraryState> emit) async {
     Fimber.d("loadLibrary()");
 
-    final vocabulary =  await AssetsUtils.loadCsv(Assets.csvVocabulary);
+    final vocabulary = await AssetsUtils.loadCsv(Assets.csvVocabulary);
 
-    if(null != vocabulary){
-      Fimber.d("$vocabulary");
+    if(null == vocabulary) {
+      Fimber.e("loadLibrary() | Failed to load vocabulary");
+      emit(state.copyWithState(newState: ErrorLoadingLibrary()));
+      return;
     }
+
+    List<List<dynamic>> filteredVocabulary = vocabulary
+        .map((words) {
+      if("francais" != words[0]){
+        return words;
+      }
+    })
+        .where((word) => null != word)
+        .cast<List>()
+        .toList();
+
+    Fimber.d("loadLibrary() | filtered list : $filteredVocabulary");
 
     emit(
       state.copyWithState(
         newState: Loaded(
-          loaded: vocabulary?.isNotEmpty ?? false,
-          fields: vocabulary?? List.empty(),
-          data: vocabulary ?? List.empty(),
+          loaded: filteredVocabulary.isNotEmpty,
+          fields: filteredVocabulary,
+          data: filteredVocabulary,
         ),
       ),
     );

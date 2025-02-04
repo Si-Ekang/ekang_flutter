@@ -37,6 +37,12 @@ class Loaded extends LibraryState {
   List<Object?> get props => [loaded, fields, data];
 }
 
+class ErrorLoadingLibrary extends LibraryState {
+
+  @override
+  List<Object?> get props => [];
+}
+
 class Found extends LibraryState {
   final List<List<dynamic>> words;
 
