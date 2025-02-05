@@ -138,16 +138,16 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
 
   @override
   void dispose() {
-    super.dispose();
     if (kDebugMode) log("dispose()");
 
     // reset view pager index
-    this.context.read<QuizBloc>().resetBlocData();
+    context.read<QuizBloc>().resetBlocData();
     canGoNext = true;
 
     // Release decoders and buffers back to the operating system making them
     // available for other apps to use.
     _player?.dispose();
+    super.dispose();
   }
 
   ///////////////////////////

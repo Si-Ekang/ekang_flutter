@@ -10,7 +10,7 @@ class QuizPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return /*MultiBlocProvider(
       providers: [
         BlocProvider<QuizBloc>(
           create: (context) => QuizBloc()..add(LoadQuizEvent()),
@@ -19,8 +19,8 @@ class QuizPage extends StatelessWidget {
           create: (context) => QuizCheckAnswerBloc()..add(QuizEvent()),
         )
       ],
-      child: const QuizWidget(),
-    );
+      child:*/ const QuizWidget()/*,
+    )*/;
   }
 }
 
