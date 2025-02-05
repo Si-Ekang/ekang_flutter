@@ -46,15 +46,15 @@ class HomePage extends StatelessWidget {
                                       SiEkangColors.primary)),
                               onPressed: () {
                                 // Navigate to second route when tapped.
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const QuizPage()));
+                                Navigator.of(context)
+                                    .pushNamed(QuizPage.routeName);
+
+                                // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const QuizPage()));
                               },
                               child: Text(
                                 'Start a new Quizz',
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onInverseSurface,
+                                  color: SiEkangColors.md_theme_light_surface,
                                 ),
                               ),
                             ),

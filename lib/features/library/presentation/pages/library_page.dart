@@ -8,12 +8,12 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return /*MultiBlocProvider(
       providers: [
         BlocProvider<LibraryBloc>(
             create: (context) => LibraryBloc()..add(GetCsvLibrary()))
       ],
-      child: const LibraryWidget(),
-    );
+      child:*/ const LibraryWidget()/*,
+    )*/;
   }
 }

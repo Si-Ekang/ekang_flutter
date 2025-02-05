@@ -27,10 +27,11 @@ class _SplashScreenState extends State<SplashScreenWidget> {
       await Future.delayed(const Duration(milliseconds: 2500), () {
         if (mounted) {
           // Here you can write your code for open new view
-          Navigator.pushReplacement(
+          Navigator.of(context).pushReplacementNamed( MainPage.routeName);
+          /*Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MainPage()),
-          );
+          );*/
         }
       });
     });
