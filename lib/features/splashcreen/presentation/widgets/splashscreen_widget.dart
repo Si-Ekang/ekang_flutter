@@ -32,11 +32,6 @@ class _SplashScreenState extends State<SplashScreenWidget> {
             MaterialPageRoute(builder: (context) => const MainPage()),
           );
         }
-        /*try {
-          dispose();
-        } catch (exception) {
-          Fimber.e('Error caught: ${exception.toString()}');
-        }*/
       });
     });
   }
