@@ -3,10 +3,13 @@ import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ekang_flutter/core/network/connectvity_controller.dart';
+import 'package:ekang_flutter/core/ui/snackbar_manager.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
 import 'package:ekang_flutter/features/home/home.dart';
 import 'package:ekang_flutter/features/library/library.dart';
 import 'package:ekang_flutter/features/main/presentation/bloc/main_bloc.dart';
+import 'package:ekang_flutter/features/main/presentation/widgets/main_bottom_navigation_bar.dart';
+import 'package:ekang_flutter/features/main/presentation/widgets/main_content_widget.dart';
 import 'package:ekang_flutter/features/notifications/notifications.dart';
 import 'package:ekang_flutter/features/settings/settings.dart';
 import 'package:fimber/fimber.dart';
@@ -82,80 +85,74 @@ class _MainWidgetState extends State<MainWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-        valueListenable: connectivityController.isConnected,
-        builder: (context, value, child) {
-          if (!value) {
-            Fimber.e('Not connected');
-          } else {
-            Fimber.d('connected');
-          }
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Fimber.d("didChangeDependencies()");
+  }
 
-          return SafeArea(
-              child: Scaffold(
-            body: BlocBuilder<MainBloc, MainState>(
-                buildWhen: (previous, current) =>
-                    previous.idSelected != current.idSelected,
-                builder: (context, state) {
-                  switch (state.idSelected) {
-                    case 0:
-                      {
-                        if (kDebugMode) {
-                          Fimber.d(
-                              '_MainPage | BlocBuilder | state is HomeState');
-                        }
-                      }
-                      break;
-                    case 1:
-                      {
-                        if (kDebugMode) {
-                          Fimber.d(
-                              '_MainPage | BlocBuilder | state is LibraryState');
-                        }
-                      }
-                      break;
-                    case 2:
-                      {
-                        if (kDebugMode) {
-                          Fimber.d(
-                              '_MainPage | BlocBuilder | state is NotificationState');
-                        }
-                      }
-                      break;
-                    case 3:
-                      {
-                        if (kDebugMode) {
-                          Fimber.d(
-                              '_MainPage | BlocBuilder | state is ProfileState');
-                        }
-                      }
-                      break;
-                    default:
-                      {
-                        if (kDebugMode) {
-                          Fimber.e(
-                              '_MainPage | BlocBuilder | default case | $state');
-                        }
-                      }
-                      break;
-                  }
-                  return Center(
-                    child: _pagesOptions.elementAt(_selectedIndex),
-                  );
-                }),
-            bottomNavigationBar: BottomNavigationBar(
-              items: _bottomNavigationList,
-              currentIndex: _selectedIndex,
-              unselectedItemColor: Colors.black,
-              selectedItemColor: Colors.amber[800],
-              onTap: (index) {
-                if (kDebugMode) log('onTap()');
-                _onItemTapped(index);
-              },
-            ),
-          ));
-        });
+  @override
+  void didUpdateWidget(covariant MainWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    Fimber.d("didUpdateWidget()");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String networkStatusMessage;
+
+    return ValueListenableBuilder(
+      valueListenable: connectivityController.isConnected,
+      builder: (context, value, child) {
+        if (!value) {
+          networkStatusMessage = "No Internet Connection";
+          Fimber.e(
+              "ValueListenableBuilder | network status message : $networkStatusMessage");
+          SnackBarManager().showErrorSnackBar(
+            message: networkStatusMessage,
+            context: context,
+          );
+        } else {
+          networkStatusMessage = "Connected to internet";
+          Fimber.i(
+              "ValueListenableBuilder | network status message : $networkStatusMessage");
+          SnackBarManager().showSuccessSnackBar(
+            message: networkStatusMessage,
+            context: context,
+          );
+        }
+
+        return SafeArea(
+            child: Scaffold(
+          body: BlocConsumer<MainBloc, MainState>(
+            listener: (context, state) {
+              if (kDebugMode) {
+                Fimber.d("build | BlocConsumer | state: $state");
+              }
+            },
+            builder: (context, state) {
+              return MainContentWidget(currentIndex: state.idSelected);
+            },
+          ),
+          bottomNavigationBar: BlocConsumer<MainBloc, MainState>(
+            listener: (context, state) {
+              if (kDebugMode) {
+                Fimber.d("build | BlocConsumer | state: $state");
+              }
+            },
+            builder: (context, state) {
+              return MainBottomNavigationBarWidget(
+                  selectedIndex: state.idSelected,
+                  onNavigationItemSelected: (itemIndex) {
+                    // Update MainBloc state
+                    context
+                        .read<MainBloc>()
+                        .add(SelectCategory(idSelected: itemIndex));
+                  });
+            },
+          ),
+        ));
+      },
+    );
   }
 
   @override
@@ -196,16 +193,6 @@ class _MainWidgetState extends State<MainWidget> {
     setState(() {
       _connectionStatus = result;
     });
-  }
-
-  void _onItemTapped(int index) {
-    if (kDebugMode) log('_onItemTapped() | index : $index');
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Update MainBloc state
-    context.read<MainBloc>().add(SelectCategory(idSelected: _selectedIndex));
   }
 
   static void _updateLibraryList(String newText) {

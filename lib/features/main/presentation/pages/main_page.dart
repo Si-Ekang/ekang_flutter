@@ -10,13 +10,13 @@ class MainPage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return /*MultiBlocProvider(
       providers: [
         BlocProvider<MainBloc>(
           create: (context) => MainBloc()..add(GetCategories()),
         ),
       ],
-      child: const MaterialApp(home: MainWidget()),
-    );
+      child: const MaterialApp(home:*/ MainWidget()/*),
+    )*/;
   }
 }
