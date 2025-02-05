@@ -2,8 +2,9 @@
 library routes;
 
 import 'package:ekang_flutter/core/router/router_utils.dart';
-import 'package:fimber/fimber.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
+import 'package:ekang_flutter/features/library/presentation/bloc/library_bloc.dart';
+import 'package:fimber/fimber.dart';
 
 import '../../features/main/main.dart';
 import '../../features/quiz/quiz.dart';
@@ -14,7 +15,6 @@ class Router {
   /// The generateRoute method is responsible for generating routes based on the routeSettings.
   /// It returns a Route<dynamic> object which can be used by the Navigator to navigate to the appropriate page.
   static Route<dynamic> generateRoute(RouteSettings routeSettings) {
-
     Fimber.d("generateRoute | route : ${routeSettings.name}");
 
     // Extracting the arguments from the routeSettings.
@@ -27,20 +27,22 @@ class Router {
 
       /// If the route name is MainPage.routeName, navigate to the MainPage.
       case MainPage.routeName:
-        return RouterUtils.buildRouteGeneric<MainBloc>(
-            block: () {
-              MainBloc()..add(GetCategories());
+        return RouterUtils.buildRouteGeneric2<MainBloc, LibraryBloc>(
+            blockForBloc1: () {
+              return MainBloc()..add(GetCategories());
             },
-            child: const MainPage());
+            blockForBloc2: () => LibraryBloc()..add(GetCsvLibrary()),
+            child: const MainPage()
+        );
 
       /// If the route name is QuizPage.routeName, navigate to the QuizPage.
       case QuizPage.routeName:
         return RouterUtils.buildRouteGeneric2<QuizBloc, QuizCheckAnswerBloc>(
             blockForBloc1: () {
-              QuizBloc()..add(LoadQuizEvent());
+              return QuizBloc()..add(LoadQuizEvent());
             },
             blockForBloc2: () {
-              QuizCheckAnswerBloc()..add(QuizEvent());
+              return QuizCheckAnswerBloc()..add(QuizEvent());
             },
             child: const QuizPage());
 

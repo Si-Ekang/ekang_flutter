@@ -13,34 +13,38 @@ class RouterUtils {
   static MaterialPageRoute _buildRouteGeneric(
     List<SingleChildWidget> blocProviders,
     Widget child,
-  ) =>
-      MaterialPageRoute(builder: (_) {
-        return MultiBlocProvider(
-          providers: blocProviders,
-          child: child,
-        );
-      });
+  ) {
+    return MaterialPageRoute(builder: (_) {
+      return MultiBlocProvider(
+        providers: blocProviders,
+        child: child,
+      );
+    });
+  }
 
   /// The _buildRouteGeneric method is a helper method that creates a MaterialPageRoute with a BlocProvider for the given Cubit(s).
-  /*static MaterialPageRoute
-      buildRouteGeneric3<C extends Bloc, D extends Bloc, E extends Bloc>(
-              Widget child) =>
+  static MaterialPageRoute
+      buildRouteGeneric3<B extends Bloc, C extends Bloc, D extends Bloc>({
+    required Function() blockForBloc1,
+    required Function() blockForBloc2,
+    required Function() blockForBloc3,
+    required Widget child,
+  }) =>
           _buildRouteGeneric(
             [
-              BlocProvider<C>(create: (context) => getIt<C>()),
-              BlocProvider<D>(create: (context) => getIt<D>()),
-              BlocProvider<E>(create: (context) => getIt<E>())
+              BlocProvider<B>(create: (context) => blockForBloc1()),
+              BlocProvider<C>(create: (context) => blockForBloc2()),
+              BlocProvider<D>(create: (context) => blockForBloc3())
             ],
             child,
-          );*/
+          );
 
   /// The _buildRouteGeneric method is a helper method that creates a MaterialPageRoute with a BlocProvider for the given Cubit(s).
-  static MaterialPageRoute buildRouteGeneric2<B extends Bloc, C extends Bloc>(
-      {
-        required Function() blockForBloc1,
-        required Function() blockForBloc2,
-        required Widget child,
-      }) =>
+  static MaterialPageRoute buildRouteGeneric2<B extends Bloc, C extends Bloc>({
+    required Function() blockForBloc1,
+    required Function() blockForBloc2,
+    required Widget child,
+  }) =>
       _buildRouteGeneric(
         [
           BlocProvider<B>(create: (context) => blockForBloc1()),
