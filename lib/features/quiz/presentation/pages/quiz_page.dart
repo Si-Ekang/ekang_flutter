@@ -4,6 +4,8 @@ import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_widget.dar
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class QuizPage extends StatelessWidget {
+  static const String routeName = "QuizPage";
+
   const QuizPage({super.key});
 
   @override
