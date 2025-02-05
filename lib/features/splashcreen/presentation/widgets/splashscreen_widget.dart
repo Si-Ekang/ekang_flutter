@@ -21,22 +21,28 @@ class SplashScreenWidget extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreenWidget> {
   @override
-  Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (mounted) {
-        // Here you can write your code for open new view
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainPage()),
-        );
-      }
-      try {
-        dispose();
-      } catch (exception) {
-        Fimber.e('Error caught: ${exception.toString()}');
-      }
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(milliseconds: 2500), () {
+        if (mounted) {
+          // Here you can write your code for open new view
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainPage()),
+          );
+        }
+        /*try {
+          dispose();
+        } catch (exception) {
+          Fimber.e('Error caught: ${exception.toString()}');
+        }*/
+      });
     });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -76,5 +82,11 @@ class _SplashScreenState extends State<SplashScreenWidget> {
         ),
       ),
     ));
+  }
+
+  @override
+  void dispose() {
+    Fimber.e("dispose()");
+    super.dispose();
   }
 }
