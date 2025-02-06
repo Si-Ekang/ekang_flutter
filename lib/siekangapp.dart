@@ -35,6 +35,7 @@ void initPlugins() {
 
 void initFirebase() async {
   await Firebase.initializeApp(
+    name: "SiEkang",
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
