@@ -38,7 +38,6 @@ class Loaded extends LibraryState {
 }
 
 class ErrorLoadingLibrary extends LibraryState {
-
   @override
   List<Object?> get props => [];
 }
@@ -52,4 +51,11 @@ class Found extends LibraryState {
   List<Object?> get props => [words];
 }
 
-class NotFound extends LibraryState {}
+class NotFound extends LibraryState {
+  final String wordQuery;
+
+  const NotFound(this.wordQuery);
+
+  @override
+  List<Object?> get props => [wordQuery];
+}

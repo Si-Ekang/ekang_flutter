@@ -64,9 +64,6 @@ dependencies:
   google_sign_in: ^6.2.2
   flutter_signin_button: ^2.0.0
 
-  # Work Manager
-  workmanager: ^0.5.2
-
   # Connectivity
   connectivity_plus: ^6.1.2
 
@@ -95,6 +92,12 @@ dependencies:
   # go router
   go_router: ^14.7.2
 
+  # Lottie
+  lottie: ^3.3.1
+
+  # Text-To-Speech
+  flutter_tts: ^4.2.2
+
   csv: ^6.0.0
   http: ^1.3.0
   js: ^0.7.1
@@ -102,12 +105,8 @@ dependencies:
   rxdart: ^0.28.0
   web: ^1.1.0
 
-  # Text-To-Speech
-  flutter_tts: ^4.2.2
-
-  # Lottie
-  lottie: ^3.3.1
-
+  # Work Manager
+  # workmanager: ^0.5.2
 
 dev_dependencies:
   flutter_test:

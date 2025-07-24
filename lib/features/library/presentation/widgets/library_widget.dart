@@ -7,11 +7,13 @@ import 'package:ekang_flutter/core/utils/audio_utils.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/data/bean/wordtexttospeech.dart';
 import 'package:ekang_flutter/features/library/presentation/bloc/library_bloc.dart';
+import 'package:ekang_flutter/generated/assets.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:lottie/lottie.dart';
 
 typedef TextChangedCallback = Function(String inputText);
 
@@ -68,6 +70,13 @@ class _LibraryWidgetState extends State<LibraryWidget> {
                 log('_LibraryWidgetState | SiEkangToolbar.onTextChanged | new value : $newValue');
               }
 
+              if (newValue.trim().isEmpty) {
+                Fimber.e(
+                    "_LibraryWidgetState | SiEkangToolbar.onTextChanged | new value is empty");
+                context.read<LibraryBloc>().add(GetCsvLibrary());
+                return;
+              }
+
               context
                   .read<LibraryBloc>()
                   .add(SearchWord(wordToSearch: newValue));
@@ -85,64 +94,42 @@ class _LibraryWidgetState extends State<LibraryWidget> {
               return LayoutBuilder(
                   builder: (context, constraints) => Row(children: [
                         Container(
-                          constraints: BoxConstraints(
-                              maxWidth: constraints.maxWidth >= 500
-                                  ? 500
-                                  : constraints.maxWidth),
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: state.data.length,
-                              itemBuilder: (context, index) {
-                                var francais = state.data[index][0];
-                                var fang = state.data[index][1];
-                                var fang2 = state.data[index][2];
-                                var fang3 = state.data[index][3];
-                                var fang4 = state.data[index][4];
-
-                                return Material(
-                                    child: Card(
-                                        child: ListTile(
-                                  title: Text('$francais = $fang'),
-                                  subtitle: Text(
-                                      '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
-                                      '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
-                                      '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
-                                  onTap: () {
-                                    WordTextToSpeech? element =
-                                        WordTextToSpeech.values.firstWhere(
-                                            (element) =>
-                                                element.word.trim() ==
-                                                state.data[index][1].toString(),
-                                            orElse: () =>
-                                                WordTextToSpeech.NONE);
-
-                                    // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
-
-                                    var audioAsset =
-                                        (element != WordTextToSpeech.NONE)
-                                            ? element.audioAsset
-                                            : null;
-
-                                    textToSpeak =
-                                        state.data[index][1].toString();
-
-                                    if (kDebugMode) {
-                                      log("onTap() | $textToSpeak");
-                                      log("onTap() | $audioAsset");
-                                    }
-                                    // _speak(textToSpeak!);
-
-                                    if (null != audioAsset ||
-                                        true == audioAsset?.isNotEmpty) {
-                                      AudioUtils.playWord(audioAsset!);
-                                    }
-                                  },
-                                  trailing:
-                                      const Icon(Icons.surround_sound_rounded),
-                                )));
-                              }),
-                        )
+                            constraints: BoxConstraints(
+                                maxWidth: constraints.maxWidth >= 500
+                                    ? 500
+                                    : constraints.maxWidth),
+                            child: _buildVocabularyList(state.data))
                       ]));
+            case Found _:
+              return LayoutBuilder(
+                  builder: (context, constraints) => Row(
+                        children: [
+                          Container(
+                              constraints: BoxConstraints(
+                                  maxWidth: constraints.maxWidth >= 500
+                                      ? 500
+                                      : constraints.maxWidth),
+                              child: _buildVocabularyList(state.words))
+                        ],
+                      ));
+            case NotFound _:
+              return LayoutBuilder(
+                  builder: (context, constraints) => Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // Content of row
+                          // Load a Lottie file from your assets
+                          Lottie.asset(
+                            Assets.lottieError404,
+                            width: 250,
+                            height: 250,
+                            fit: BoxFit.contain,
+                          ),
+
+                          Text("No item found for value : ${state.wordQuery}")
+                        ],
+                      ));
             default:
               return Center(
                 child: Container(),
@@ -279,5 +266,52 @@ class _LibraryWidgetState extends State<LibraryWidget> {
         _data = suggestions;
       });*/
     }
+  }
+
+  Widget _buildVocabularyList(List<List<dynamic>> data) {
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          var francais = data[index][0];
+          var fang = data[index][1];
+          var fang2 = data[index][2];
+          var fang3 = data[index][3];
+          var fang4 = data[index][4];
+
+          return Material(
+              child: Card(
+                  child: ListTile(
+            title: Text('$francais = $fang'),
+            subtitle: Text(
+                '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
+                '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
+                '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
+            onTap: () {
+              WordTextToSpeech? element = WordTextToSpeech.values.firstWhere(
+                  (element) => element.word.trim() == data[index][1].toString(),
+                  orElse: () => WordTextToSpeech.NONE);
+
+              // bool isVisible = (element != WordTextToSpeech.NONE) ? true : false;
+
+              var audioAsset = (element != WordTextToSpeech.NONE)
+                  ? element.audioAsset
+                  : null;
+
+              textToSpeak = data[index][1].toString();
+
+              if (kDebugMode) {
+                log("onTap() | $textToSpeak");
+                log("onTap() | $audioAsset");
+              }
+              // _speak(textToSpeak!);
+
+              if (null != audioAsset || true == audioAsset?.isNotEmpty) {
+                AudioUtils.playWord(audioAsset!);
+              }
+            },
+            trailing: const Icon(Icons.surround_sound_rounded),
+          )));
+        });
   }
 }
