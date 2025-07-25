@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "473333502274",
     "project_id": "siekang",
-    "storage_bucket": "siekang.appspot.com"
+    "storage_bucket": "siekang.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,28 @@
           "package_name": "com.siekang.ekang_flutter"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "473333502274-aivqkvvad3k36jheio1d1rq9k4q745f0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.siekang.ekang_flutter",
+            "certificate_hash": "81f2478ab1641382e965f10a2e092fa3bbd90a79"
+          }
+        },
+        {
+          "client_id": "473333502274-g5a7gp7fjrvpnoa09eek7mrt32fpeodf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.siekang.ekang_flutter",
+            "certificate_hash": "c568a845389066dd5fb69b204f3669bca58137fb"
+          }
+        },
+        {
+          "client_id": "473333502274-9e31kmcgh1jgo4h3drneid8trmuufnj2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAz3Jio5eh-J2BJCvBu1e3Sm7wMeJCR8EY"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "473333502274-9e31kmcgh1jgo4h3drneid8trmuufnj2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "473333502274-1haec1kumakj06fkmpb90614ejt9nfkq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.siekang.ekangFlutter"
+              }
+            }
+          ]
         }
       }
     }
