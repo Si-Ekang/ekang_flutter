@@ -10,6 +10,14 @@ import 'package:http/http.dart' as http;
 
 // import 'src/sign_in_button.dart';
 
+/// To run this example, replace this value with your client ID, and/or
+/// update the relevant configuration files, as described in the README.
+String? clientId = "AIzaSyAz3Jio5eh-J2BJCvBu1e3Sm7wMeJCR8EY";
+
+/// To run this example, replace this value with your server client ID, and/or
+/// update the relevant configuration files, as described in the README.
+String? serverClientId = "473333502274-9e31kmcgh1jgo4h3drneid8trmuufnj2.apps.googleusercontent.com";
+
 /// The scopes required by this application.
 // #docregion Initialize
 const List<String> scopes = <String>[
@@ -221,65 +229,6 @@ class _ProfilePage extends State<ProfilePage> {
       return false;
     }
   }
-  Widget _buildBody() {
-    if (kDebugMode) {
-      Fimber.d(' _buildBody()');
-    }
-
-    final GoogleSignInAccount? user = _currentUser;
-    if (user != null) {
-      // The user is Authenticated
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          ListTile(
-            leading: GoogleUserCircleAvatar(
-              identity: user,
-            ),
-            title: Text(user.displayName ?? ''),
-            subtitle: Text(user.email),
-          ),
-          const Text('Signed in successfully.'),
-          if (_isAuthorized) ...<Widget>[
-            // The user has Authorized all required scopes
-            Text(_contactText),
-            ElevatedButton(
-              child: const Text('REFRESH'),
-              onPressed: () => _handleGetContact(user),
-            ),
-          ],
-          if (!_isAuthorized) ...<Widget>[
-            // The user has NOT Authorized all required scopes.
-            // (Mobile users may never see this button!)
-            const Text('Additional permissions needed to read your contacts.'),
-            ElevatedButton(
-              onPressed: _handleAuthorizeScopes,
-              child: const Text('REQUEST PERMISSIONS'),
-            ),
-          ],
-          ElevatedButton(
-            onPressed: _handleSignOut,
-            child: const Text('SIGN OUT'),
-          ),
-        ],
-      );
-    } else {
-      // The user is NOT Authenticated
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          const Text('You are not currently signed in.'),
-          // This method is used to separate mobile from web code with conditional exports.
-          // See: src/sign_in_button.dart
-          /*buildSignInButton(
-            onPressed: _handleSignIn,
-          )*/
-          ElevatedButton(
-              onPressed: _handleSignIn, child: const Text('SIGN IN')),
-        ],
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -344,6 +293,69 @@ class _ProfilePage extends State<ProfilePage> {
             ),
           ))*/
       ,
+    );
+  }
+
+  Widget _buildBody() {
+    if (kDebugMode) {
+      Fimber.d(' _buildBody()');
+    }
+
+    final GoogleSignInAccount? user = _currentUser;
+
+    if (null == user) {
+      // The user is NOT Authenticated
+      Fimber.e("_buildBody() | The user is NOT Authenticated");
+
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          const Text('You are not currently signed in.'),
+          // This method is used to separate mobile from web code with conditional exports.
+          // See: src/sign_in_button.dart
+          /*buildSignInButton(
+            onPressed: _handleSignIn,
+          )*/
+          ElevatedButton(
+              onPressed: _handleSignIn, child: const Text('SIGN IN')),
+        ],
+      );
+    }
+
+    // The user is Authenticated
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        ListTile(
+          leading: GoogleUserCircleAvatar(
+            identity: user,
+          ),
+          title: Text(user.displayName ?? ''),
+          subtitle: Text(user.email),
+        ),
+        const Text('Signed in successfully.'),
+        if (_isAuthorized) ...<Widget>[
+          // The user has Authorized all required scopes
+          Text(_contactText),
+          ElevatedButton(
+            child: const Text('REFRESH'),
+            onPressed: () => _handleGetContact(user),
+          ),
+        ],
+        if (!_isAuthorized) ...<Widget>[
+          // The user has NOT Authorized all required scopes.
+          // (Mobile users may never see this button!)
+          const Text('Additional permissions needed to read your contacts.'),
+          ElevatedButton(
+            onPressed: _handleAuthorizeScopes,
+            child: const Text('REQUEST PERMISSIONS'),
+          ),
+        ],
+        ElevatedButton(
+          onPressed: _handleSignOut,
+          child: const Text('SIGN OUT'),
+        ),
+      ],
     );
   }
 }
