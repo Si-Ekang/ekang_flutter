@@ -51,6 +51,7 @@ class Assets {
   static const String csvVocabulary = 'assets/csv/vocabulary.csv';
 
   // Images
+  static const String imagesFlutterfire = 'assets/images/flutterfire.jpg';
   static const String imagesGooglegColor = 'assets/images/googleg_color.png';
   static const String imagesSiEkangLogo = 'assets/images/si_ekang_logo.png';
 
