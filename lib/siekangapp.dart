@@ -40,7 +40,6 @@ void initFirebase() async {
   );
 
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   FirebaseCrashlytics.instance.setUserIdentifier('mike_dev');
 
   // Pass all uncaught errors from the framework to Crashlytics.
@@ -73,7 +72,6 @@ class SiEkangApp extends StatefulWidget {
 }
 
 class _SiEkangAppState extends State<SiEkangApp> {
-
   @override
   Widget build(BuildContext context) {
     final brightness = View.of(context).platformDispatcher.platformBrightness;

@@ -22,14 +22,14 @@ class SignInOrSignUpWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Expanded(flex: 1,child: StreamBuilder<User?>(
+    /*return Expanded(flex: 1,child: StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return SignInScreen(
             providers: [
              EmailAuthProvider(),
-            //GoogleAuthProvider(),
+            // GoogleAuthProvider(),
           ],
             headerBuilder: (context, constraints, shrinkOffset) {
             return Padding(
@@ -59,7 +59,7 @@ class SignInOrSignUpWidget extends StatelessWidget {
           ],
         );
       },
-    ),);
+    ),);*/
 
     //////////////////////////////////////////////////////////////////////////////::
 
