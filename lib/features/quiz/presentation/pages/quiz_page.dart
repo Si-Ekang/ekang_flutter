@@ -9,19 +9,7 @@ class QuizPage extends StatelessWidget {
   const QuizPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return /*MultiBlocProvider(
-      providers: [
-        BlocProvider<QuizBloc>(
-          create: (context) => QuizBloc()..add(LoadQuizEvent()),
-        ),
-        BlocProvider<QuizCheckAnswerBloc>(
-          create: (context) => QuizCheckAnswerBloc()..add(QuizEvent()),
-        )
-      ],
-      child:*/ const QuizWidget()/*,
-    )*/;
-  }
+  Widget build(BuildContext context) => const QuizWidget();
 }
 
 /*

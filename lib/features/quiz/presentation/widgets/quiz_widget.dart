@@ -1,6 +1,7 @@
 import 'package:ekang_flutter/core/widgets/loading/loading_widget.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_ended_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_loading_error_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_started_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,15 +18,7 @@ class QuizWidget extends StatefulWidget {
 class _QuizState extends State<QuizWidget> {
   @override
   Widget build(BuildContext context) {
-    return /*Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(128.0),
-            child: SiEkangToolbar(
-              title: null,
-              onTextChanged: (String inputText) {},
-            )),
-        body: */
-        BlocConsumer<QuizBloc, QuizState>(
+    return BlocConsumer<QuizBloc, QuizState>(
       listener: (context, state) {},
       builder: (context, state) {
         switch (state) {
@@ -41,14 +34,19 @@ class _QuizState extends State<QuizWidget> {
             return QuizStartedWidget(quizzes: state.quizzes);
 
           case QuizEnded _:
-            return Container();
+            return QuizEndedWidget(
+              score: state.score,
+              successPercentage: state.successPercentage,
+              onFinishCallback: (value) {
+                Navigator.of(context).pop();
+              },
+            );
           default:
             return Center(
               child: Container(),
             );
         }
       },
-      // )
     );
   }
 }

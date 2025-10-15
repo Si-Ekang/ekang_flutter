@@ -31,8 +31,39 @@ class _BottomValidateWidgetState extends State<BottomValidateWidget> {
   Widget build(BuildContext context) {
     return BlocConsumer<QuizCheckAnswerBloc, QuizCheckAnswerState>(
       listener: (BuildContext context, QuizCheckAnswerState state) {
-        Fimber.d(
+        Fimber.i(
             "_BottomValidateWidgetState | BlocConsumer.listener | state : $state");
+
+        // The switch statement evaluates the 'state' variable.
+        switch (state) {
+          // This is the first case pattern.
+          case QuizCheckAnswerSuccessState _:
+            // This code block runs ONLY IF the 'state' object is an instance of
+            // the QuizCheckAnswerSuccessState class.
+
+            // The underscore `_` is a wildcard pattern. It means "we know this is a
+            // QuizCheckAnswerSuccessState, but we don't need to use the object itself
+            // in a new variable, so we'll just ignore it."
+
+            // Action 1: Access the QuizBloc from the widget tree.
+            context
+                .read<QuizBloc>()
+                // Action 2: Call the incrementCorrectAnswers method on the bloc.
+                .incrementCorrectAnswers();
+
+            // Action 3: Access the QuizBloc again.
+            context
+                .read<QuizBloc>()
+                // Action 4: Call the incrementCorrectAnswerInARow method.
+                .incrementCorrectAnswerInARow();
+
+            // The break statement exits the switch.
+            break;
+
+          case QuizCheckAnswerErrorState _ :
+            context.read<QuizBloc>().resetCorrectAnswerInARow();
+            break;
+        }
       },
       builder: (BuildContext context, QuizCheckAnswerState state) {
         return Column(

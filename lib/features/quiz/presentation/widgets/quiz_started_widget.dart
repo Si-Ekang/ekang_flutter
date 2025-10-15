@@ -138,7 +138,7 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
 
   @override
   void dispose() {
-    if (kDebugMode) log("dispose()");
+    if (kDebugMode) Fimber.e("dispose()");
 
     // reset view pager index
     context.read<QuizBloc>().resetBlocData();
@@ -176,7 +176,7 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     }
   }
 
-  createPage(int page, Quizz quizzItem) {
+  Widget createPage(int page, Quizz quizzItem) {
     log("createPage() | page : $page, quizz : ${quizzItem.toString()}");
 
     canGoNext =
@@ -234,18 +234,27 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
                   Fimber.d(
                       "onNavigateToNextPage() | correct answer : ${quizzItem.correctAnswer}");
 
+                  final bool isLastPage = context.read<QuizBloc>().currentQuizIndex + 1 == widget.quizzes.length;
+
                   // Check if current page is the last page
-                  if (context.read<QuizBloc>().currentQuizIndex + 1 ==
-                      widget.quizzes.length) {
+                  if (isLastPage) {
                     Fimber.i("onNavigateToNextPage() | Quiz finished!");
 
-                    if (kDebugMode) {
-                      Navigator.of(context).pop();
-                    } else {
+                    //if (kDebugMode) {
+                      //Navigator.of(context).pop();
+                   // } else {
                       // TODO : Show a final screen
-                      // Navigator.push(context,
-                      //     MaterialPageRoute(builder: (context) => QuizFinishedScreen()));
-                    }
+                      final int totalCorrectAnswers =
+                          context.read<QuizBloc>().totalCorrectAnswers;
+
+                      final double successPercentage =
+                          context.read<QuizBloc>().getSuccessPercentage();
+
+                      context.read<QuizBloc>().add(QuizFinishEvent(
+                          score: totalCorrectAnswers.toDouble(),
+                          successPercentage: successPercentage));
+                      //   Navigator.push(context, MaterialPageRoute(builder: (context) => QuizEnded(context.read<QuizBloc>().totalCorrectAnswers, context.read<QuizBloc>().getSuccessPercentage())));
+                   // }
 
                     return;
                   }
@@ -255,6 +264,8 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
                   // update progressbar
                   progressIndicatorController.value =
                       progressIndicatorController.value + 0.1;
+
+                  context.read<QuizBloc>().resetChoice();
                 },
                 enabled: context.read<QuizBloc>().quizChoice.trim().isNotEmpty,
               ),

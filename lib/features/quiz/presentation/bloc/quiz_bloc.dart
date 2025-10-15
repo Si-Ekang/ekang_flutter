@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:bloc/bloc.dart';
 import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
@@ -12,6 +10,8 @@ part 'quiz_event.dart';
 part 'quiz_state.dart';
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
+  int totalCorrectAnswersInARow = 0;
+  int totalCorrectAnswers = 0;
   int currentQuizIndex = 1;
   int totalQuestions = 0;
   String quizChoice = "".trim();
@@ -22,7 +22,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     on<QuizEvent>((event, emit) {});
     on<LoadQuizEvent>(_loadQuiz);
     on<QuizStartedEvent>(_startQuiz);
-    on<QuizFinishEvent>((event, emit) {});
+    on<QuizFinishEvent>(_quizEnded);
   }
 
   void _loadQuiz(LoadQuizEvent event, Emitter<QuizState> emit) async {
@@ -47,8 +47,34 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     Fimber.d("_startQuiz()");
   }
 
+  void _quizEnded(QuizFinishEvent event, Emitter<QuizState> emit) async {
+    Fimber.d("_quizEnded()");
+    emit(state.copyWithState(
+        newState: QuizEnded(
+      score: totalCorrectAnswers.toDouble(),
+      successPercentage: getSuccessPercentage(),
+    )));
+  }
+
   void incrementQuizIndex() {
     currentQuizIndex++;
+  }
+
+  void incrementCorrectAnswers() {
+    totalCorrectAnswers++;
+    Fimber.d(
+        "incrementCorrectAnswers() | total correct answers count : $totalCorrectAnswers");
+  }
+
+  void incrementCorrectAnswerInARow() {
+    totalCorrectAnswersInARow++;
+    Fimber.d(
+        "incrementCorrectAnswerInARow() | total correct answers in a row count : $totalCorrectAnswersInARow");
+  }
+
+  void resetCorrectAnswerInARow() {
+    Fimber.w("resetCorrectAnswerInARow()");
+    totalCorrectAnswersInARow = 0;
   }
 
   void updateQuizIndex(int newIndex) {
@@ -71,6 +97,11 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   void resetCurrentQuizIndex() {
     // reset view pager index
     currentQuizIndex = 1;
+  }
+
+  double getSuccessPercentage() {
+    if (0 == totalQuestions) return 0.0;
+    return totalQuestions / totalCorrectAnswers ;
   }
 }
 

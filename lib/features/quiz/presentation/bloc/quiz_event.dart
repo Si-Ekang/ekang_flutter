@@ -46,10 +46,10 @@ class QuizStartedEvent extends QuizEvent {
 }
 
 class QuizFinishEvent extends QuizEvent {
-  final Double score;
-  final Int successPercentage;
+  final double score;
+  final double successPercentage;
 
-  QuizFinishEvent(this.score, this.successPercentage);
+  QuizFinishEvent({required this.score, required this.successPercentage});
 
   @override
   List<Object?> get props => [score, successPercentage];
