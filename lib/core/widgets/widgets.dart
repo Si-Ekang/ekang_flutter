@@ -4,6 +4,7 @@ export 'package:flutter/material.dart';
 
 // Components
 export 'package:ekang_flutter/core/component/siekangtoolbar.dart';
+export 'package:ekang_flutter/core/component/siekangtoolbar_with_search.dart';
 
 // Theme
 export 'package:ekang_flutter/core/theme/siekang_app_widget.dart';
