@@ -10,12 +10,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(128.0),
-            child: SiEkangToolbar(
-              title: Constants.appName,
-              onTextChanged: null,
-            )),
+        appBar: SiEkangToolbar(title: Constants.appName),
         body: LayoutBuilder(
             builder: (context, constraints) => Center(
                   child: Row(

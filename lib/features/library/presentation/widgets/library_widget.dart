@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:audio_session/audio_session.dart';
+import 'package:ekang_flutter/core/component/siekangtoolbar_with_search.dart';
 import 'package:ekang_flutter/core/texttospeech/texttospeechutils.dart';
 import 'package:ekang_flutter/core/texttospeech/ttsstate.dart';
 import 'package:ekang_flutter/core/utils/audio_utils.dart';
@@ -63,7 +64,7 @@ class _LibraryWidgetState extends State<LibraryWidget> {
     return Scaffold(
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(128.0),
-          child: SiEkangToolbar(
+          child: SiEkangToolbarWithSearch(
             title: null,
             onTextChanged: (newValue) {
               if (kDebugMode) {
@@ -88,7 +89,7 @@ class _LibraryWidgetState extends State<LibraryWidget> {
           switch (state) {
             case Idle _:
               return const Center(
-                child: CircularProgressIndicator(),
+                child: SiEkangLoader(30, 30),
               );
             case Loaded _:
               return LayoutBuilder(
@@ -284,7 +285,7 @@ class _LibraryWidgetState extends State<LibraryWidget> {
                   child: ListTile(
             title: Text('$francais = $fang'),
             subtitle: Text(
-                '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative :$fang2' : ''}'
+                '${null != fang2 && fang2.toString().isNotEmpty ? 'traduction alternative : $fang2' : ''}'
                 '${null != fang3 && fang3.toString().isNotEmpty ? ', $fang3' : ''}'
                 '${null != fang4 && fang4.toString().isNotEmpty ? ', $fang4' : ''}'),
             onTap: () {

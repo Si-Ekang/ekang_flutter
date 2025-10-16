@@ -143,6 +143,12 @@ class _MainWidgetState extends State<MainWidget> {
               return MainBottomNavigationBarWidget(
                   selectedIndex: state.idSelected,
                   onNavigationItemSelected: (itemIndex) {
+                    if (state.idSelected == itemIndex) {
+                      Fimber.w(
+                          "build | BlocConsumer | MainBottomNavigationBarWidget.onNavigationItemSelected | Nav bottom item already selected. No need to select it again.");
+                      return;
+                    }
+
                     // Update MainBloc state
                     context
                         .read<MainBloc>()
