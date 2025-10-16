@@ -44,12 +44,7 @@ class _SettingsState extends State<SettingsWidget> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(128.0),
-            child: SiEkangToolbar(
-              title: Constants.settingsTitle,
-              onTextChanged: null,
-            )),
+        appBar: SiEkangToolbar(title: Constants.settingsTitle),
         body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
             listener: (context, state) {
           if (kDebugMode) {
@@ -72,7 +67,7 @@ class _SettingsState extends State<SettingsWidget> with WidgetsBindingObserver {
                           AuthenticationInitialState _ =>
                             const SignInOrSignUpWidget(),
                           AuthenticationLoadingState _ =>
-                            const CircularProgressIndicator(),
+                            const SiEkangLoader(30, 30),
                           AuthenticationSuccessState _ => UserLoggedWidget(
                               user: state.user,
                             ),

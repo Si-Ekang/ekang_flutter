@@ -3,6 +3,7 @@ export 'package:flutter/material.dart';
 // export 'package:flutter/cupertino.dart';
 
 // Components
+export 'package:ekang_flutter/core/component/siekang_loader.dart';
 export 'package:ekang_flutter/core/component/siekangtoolbar.dart';
 export 'package:ekang_flutter/core/component/siekangtoolbar_with_search.dart';
 

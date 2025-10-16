@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
@@ -39,6 +39,8 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     // Build quizz list items
     List<Quizz> list = Quizz.toQuizzList(questions);
+
+    updateTotalQuestions(list.length);
 
     emit(state.copyWithState(newState: QuizStarted(quizzes: list)));
   }
@@ -81,6 +83,10 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     currentQuizIndex = newIndex;
   }
 
+  void updateTotalQuestions(int count){
+    this.totalQuestions = count;
+  }
+
   void resetChoice() {
     quizChoice = "".trim();
   }
@@ -100,8 +106,12 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   }
 
   double getSuccessPercentage() {
-    if (0 == totalQuestions) return 0.0;
-    return totalQuestions / totalCorrectAnswers ;
+    if (0 == totalQuestions) {
+      Fimber.e("getSuccessPercentage() | total questions equals to 0");
+      return 0.0;
+    }
+
+    return (totalCorrectAnswers * 100) / totalQuestions;
   }
 }
 

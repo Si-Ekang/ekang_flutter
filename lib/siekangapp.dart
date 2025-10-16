@@ -4,6 +4,8 @@ import 'package:adaptive_theme/adaptive_theme.dart' as theme;
 import 'package:ekang_flutter/core/router/routes.dart' as siekang_router;
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:fimber/fimber.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -17,6 +19,8 @@ import 'firebase_options.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
+String _FIREBASE_APPCHECK_DEBUG_TOKEN = "46AB866D-BDAE-49D5-B852-0FF8BDAD6819";
+
 void main() {
   if (kDebugMode) {
     Fimber.plantTree(DebugTree(useColors: true));
@@ -24,6 +28,8 @@ void main() {
 
   initPlugins();
   initFirebase();
+
+  Fimber.d("main() | SiEkangApp successfully initialized");
 
   runApp(const SiEkangApp());
 }
@@ -34,11 +40,13 @@ void initPlugins() {
 }
 
 void initFirebase() async {
+  // Initialize Firebase App
   await Firebase.initializeApp(
     name: "SiEkang",
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Initialize Firebase Crashlytics
   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   FirebaseCrashlytics.instance.setUserIdentifier('mike_dev');
 
@@ -53,6 +61,33 @@ void initFirebase() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  await FirebaseAppCheck.instance
+      .activate(
+    // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
+    // argument for `webProvider`
+    webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
+    // your preferred provider. Choose from:
+    // 1. Debug provider
+    // 2. Safety Net provider
+    // 3. Play Integrity provider
+    androidProvider: AndroidProvider.debug,
+    // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
+    // your preferred provider. Choose from:
+    // 1. Debug provider
+    // 2. Device Check provider
+    // 3. App Attest provider
+    // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
+    appleProvider: AppleProvider.appAttest,
+  )
+      .then((value) {
+    Fimber.i("initFirebase() | value");
+
+    FirebaseAuth.instance.signInAnonymously();
+  }, onError: (error) {
+    Fimber.e("initFirebase() | error : ${error.toString()}");
+  });
 }
 
 class SiEkangApp extends StatefulWidget {

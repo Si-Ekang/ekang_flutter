@@ -1,9 +1,10 @@
 import 'dart:developer';
-import 'dart:ui';
-import 'package:adaptive_theme/adaptive_theme.dart' as theme;
 
+import 'package:adaptive_theme/adaptive_theme.dart' as theme;
 import 'package:ekang_flutter/core/widgets/widgets.dart';
+import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:fimber/fimber.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 const quizEndedKey = GlobalObjectKey<_QuizEndedWidgetState>(5);
 
@@ -12,18 +13,18 @@ class QuizEndedWidget extends StatefulWidget {
   final double successPercentage;
   final Function(bool) onFinishCallback;
 
-  const QuizEndedWidget(
-      {super.key,
-      required this.onFinishCallback,
-      required this.score,
-      required this.successPercentage});
+  const QuizEndedWidget({
+    super.key,
+    required this.onFinishCallback,
+    required this.score,
+    required this.successPercentage,
+  });
 
   @override
   State<QuizEndedWidget> createState() => _QuizEndedWidgetState();
 }
 
 class _QuizEndedWidgetState extends State<QuizEndedWidget> {
-
   @override
   void initState() {
     super.initState();
@@ -37,8 +38,8 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
     super.didUpdateWidget(oldWidget);
     Fimber.i("didUpdateWidget()");
 
-    log("initState() | score : ${widget.score}");
-    log("initState() | success percentage : ${widget.successPercentage}");
+    log("initState() | score : ${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}");
+    log("initState() | success percentage : ${widget.successPercentage.toInt()} %");
   }
 
   @override
@@ -47,8 +48,8 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: SiEkangToolbar(
-          quizEndedKey,
+        appBar: SiEkangToolbar.withKey(
+          key: quizEndedKey,
           title: toolbarTitle,
         ),
         body: Padding(
@@ -81,10 +82,20 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
                 spacing: 8.0,
                 children: [
                   _buildStatisticSegment(
-                      context, "Correct answers", widget.score),
+                    context: context,
+                    segmentTitle: "Correct answers",
+                    value:
+                        "${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}",
+                  ),
                   _buildStatisticSegment(
-                      context, "Success percentage", widget.successPercentage),
-                  _buildStatisticSegment(context, "Time elapsed", "2:30"),
+                    context: context,
+                    segmentTitle: "Success percentage",
+                    value: "${widget.successPercentage.toInt()} %",
+                  ),
+                  _buildStatisticSegment(
+                      context: context,
+                      segmentTitle: "Time elapsed",
+                      value: "2:30"),
                 ],
               ),
               SizedBox(
@@ -105,8 +116,11 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
     );
   }
 
-  Widget _buildStatisticSegment(
-      BuildContext context, String segmentTitle, Object value) {
+  Widget _buildStatisticSegment({
+    required BuildContext context,
+    required String segmentTitle,
+    required Object value,
+  }) {
     final Size mediaSize = MediaQuery.of(context).size;
     String finalSegmentTitle = segmentTitle;
 

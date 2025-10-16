@@ -3,7 +3,11 @@ library routes;
 
 import 'package:ekang_flutter/core/router/router_utils.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
-import 'package:ekang_flutter/features/library/presentation/bloc/library_bloc.dart';
+import 'package:ekang_flutter/features/library/library.dart';
+import 'package:ekang_flutter/features/notifications/data/data_sources/notifications_local_data_source.dart';
+import 'package:ekang_flutter/features/notifications/data/repositories/notifications_repository.dart';
+import 'package:ekang_flutter/features/notifications/domain/notifications_use_case.dart';
+import 'package:ekang_flutter/features/notifications/notifications.dart';
 import 'package:fimber/fimber.dart';
 
 import '../../features/main/main.dart';
@@ -27,13 +31,17 @@ class Router {
 
       /// If the route name is MainPage.routeName, navigate to the MainPage.
       case MainPage.routeName:
-        return RouterUtils.buildRouteGeneric2<MainBloc, LibraryBloc>(
+        return RouterUtils.buildRouteGeneric3<MainBloc, LibraryBloc,
+                NotificationsBloc>(
             blockForBloc1: () {
               return MainBloc()..add(GetCategories());
             },
             blockForBloc2: () => LibraryBloc()..add(GetCsvLibrary()),
-            child: const MainPage()
-        );
+            blockForBloc3: () => NotificationsBloc(
+                useCases: NotificationsUseCases(NotificationsRepositoryImpl(
+                    NotificationsLocalDataSource())))
+              ..add(NotificationsEvent()),
+            child: const MainPage());
 
       /// If the route name is QuizPage.routeName, navigate to the QuizPage.
       case QuizPage.routeName:

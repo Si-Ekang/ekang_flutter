@@ -10,8 +10,10 @@ class SiEkangToolbar extends StatefulWidget implements PreferredSizeWidget {
   final String? title;
 
   // Constructor
-  SiEkangToolbar(Key? key, {required this.title})
-      : super(key: key ?? toolbarKey);
+  const SiEkangToolbar({required this.title}) : super(key: toolbarKey);
+
+  const SiEkangToolbar.withKey({required Key key, required this.title})
+      : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(128.0);
@@ -23,7 +25,6 @@ class SiEkangToolbar extends StatefulWidget implements PreferredSizeWidget {
 class _SiEkangToolbarState extends State<SiEkangToolbar> {
   String? currentPageName;
 
-  final double toolbarHeight = 128.0;
   bool isLibrary = false;
 
   void updateRoute(String currentPageName, bool isLibrary) {
@@ -37,7 +38,7 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      toolbarHeight: toolbarHeight,
+      toolbarHeight: widget.preferredSize.height,
       /*title: const Text(
         Constants.appName,
         style: TextStyle(color: Colors.black),

@@ -23,7 +23,7 @@ class _QuizState extends State<QuizWidget> {
       builder: (context, state) {
         switch (state) {
           case QuizLoading _:
-            return LoadingWidget();
+            return SiEkangLoader(30, 30);
           case QuizLoadingError _:
             return QuizLoadingErrorWidget(
               onRetryCallback: (isRetry) {
