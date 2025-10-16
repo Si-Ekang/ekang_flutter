@@ -1,0 +1,38 @@
+{
+  "version": "1.0.2",
+  "release_date": "2025-10-16T12:00:00Z",
+  "features": [
+    {
+      "id": "1",
+      "title": "Google Account Login",
+      "message": "Users can now log in using their Google account, enabling a smoother and more secure authentication experience.",
+      "tags": ["authentication", "google", "login"],
+      "category": "auth",
+      "timestamp": "2025-10-16T12:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Image Notifications Support",
+      "message": "Notifications now support images, making alerts more informative and engaging.",
+      "tags": ["notifications", "ui", "image"],
+      "category": "ui",
+      "timestamp": "2025-10-16T12:01:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Firebase Image Fetching",
+      "message": "The app now fetches image data directly from Firebase Storage, improving scalability and performance.",
+      "tags": ["firebase", "storage", "image", "backend"],
+      "category": "backend",
+      "timestamp": "2025-10-16T12:02:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Quiz Results Summary",
+      "message": "Quizzes now display a detailed results screen upon completion, helping users track their progress.",
+      "tags": ["quiz", "feature", "results", "education"],
+      "category": "feature",
+      "timestamp": "2025-10-16T12:03:00Z"
+    }
+  ]
+}

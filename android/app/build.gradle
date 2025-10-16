@@ -89,13 +89,18 @@ flutter {
 
 dependencies {
     // Kotlin
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:2.2.20"))
+    implementation(platform(libs.kotlin.bom))
 
     // AndroidX
-    implementation("androidx.multidex:multidex:2.0.1")
+    implementation(libs.androidx.multidex)
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-crashlytics")
+
+
+    // Firebase App Check
+    implementation(libs.firebase.appcheck.ktx)
+    implementation(libs.firebase.appcheck.debug)
 }

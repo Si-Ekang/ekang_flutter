@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "473333502274-q33d378mf078k1hvf110cge7q807o8l3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.siekang.ekang_flutter",
+            "certificate_hash": "8a1467ebf02fc2c7caf7cf9327b57e9bb708030d"
+          }
+        },
+        {
           "client_id": "473333502274-9e31kmcgh1jgo4h3drneid8trmuufnj2.apps.googleusercontent.com",
           "client_type": 3
         }

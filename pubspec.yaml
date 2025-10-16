@@ -74,13 +74,15 @@ dependencies:
 #  flutter_login_facebook: ^2.0.1
 
   # Firebase
-  firebase_core: ^4.2.0
+  firebase_app_check: ^0.4.1+1
+  firebase_analytics: ^12.0.3
   firebase_auth: ^6.1.1
+  firebase_auth_web: ^6.0.4
+  firebase_core: ^4.2.0
+  firebase_crashlytics: ^5.0.3
+  firebase_storage: ^13.0.3
   firebase_ui_auth: ^3.0.0
   firebase_ui_oauth_google: ^2.0.0
-  firebase_auth_web: ^6.0.4
-  firebase_analytics: ^12.0.3
-  firebase_crashlytics: ^5.0.3
   cloud_firestore: ^6.0.3
 
   formz: ^0.8.0
@@ -90,7 +92,7 @@ dependencies:
   flow_builder: ^0.1.0
 
   # go router
-  go_router: ^16.2.4
+  go_router: ^16.2.5
 
   # Lottie
   lottie: ^3.3.2
@@ -147,6 +149,7 @@ flutter:
     - assets/audio/
     - assets/csv/
     - assets/images/
+    - assets/json/
     - assets/lottie/
 
   # To add custom fonts to your application, add a fonts section here,
