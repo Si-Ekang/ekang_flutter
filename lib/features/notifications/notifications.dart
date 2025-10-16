@@ -1,4 +1,5 @@
 library notifications;
 
-export 'package:ekang_flutter/features/notifications/presentation/pages/notification_page.dart';
-export 'package:ekang_flutter/features/notifications/presentation/widgets/notification_widget.dart';
+export 'package:ekang_flutter/features/notifications/presentation/bloc/notifications_bloc.dart';
+export 'package:ekang_flutter/features/notifications/presentation/pages/notifications_page.dart';
+export 'package:ekang_flutter/features/notifications/presentation/widgets/notifications_widget.dart';
