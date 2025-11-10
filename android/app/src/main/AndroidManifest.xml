@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="${applicationName}"
+        android:name=".SiEkangApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="ekang_flutter">
 
