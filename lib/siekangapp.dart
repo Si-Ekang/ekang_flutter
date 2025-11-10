@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'firebase_options.dart';
 
@@ -28,6 +29,7 @@ void main() {
 
   initPlugins();
   initFirebase();
+  initMobileAds();
 
   Fimber.d("main() | SiEkangApp successfully initialized");
 
@@ -90,6 +92,10 @@ void initFirebase() async {
   });
 }
 
+void initMobileAds() {
+  MobileAds.instance.initialize();
+}
+
 class SiEkangApp extends StatefulWidget {
   const SiEkangApp({super.key});
 
@@ -145,10 +151,5 @@ class _SiEkangAppState extends State<SiEkangApp> {
                 ));
       }),
     );
-
-    /*return const MaterialApp(
-      debugShowCheckedModeBanner: true,
-      home: SplashScreenPage(),
-    );*/
   }
 }

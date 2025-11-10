@@ -4,7 +4,10 @@ import 'dart:developer';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ekang_flutter/core/network/connectvity_controller.dart';
 import 'package:ekang_flutter/core/ui/snackbar_manager.dart';
+import 'package:ekang_flutter/core/utils/app_lifecycle_reactor.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
+import 'package:ekang_flutter/core/widgets/ads/ads_widget.dart';
+import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
 import 'package:ekang_flutter/features/home/home.dart';
 import 'package:ekang_flutter/features/library/library.dart';
 import 'package:ekang_flutter/features/main/presentation/bloc/main_bloc.dart';
@@ -39,6 +42,9 @@ class _MainWidgetState extends State<MainWidget> {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
+  late AppLifecycleReactor _appLifecycleReactor;
+  late AppOpenAdManager _appOpenAdManager;
 
   ///////////////////////////
   // Widgets
@@ -82,6 +88,10 @@ class _MainWidgetState extends State<MainWidget> {
   void initState() {
     super.initState();
     connectivityController.init();
+
+    _appOpenAdManager = AppOpenAdManager();
+    _appLifecycleReactor =
+        AppLifecycleReactor(appOpenAdManager: _appOpenAdManager);
   }
 
   @override
@@ -122,41 +132,47 @@ class _MainWidgetState extends State<MainWidget> {
         }
 
         return SafeArea(
-            child: Scaffold(
-          body: BlocConsumer<MainBloc, MainState>(
-            listener: (context, state) {
-              if (kDebugMode) {
-                Fimber.d("build | BlocConsumer | state: $state");
-              }
-            },
-            builder: (context, state) {
-              return MainContentWidget(currentIndex: state.idSelected);
-            },
-          ),
-          bottomNavigationBar: BlocConsumer<MainBloc, MainState>(
-            listener: (context, state) {
-              if (kDebugMode) {
-                Fimber.d("build | BlocConsumer | state: $state");
-              }
-            },
-            builder: (context, state) {
-              return MainBottomNavigationBarWidget(
-                  selectedIndex: state.idSelected,
-                  onNavigationItemSelected: (itemIndex) {
-                    if (state.idSelected == itemIndex) {
-                      Fimber.w(
-                          "build | BlocConsumer | MainBottomNavigationBarWidget.onNavigationItemSelected | Nav bottom item already selected. No need to select it again.");
-                      return;
+          child: Stack(
+            children: [
+              Scaffold(
+                body: BlocConsumer<MainBloc, MainState>(
+                  listener: (context, state) {
+                    if (kDebugMode) {
+                      Fimber.d("build | BlocConsumer | state: $state");
                     }
+                  },
+                  builder: (context, state) {
+                    return MainContentWidget(currentIndex: state.idSelected);
+                  },
+                ),
+                bottomNavigationBar: BlocConsumer<MainBloc, MainState>(
+                  listener: (context, state) {
+                    if (kDebugMode) {
+                      Fimber.d("build | BlocConsumer | state: $state");
+                    }
+                  },
+                  builder: (context, state) {
+                    return MainBottomNavigationBarWidget(
+                        selectedIndex: state.idSelected,
+                        onNavigationItemSelected: (itemIndex) {
+                          if (state.idSelected == itemIndex) {
+                            Fimber.w(
+                                "build | BlocConsumer | MainBottomNavigationBarWidget.onNavigationItemSelected | Nav bottom item already selected. No need to select it again.");
+                            return;
+                          }
 
-                    // Update MainBloc state
-                    context
-                        .read<MainBloc>()
-                        .add(SelectCategory(idSelected: itemIndex));
-                  });
-            },
+                          // Update MainBloc state
+                          context
+                              .read<MainBloc>()
+                              .add(SelectCategory(idSelected: itemIndex));
+                        });
+                  },
+                ),
+              ),
+              AdsWidget()
+            ],
           ),
-        ));
+        );
       },
     );
   }
@@ -180,8 +196,11 @@ class _MainWidgetState extends State<MainWidget> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = (await _connectivity.checkConnectivity()) as ConnectivityResult;
-    } on PlatformException catch (e) {
-      log('Couldn\'t check connectivity status', error: e);
+    } on PlatformException catch (error, stacktrace) {
+      if (kDebugMode) {
+        Fimber.e(
+            "initConnectivity() | Couldn\'t check connectivity status. Error: $error (stacktrace: ${stacktrace.toString()})");
+      }
       return;
     }
 
@@ -197,6 +216,7 @@ class _MainWidgetState extends State<MainWidget> {
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     setState(() {
+      Fimber.d("_updateConnectionStatus() | result : $result");
       _connectionStatus = result;
     });
   }
