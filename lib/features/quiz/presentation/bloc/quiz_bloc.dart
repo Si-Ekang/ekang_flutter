@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
@@ -28,7 +30,9 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   void _loadQuiz(LoadQuizEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_loadQuiz()");
 
-    final questions = await AssetsUtils.loadCsv(Assets.csvQuizzOiseaux);
+    List<String> csvQuizList = List.of([Assets.csvQuizBibouma, Assets.csvQuizz, Assets.csvQuizzOiseaux]);
+
+    final questions = await AssetsUtils.loadCsv(csvQuizList[Random().nextInt(csvQuizList.length -1)]);
 
     if (null == questions) {
       Fimber.e("Failed to load CSV file");

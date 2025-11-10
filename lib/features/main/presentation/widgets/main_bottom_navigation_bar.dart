@@ -24,7 +24,6 @@ class MainBottomNavigationBarWidget extends StatefulWidget {
 
 class _MainBottomNavigationBarWidgetState
     extends State<MainBottomNavigationBarWidget> {
-
   bool hasNotifications = false;
   int notificationCount = 0;
 
@@ -57,19 +56,7 @@ class _MainBottomNavigationBarWidgetState
     super.initState();
     Fimber.d("initState()");
 
-    hasNotifications = context.read<NotificationsBloc>().state
-            is NotificationsSuccess &&
-        true ==
-            (context.read<NotificationsBloc>().state as NotificationsSuccess?)
-                ?.model
-                .features
-                .isNotEmpty;
-    notificationCount =
-        (context.read<NotificationsBloc>().state as NotificationsSuccess?)
-                ?.model
-                .features
-                .length ??
-            0;
+    updateVariables(context.read<NotificationsBloc>().state);
   }
 
   @override
@@ -82,19 +69,7 @@ class _MainBottomNavigationBarWidgetState
   void didUpdateWidget(covariant MainBottomNavigationBarWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     Fimber.d("didUpdateWidget()");
-    hasNotifications = context.read<NotificationsBloc>().state
-            is NotificationsSuccess &&
-        true ==
-            (context.read<NotificationsBloc>().state as NotificationsSuccess?)
-                ?.model
-                .features
-                .isNotEmpty;
-    notificationCount =
-        (context.read<NotificationsBloc>().state as NotificationsSuccess?)
-                ?.model
-                .features
-                .length ??
-            0;
+    updateVariables(context.read<NotificationsBloc>().state);
   }
 
   @override
@@ -115,5 +90,22 @@ class _MainBottomNavigationBarWidgetState
   void dispose() {
     Fimber.e("dispose()");
     super.dispose();
+  }
+
+  void updateVariables(NotificationsState state){
+    Fimber.d("updateVariables() | state : $state");
+    switch (state) {
+      case NotificationsSuccess _:
+        hasNotifications = true == state.model
+                .features
+                .isNotEmpty;
+
+        notificationCount = state.model
+                .features
+                .length ??
+                0;
+
+        break;
+    }
   }
 }
