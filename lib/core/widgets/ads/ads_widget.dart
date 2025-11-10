@@ -79,7 +79,7 @@ class AdsWidgetState extends State<AdsWidget> {
         ));
   }
 
-  void _showInterstitialAd() {
+  void showInterstitialAd() {
     if (_interstitialAd == null) {
       Fimber.d('Warning: attempt to show interstitial before loaded.');
       return;
@@ -226,7 +226,7 @@ class AdsWidgetState extends State<AdsWidget> {
                 onSelected: (String result) {
                   switch (result) {
                     case interstitialButtonText:
-                      _showInterstitialAd();
+                      showInterstitialAd();
                       break;
                     case rewardedButtonText:
                       _showRewardedAd();

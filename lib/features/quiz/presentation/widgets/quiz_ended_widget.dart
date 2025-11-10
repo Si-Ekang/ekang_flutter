@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:adaptive_theme/adaptive_theme.dart' as theme;
+import 'package:ekang_flutter/core/widgets/ads/ads_widget.dart';
+import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:fimber/fimber.dart';
@@ -25,6 +27,8 @@ class QuizEndedWidget extends StatefulWidget {
 }
 
 class _QuizEndedWidgetState extends State<QuizEndedWidget> {
+  AppOpenAdManager? _adsManager = null;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +41,7 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
   void didUpdateWidget(covariant QuizEndedWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     Fimber.i("didUpdateWidget()");
-
+    _adsManager = AppOpenAdManager();
     log("initState() | score : ${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}");
     log("initState() | success percentage : ${widget.successPercentage.toInt()} %");
   }
@@ -45,6 +49,8 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
   @override
   Widget build(BuildContext context) {
     const String toolbarTitle = "Résultats Quiz";
+
+    _adsManager?.showAdIfAvailable();
 
     return SafeArea(
       child: Scaffold(

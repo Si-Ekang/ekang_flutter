@@ -1,4 +1,5 @@
 import 'package:ekang_flutter/core/utils/constants.dart';
+import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/notifications/data/model/whats_new_model.dart';
 import 'package:ekang_flutter/features/notifications/presentation/bloc/notifications_bloc.dart';
@@ -30,6 +31,13 @@ class _NotificationState extends State<NotificationWidget> {
     super.initState();
 
     context.read<NotificationsBloc>().add(NotificationsLoadImageEvent());
+  }
+
+  @override
+  void didUpdateWidget(covariant NotificationWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    AppOpenAdManager().showAdIfAvailable();
   }
 
   @override
@@ -107,7 +115,10 @@ class _NotificationState extends State<NotificationWidget> {
               width: 24,
               height: 24,
               child: ClipOval(
-                child: Image.asset(Assets.imagesSiEkangLogo, fit: BoxFit.fill,),
+                child: Image.asset(
+                  Assets.imagesSiEkangLogo,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
           ),

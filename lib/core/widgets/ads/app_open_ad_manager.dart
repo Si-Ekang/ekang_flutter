@@ -8,6 +8,12 @@ class AppOpenAdManager {
       ? 'ca-app-pub-3940256099942544/9257395921'
       : 'ca-app-pub-3940256099942544/5575463023';
 
+  static final AdRequest request = AdRequest(
+    keywords: <String>['foo', 'bar'],
+    contentUrl: 'http://foo.com/bar.html',
+    nonPersonalizedAds: true,
+  );
+
   AppOpenAd? _appOpenAd;
   bool _isShowingAd = false;
 
@@ -21,7 +27,7 @@ class AppOpenAdManager {
   void loadAd() {
     AppOpenAd.load(
       adUnitId: adUnitId,
-      request: AdRequest(),
+      request: request,
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
           Fimber.d('$ad loaded');

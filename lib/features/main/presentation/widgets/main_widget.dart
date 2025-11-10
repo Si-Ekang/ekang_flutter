@@ -132,47 +132,41 @@ class _MainWidgetState extends State<MainWidget> {
         }
 
         return SafeArea(
-          child: Stack(
-            children: [
-              Scaffold(
-                body: BlocConsumer<MainBloc, MainState>(
-                  listener: (context, state) {
-                    if (kDebugMode) {
-                      Fimber.d("build | BlocConsumer | state: $state");
-                    }
-                  },
-                  builder: (context, state) {
-                    return MainContentWidget(currentIndex: state.idSelected);
-                  },
-                ),
-                bottomNavigationBar: BlocConsumer<MainBloc, MainState>(
-                  listener: (context, state) {
-                    if (kDebugMode) {
-                      Fimber.d("build | BlocConsumer | state: $state");
-                    }
-                  },
-                  builder: (context, state) {
-                    return MainBottomNavigationBarWidget(
-                        selectedIndex: state.idSelected,
-                        onNavigationItemSelected: (itemIndex) {
-                          if (state.idSelected == itemIndex) {
-                            Fimber.w(
-                                "build | BlocConsumer | MainBottomNavigationBarWidget.onNavigationItemSelected | Nav bottom item already selected. No need to select it again.");
-                            return;
-                          }
-
-                          // Update MainBloc state
-                          context
-                              .read<MainBloc>()
-                              .add(SelectCategory(idSelected: itemIndex));
-                        });
-                  },
-                ),
-              ),
-              AdsWidget()
-            ],
+            child: Scaffold(
+          body: BlocConsumer<MainBloc, MainState>(
+            listener: (context, state) {
+              if (kDebugMode) {
+                Fimber.d("build | BlocConsumer | state: $state");
+              }
+            },
+            builder: (context, state) {
+              return MainContentWidget(currentIndex: state.idSelected);
+            },
           ),
-        );
+          bottomNavigationBar: BlocConsumer<MainBloc, MainState>(
+            listener: (context, state) {
+              if (kDebugMode) {
+                Fimber.d("build | BlocConsumer | state: $state");
+              }
+            },
+            builder: (context, state) {
+              return MainBottomNavigationBarWidget(
+                  selectedIndex: state.idSelected,
+                  onNavigationItemSelected: (itemIndex) {
+                    if (state.idSelected == itemIndex) {
+                      Fimber.w(
+                          "build | BlocConsumer | MainBottomNavigationBarWidget.onNavigationItemSelected | Nav bottom item already selected. No need to select it again.");
+                      return;
+                    }
+
+                    // Update MainBloc state
+                    context
+                        .read<MainBloc>()
+                        .add(SelectCategory(idSelected: itemIndex));
+                  });
+            },
+          ),
+        ));
       },
     );
   }
