@@ -81,7 +81,7 @@ androidxWork = "2.10.5"
 blurry = "4.0.1"
 coil = "3.3.0"
 # Firebase
-firebaseBom = "34.4.0"
+firebaseBom = "34.5.0"
 firebaseAds = "24.7.0"
 firebaseAppCheck = "18.0.0"
 # Google Api
