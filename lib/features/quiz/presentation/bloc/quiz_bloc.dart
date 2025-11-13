@@ -7,11 +7,17 @@ import 'package:ekang_flutter/generated/assets.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fimber/fimber.dart';
 
+import '../../data/models/quiz_category.dart';
+
 part 'quiz_check_answer_state.dart';
+
 part 'quiz_event.dart';
+
 part 'quiz_state.dart';
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
+  String quizCategoryChosen = "".trim();
+
   int totalCorrectAnswersInARow = 0;
   int totalCorrectAnswers = 0;
   int currentQuizIndex = 1;
@@ -20,24 +26,64 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
   // bool isFirstQuestion = this.currentQuizIndex  == this.totalQuestions - 1 ;
 
-  QuizBloc() : super(QuizInitial()) {
+  QuizBloc() : super(QuizInitialState()) {
     on<QuizEvent>((event, emit) {});
+    on<LoadQuizChooserEvent>(_loadQuizChooser);
+    on<NavigateToQuizEvent>(_navigateToQuiz);
     on<LoadQuizEvent>(_loadQuiz);
     on<QuizStartedEvent>(_startQuiz);
     on<QuizFinishEvent>(_quizEnded);
   }
 
+  void _loadQuizChooser(
+    LoadQuizChooserEvent event,
+    Emitter<QuizState> emit,
+  ) async {
+    Fimber.d("_loadQuizChooser()");
+
+    emit(state.copyWithState(newState: QuizCategoryChooserState()));
+  }
+
+  void _navigateToQuiz(
+    NavigateToQuizEvent event,
+    Emitter<QuizState> emit,
+  ) async {
+    Fimber.d("_navigateToQuiz()");
+    quizCategoryChosen = event.quizCategoryChosen;
+  }
+
   void _loadQuiz(LoadQuizEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_loadQuiz()");
 
-    List<String> csvQuizList = List.of([Assets.csvQuizBibouma, Assets.csvQuizz, Assets.csvQuizzOiseaux]);
+    // Load csv based on quiz category chosen
+    List<String>? csvQuizList = getQuizCategories(
+      quizCategoryChosen.toQuizCategory(),
+    );
 
-    final questions = await AssetsUtils.loadCsv(csvQuizList[Random().nextInt(csvQuizList.length -1)]);
+    if (null == csvQuizList) {
+      Fimber.e("Failed to load CSV file");
+      emit(
+        state.copyWithState(
+            newState: QuizLoadingErrorState(error: "Failed to load CSV file")),
+      );
+      return;
+    }
+
+    Fimber.d("_loadQuiz() | csvQuizList : $csvQuizList");
+
+    // List<String> csvQuizList = List.of([Assets.csvQuizzAnimaux1, Assets.csvQuizzOiseaux]);
+
+    final csvQuiz = 1 == csvQuizList.length
+        ? csvQuizList.first
+        : csvQuizList[Random().nextInt(csvQuizList.length - 1)];
+    final questions = await AssetsUtils.loadCsv(csvQuiz);
 
     if (null == questions) {
       Fimber.e("Failed to load CSV file");
-      emit(state.copyWithState(
-          newState: QuizLoadingError(error: "Failed to load CSV file")));
+      emit(
+        state.copyWithState(
+            newState: QuizLoadingErrorState(error: "Failed to load CSV file")),
+      );
       return;
     }
 
@@ -46,7 +92,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     updateTotalQuestions(list.length);
 
-    emit(state.copyWithState(newState: QuizStarted(quizzes: list)));
+    emit(state.copyWithState(newState: QuizStartedState(quizzes: list)));
   }
 
   void _startQuiz(QuizStartedEvent event, Emitter<QuizState> emit) async {
@@ -56,10 +102,27 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   void _quizEnded(QuizFinishEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_quizEnded()");
     emit(state.copyWithState(
-        newState: QuizEnded(
-      score: totalCorrectAnswers.toDouble(),
-      successPercentage: getSuccessPercentage(),
-    )));
+      newState: QuizEndedState(
+        score: totalCorrectAnswers.toDouble(),
+        successPercentage: getSuccessPercentage(),
+      ),
+    ));
+  }
+
+  static List<String>? getQuizCategories(QuizCategory category) {
+    Fimber.d("getQuizCategories() | category : $category");
+    switch (category) {
+      case QuizCategory.animals:
+        return List.of([Assets.csvQuizzAnimaux1]);
+      case QuizCategory.birds:
+        return List.of([Assets.csvQuizzOiseaux]);
+      case QuizCategory.clothes:
+        return null;
+      case QuizCategory.home:
+        return null;
+      default:
+        return null;
+    }
   }
 
   void incrementQuizIndex() {
@@ -87,7 +150,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     currentQuizIndex = newIndex;
   }
 
-  void updateTotalQuestions(int count){
+  void updateTotalQuestions(int count) {
     this.totalQuestions = count;
   }
 
