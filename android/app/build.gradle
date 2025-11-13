@@ -54,6 +54,10 @@ android {
         versionName flutterVersionName
 
         multiDexEnabled true
+
+        manifestPlaceholders = [
+                applicationName: "com.siekang.ekang_flutter.SiEkangApplication"
+        ]
     }
 
     kotlinOptions {

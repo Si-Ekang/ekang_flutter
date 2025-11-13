@@ -5,15 +5,19 @@ import android.util.Log
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.firebase.FirebaseApp
+import io.flutter.app.FlutterApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class SiEkangApplication : Application() {
+class SiEkangApplication : FlutterApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Initialize the Intercom SDK
+        // IntercomFlutterPlugin.initSdk(this, appId = "appId", androidApiKey = "androidApiKey")
 
         initFirebase()
         initMobileAds()
@@ -33,7 +37,7 @@ class SiEkangApplication : Application() {
         Log.d(SiEkangApplication::class.java.simpleName, "initMobileAds()")
         CoroutineScope(Dispatchers.IO).launch {
             // Initialize the Google Mobile Ads SDK on a background thread.
-            MobileAds.initialize(this@MainActivity) { initializationStatus: InitializationStatus -> }
+            MobileAds.initialize(this@SiEkangApplication) { initializationStatus: InitializationStatus -> }
         }
     }
 }
