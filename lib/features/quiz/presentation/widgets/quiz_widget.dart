@@ -1,6 +1,6 @@
-import 'package:ekang_flutter/core/widgets/loading/loading_widget.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_category_chooser_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_ended_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_loading_error_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_started_widget.dart';
@@ -22,18 +22,20 @@ class _QuizState extends State<QuizWidget> {
       listener: (context, state) {},
       builder: (context, state) {
         switch (state) {
-          case QuizLoading _:
+          case QuizLoadingState _:
             return SiEkangLoader(30, 30);
-          case QuizLoadingError _:
+          case QuizLoadingErrorState _:
             return QuizLoadingErrorWidget(
               onRetryCallback: (isRetry) {
                 context.read<QuizBloc>().add(LoadQuizEvent());
               },
             );
-          case QuizStarted _:
+          case QuizCategoryChooserState _:
+            return QuizCategoryChooserWidget();
+          case QuizStartedState _:
             return QuizStartedWidget(quizzes: state.quizzes);
 
-          case QuizEnded _:
+          case QuizEndedState _:
             return QuizEndedWidget(
               score: state.score,
               successPercentage: state.successPercentage,

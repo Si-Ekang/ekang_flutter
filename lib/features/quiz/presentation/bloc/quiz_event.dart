@@ -5,6 +5,20 @@ class QuizEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class LoadQuizChooserEvent extends QuizEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class NavigateToQuizEvent extends QuizEvent {
+  final String quizCategoryChosen;
+
+  NavigateToQuizEvent({required this.quizCategoryChosen});
+
+  @override
+  List<Object?> get props => [quizCategoryChosen];
+}
+
 class LoadQuizEvent extends QuizEvent {
   @override
   List<Object?> get props => [];

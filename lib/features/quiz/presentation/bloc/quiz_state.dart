@@ -15,33 +15,35 @@ class QuizState extends Equatable {
   }
 }
 
-final class QuizInitial extends QuizState {}
+final class QuizInitialState extends QuizState {}
 
-final class QuizLoading extends QuizState {}
+final class QuizCategoryChooserState extends QuizState {}
 
-final class QuizLoadingError extends QuizState {
+final class QuizLoadingState extends QuizState {}
+
+final class QuizLoadingErrorState extends QuizState {
   final String error;
 
-  const QuizLoadingError({required this.error});
+  const QuizLoadingErrorState({required this.error});
 
   @override
   List<Object?> get props => [error];
 }
 
-final class QuizStarted extends QuizState {
+final class QuizStartedState extends QuizState {
   final List<Quizz> quizzes;
 
-  const QuizStarted({required this.quizzes});
+  const QuizStartedState({required this.quizzes});
 
   @override
   List<Object?> get props => [quizzes];
 }
 
-final class QuizEnded extends QuizState {
+final class QuizEndedState extends QuizState {
   final double score;
   final double successPercentage;
 
-  const QuizEnded({required this.score, required this.successPercentage});
+  const QuizEndedState({required this.score, required this.successPercentage});
 
   @override
   List<Object?> get props => [score, successPercentage];

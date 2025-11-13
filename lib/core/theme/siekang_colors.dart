@@ -456,10 +456,12 @@ class SiEkangColors {
   static const Color quizItemSelectedTextColor = Color(0xFF207EC3);
 
   // Other Palette
+  static const Color white = Color(0xFFFFFFFF);
   static const Color yellow = Color(0xFF816C06);
   static const Color red = Color(0xFF980100);
   static const Color blue = Color(0xFF003988);
   static const Color green = Color(0xFF17601A);
+  static const Color black = Color(0xFF000000);
   static const Color transparent = Color(0x00000000);
 }
 

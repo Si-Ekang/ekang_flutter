@@ -63,7 +63,11 @@ class _NotificationState extends State<NotificationWidget> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: SiEkangToolbar(title: Constants.notificationsTitle),
+          appBar: SiEkangToolbar(
+            title: Constants.notificationsTitle,
+            leadingIcon: null,
+            actions: null,
+          ),
           body: Center(
               child: Column(children: [
             null == context.read<NotificationsBloc>().imageData

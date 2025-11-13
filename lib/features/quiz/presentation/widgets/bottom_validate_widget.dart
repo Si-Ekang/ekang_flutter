@@ -131,19 +131,19 @@ class _BottomValidateWidgetState extends State<BottomValidateWidget> {
                 child: Text(
                   switch (state) {
                     QuizCheckAnswerSuccessState() => true ==
-                            context.read<QuizBloc>().state is! QuizStarted
+                            context.read<QuizBloc>().state is! QuizStartedState
                         ? "N/A"
                         : context.read<QuizBloc>().currentQuizIndex + 1 ==
-                                (context.read<QuizBloc>().state as QuizStarted)
+                                (context.read<QuizBloc>().state as QuizStartedState)
                                     .quizzes
                                     .length
                             ? "Next"
                             : 'Finish',
                     QuizCheckAnswerErrorState() => true ==
-                            context.read<QuizBloc>().state is! QuizStarted
+                            context.read<QuizBloc>().state is! QuizStartedState
                         ? "N/A"
                         : context.read<QuizBloc>().currentQuizIndex + 1 ==
-                                (context.read<QuizBloc>().state as QuizStarted)
+                                (context.read<QuizBloc>().state as QuizStartedState)
                                     .quizzes
                                     .length
                             ? "Next"

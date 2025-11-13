@@ -44,7 +44,7 @@ class _SettingsState extends State<SettingsWidget> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: SiEkangToolbar(title: Constants.settingsTitle),
+        appBar: SiEkangToolbar(title: Constants.settingsTitle,leadingIcon: null,actions: null,),
         body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
             listener: (context, state) {
           if (kDebugMode) {

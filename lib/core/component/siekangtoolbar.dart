@@ -8,12 +8,22 @@ const toolbarKey = GlobalObjectKey<_SiEkangToolbarState>(0);
 
 class SiEkangToolbar extends StatefulWidget implements PreferredSizeWidget {
   final String? title;
+  final Widget? leadingIcon;
+  final List<Widget>? actions;
 
   // Constructor
-  const SiEkangToolbar({required this.title}) : super(key: toolbarKey);
+  const SiEkangToolbar({
+    required this.title,
+    required this.leadingIcon,
+    required this.actions,
+  }) : super(key: toolbarKey);
 
-  const SiEkangToolbar.withKey({required Key key, required this.title})
-      : super(key: key);
+  const SiEkangToolbar.withKey({
+    required Key key,
+    required this.title,
+    required this.leadingIcon,
+    required this.actions,
+  }) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(128.0);
@@ -44,24 +54,13 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
         style: TextStyle(color: Colors.black),
       ),*/
       backgroundColor: SiEkangColors.primaryDark,
-      /*leading: IconButton(
-        icon: Icon(Icons.chevron_left),
-        onPressed: () => Navigator.pop(context),
-        color: Colors.black,
-      ),*/
-      flexibleSpace: Container(
+      leading: widget.leadingIcon,
+      title: Container(
         color: SiEkangColors.primaryDark,
         alignment: Alignment.bottomCenter,
         child: Row(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Image(
-                image: AssetImage(Assets.imagesSiEkangLogo),
-                width: 96,
-                height: 96,
-              ),
-            ),
+
             Expanded(
               child: Padding(
                 padding:
@@ -78,6 +77,7 @@ class _SiEkangToolbarState extends State<SiEkangToolbar> {
           ],
         ),
       ),
+      actions: widget.actions ?? [],
     );
   }
 

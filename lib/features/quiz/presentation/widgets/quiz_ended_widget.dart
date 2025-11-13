@@ -57,6 +57,8 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
         appBar: SiEkangToolbar.withKey(
           key: quizEndedKey,
           title: toolbarTitle,
+          leadingIcon: null,
+          actions: null,
         ),
         body: Padding(
           padding: EdgeInsets.all(16.0),

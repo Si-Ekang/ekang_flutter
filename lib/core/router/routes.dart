@@ -47,7 +47,7 @@ class Router {
       case QuizPage.routeName:
         return RouterUtils.buildRouteGeneric2<QuizBloc, QuizCheckAnswerBloc>(
             blockForBloc1: () {
-              return QuizBloc()..add(LoadQuizEvent());
+              return QuizBloc()..add(LoadQuizChooserEvent());
             },
             blockForBloc2: () {
               return QuizCheckAnswerBloc()..add(QuizEvent());

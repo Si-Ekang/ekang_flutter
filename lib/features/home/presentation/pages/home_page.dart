@@ -11,7 +11,18 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SiEkangToolbar(title: Constants.appName),
+      appBar: SiEkangToolbar(
+        title: Constants.appName,
+        leadingIcon: const Padding(
+          padding: EdgeInsets.all(8),
+          child: Image(
+            image: AssetImage(Assets.imagesSiEkangLogo),
+            width: 96,
+            height: 96,
+          ),
+        ),
+        actions: null,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) => Center(
           child: Row(
