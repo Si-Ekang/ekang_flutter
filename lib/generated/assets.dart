@@ -46,6 +46,7 @@ class Assets {
   // CSV
   static const String csvQuizBibouma = 'assets/csv/quiz_bibouma.csv';
   static const String csvQuizz = 'assets/csv/quizz.csv';
+  static const String csvQuizzAnimaux1 = 'assets/csv/quizz_animaux_1.csv';
   static const String csvQuizzOiseaux = 'assets/csv/quizz_oiseaux.csv';
   static const String csvTest = 'assets/csv/test.csv';
   static const String csvVocabulary = 'assets/csv/vocabulary.csv';
