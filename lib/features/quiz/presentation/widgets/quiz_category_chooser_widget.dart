@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quiz_category.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
@@ -62,52 +63,51 @@ class _QuizCategoryChooserState extends State<QuizCategoryChooserWidget> {
   }
 
   Widget _buildChoiceGrid(BuildContext context) => Expanded(
-      flex: 1,
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          // Create a grid with 2 columns. If you change the scrollDirection to
-          // horizontal, this produces 2 rows.
-          crossAxisCount: 2,
-        ),
-        itemCount: choices.length,
-        itemBuilder: (context, index) => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(border: Border.all()),
-                  child: ChoiceChip(
-                    avatar: null,
-                    label: SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: Center(
-                        child: Text(
-                          choices[index].name,
-                          style: TextStyle(
-                              color: (index == selectedIndex)
-                                  ? Colors.white
-                                  : Colors.black),
-                        ),
+        flex: 1,
+        child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              // Create a grid with 2 columns. If you change the scrollDirection to
+              // horizontal, this produces 2 rows.
+              crossAxisCount: 2,
+              // Generate 100 widgets that display their index in the List.
+              mainAxisSpacing: 16.0,
+              crossAxisSpacing: 16.0,
+            ),
+            itemCount: choices.length,
+            itemBuilder: (context, index) {
+              Color cardColor = AdaptiveTheme.of(context).theme.primaryColor;
+              Color selectedCardColor = SiEkangColors.quizItemSelectedTextColor;
+              double cardBorderWidth = index == selectedIndex ? 2.0 : 0.0;
+
+              return SizedBox.expand(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  },
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: selectedCardColor,
+                        width: cardBorderWidth,
+                      ),
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    child: Center(
+                      child: Text(
+                        choices[index].name,
+                        style: TextStyle(
+                            color: (index == selectedIndex)
+                                ? selectedCardColor
+                                : Colors.black),
                       ),
                     ),
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    selected: index == selectedIndex,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        selectedIndex = index;
-                      });
-                    },
-                    selectedColor: SiEkangColors.quizItemSelectedTextColor,
-                    shape: ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0)),
                   ),
-                )),
-          ],
-        ),
-      ));
+                ),
+              );
+            }),
+      );
 
   Widget _buildChoiceButton(BuildContext context) => SizedBox(
         width: double.infinity,
