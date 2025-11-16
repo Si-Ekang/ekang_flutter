@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:ekang_flutter/core/utils/log.dart';
 import 'package:flutter/foundation.dart';
 
 class Quizz {
@@ -17,8 +18,13 @@ class Quizz {
   ////////////////////////////////////
   Quizz();
 
-  Quizz.withData(questionId, this.question, this.quizzImage, possibleAnswers,
-      this.correctAnswer) {
+  Quizz.withData(
+    questionId,
+    this.question,
+    this.quizzImage,
+    possibleAnswers,
+    this.correctAnswer,
+  ) {
     id = questionId;
     this.possibleAnswers = (possibleAnswers as String).split('|').toList();
   }
@@ -34,14 +40,15 @@ class Quizz {
   //
   ////////////////////////////////////
   static List<Quizz> toQuizzList(List<List<dynamic>> fields) {
-    if (kDebugMode) log("toQuizzList() : fields length : ${fields.length}");
+    Log.d("toQuizzList", "fields length : ${fields.length}", "Quizz");
 
     List<Quizz> list = List.empty(growable: true);
 
     try {
       for (var element in fields) {
         if (element[0] != 'question_id') {
-          if (kDebugMode) log("list.add() | element : $element");
+          Log.d("toQuizzList", "element : $element", "Quizz");
+
           list.add(Quizz.withData(
               // questionId
               element[0],
@@ -58,7 +65,7 @@ class Quizz {
 
       return list;
     } catch (exception) {
-      if (kDebugMode) log("error : ${exception.toString()}");
+      Log.e("toQuizzList", "error : ${exception.toString()}");
       return List.empty(growable: false);
     }
   }

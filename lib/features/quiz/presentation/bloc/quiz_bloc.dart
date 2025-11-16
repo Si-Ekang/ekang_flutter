@@ -9,8 +9,6 @@ import 'package:fimber/fimber.dart';
 
 import '../../data/models/quiz_category.dart';
 
-part 'quiz_check_answer_state.dart';
-
 part 'quiz_event.dart';
 
 part 'quiz_state.dart';
@@ -179,35 +177,5 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     }
 
     return (totalCorrectAnswers * 100) / totalQuestions;
-  }
-}
-
-class QuizCheckAnswerBloc extends Bloc<QuizEvent, QuizCheckAnswerState> {
-  QuizCheckAnswerBloc() : super(QuizCheckAnswerInitialState()) {
-    on<QuizEvent>((event, emit) {});
-    on<CheckAnswerEvent>(_checkAnswer);
-    on<ResetCheckAnswerEvent>(_resetState);
-  }
-
-  void _resetState(
-      ResetCheckAnswerEvent event, Emitter<QuizCheckAnswerState> emit) {
-    emit(state.copyWithState(newState: QuizCheckAnswerInitialState()));
-  }
-
-  void _checkAnswer(
-      CheckAnswerEvent event, Emitter<QuizCheckAnswerState> emit) async {
-    Fimber.d(
-        "_checkAnswer() | choice : ${event.choice}, correctAnswer : ${event.correctAnswer}");
-
-    emit(
-      state.copyWithState(
-        newState: event.choice != event.correctAnswer
-            ? QuizCheckAnswerErrorState(
-                errorMessage:
-                    "Wrong Answer!. The correct answer is ${event.correctAnswer}")
-            : QuizCheckAnswerSuccessState(
-                encouragementMessage: "Great! Continue like this!"),
-      ),
-    );
   }
 }

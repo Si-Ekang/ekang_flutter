@@ -1,6 +1,6 @@
 question_id;question;image_url;possible_answers;correct_answer
-1;�pervier;�pervier.jpg;obeng|kok�s|sosoo|obam;obam
+1;épervier;épervier.jpg;obeng|kokös|sosoo|obam;obam
 2;gbem gbem;lion.jpg;TRUE|FALSE;TRUE
 3;obam;aigle.jpg;TRUE|FALSE;FALSE
 4;mvu;chien.jpg;TRUE|FALSE;TRUE
-5;angbang;�pervier.jpg;TRUE|FALSE;TRUE
+5;angbang;épervier.jpg;TRUE|FALSE;TRUE

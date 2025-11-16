@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:adaptive_theme/adaptive_theme.dart' as theme;
+import 'package:ekang_flutter/core/utils/log.dart';
 import 'package:ekang_flutter/core/widgets/ads/ads_widget.dart';
 import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
@@ -33,17 +34,23 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
   void initState() {
     super.initState();
 
-    log("initState() | score : ${widget.score}");
-    log("initState() | success percentage : ${widget.successPercentage}");
+    Log.d(
+      "initState",
+      "score : ${widget.score}, success percentage : ${widget.successPercentage}",
+      runtimeType.toString(),
+    );
   }
 
   @override
   void didUpdateWidget(covariant QuizEndedWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    Fimber.i("didUpdateWidget()");
+    Log.i("didUpdateWidget", "");
     _adsManager = AppOpenAdManager();
-    log("initState() | score : ${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}");
-    log("initState() | success percentage : ${widget.successPercentage.toInt()} %");
+
+    Log.d("didUpdateWidget",
+        "score : ${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}");
+    Log.d("didUpdateWidget",
+        "success percentage : ${widget.successPercentage.toInt()} %");
   }
 
   @override

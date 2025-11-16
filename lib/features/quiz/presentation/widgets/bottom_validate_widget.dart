@@ -1,5 +1,7 @@
+import 'package:ekang_flutter/core/utils/log.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_check_answer_bloc.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,6 +29,20 @@ class BottomValidateWidget extends StatefulWidget {
 }
 
 class _BottomValidateWidgetState extends State<BottomValidateWidget> {
+  @override
+  void initState() {
+    super.initState();
+
+    Log.d('initState', 'init method',this.runtimeType.toString() );
+  }
+
+  @override
+  void didUpdateWidget(covariant BottomValidateWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    Log.d('didUpdateWidget', 'oldWidget : $oldWidget',this.runtimeType.toString() );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QuizCheckAnswerBloc, QuizCheckAnswerState>(
