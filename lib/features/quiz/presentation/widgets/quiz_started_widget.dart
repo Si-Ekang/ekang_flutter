@@ -10,7 +10,6 @@ import 'package:ekang_flutter/features/quiz/presentation/widgets/bottom_validate
 import 'package:ekang_flutter/features/quiz/presentation/widgets/possible_answers_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/top_question_widget.dart';
 import 'package:fimber/fimber.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -95,6 +94,9 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     Fimber.d("build() | data list length = : ${widget.quizzes.length}");
 
     return Scaffold(
@@ -103,73 +105,18 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
         title: const Text('Quiz', style: TextStyle(color: Colors.white)),
         leading: IconButton(
             onPressed: () => {Navigator.of(context).pop()},
-            icon: const Icon(Icons.arrow_back)),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: SiEkangColors.white,
+            )),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) => Center(
-          child: Row(
-            children: [
-              Container(
-                constraints: BoxConstraints(
-                    maxWidth: constraints.maxWidth >= 500
-                        ? 500
-                        : constraints.maxWidth),
-                child: Column(
-                  children: [
-                    // Top Progress Bar
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 32.0,
-                        child: Center(
-                          child: Container(
-                            margin: const EdgeInsets.all(8.0),
-                            // source : https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
-                            child: LinearProgressIndicator(
-                              minHeight: 4.0,
-                              color: SiEkangColors.quizItemSelectedTextColor,
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                  SiEkangColors.quizItemSelectedTextColor),
-                              value: progressIndicatorController.value + 0.1,
-                              semanticsLabel: 'Linear progress indicator',
-                            ),
-                          ),
-                        )),
-
-                    // PageView quizz
-                    Expanded(
-                      child: PageView.builder(
-                        controller: controller,
-                        // Disable scroll functionality
-                        physics: const NeverScrollableScrollPhysics(),
-                        onPageChanged: (pageIndex) {
-                          context.read<QuizBloc>().updateQuizIndex(pageIndex);
-
-                          if (pageIndex == widget.quizzes.length - 1) {
-                            canGoNext = false;
-                          }
-                        },
-                        itemCount: widget.quizzes.length,
-                        itemBuilder: (context, position) {
-                          return Container(
-                            child: createPage(
-                              position,
-                              widget.quizzes[position],
-                            ),
-                          );
-                        },
-                        scrollDirection: Axis.horizontal,
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+          child: _buildQuizContent(constraints),
         ),
       ),
     );
   }
-
 
   ///////////////////////////
   //
@@ -197,7 +144,7 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     }
   }
 
-  Widget createPage(int page, Quizz quizzItem) {
+  Widget _createPage({required int page, required Quizz quizzItem}) {
     log("createPage() | page : $page, quizz : ${quizzItem.toString()}");
 
     canGoNext =
@@ -209,132 +156,191 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
       context.read<QuizCheckAnswerBloc>().add(ResetCheckAnswerEvent());
     }
 
-    bool hasImage = quizzItem.quizzImage.trim().isNotEmpty;
+    bool hasImage = quizzItem.hasImage();
 
     // Source - https://stackoverflow.com/a/44578884
     // Posted by Ram ch, modified by community. See post 'Timeline' for change history
     // Retrieved 2025-11-16, License - CC BY-SA 4.0
     //Uint8List? imageData = await _getQuizImage(quizzItem.quizzImage);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
-      child: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: TopQuestionWidget(question: quizzItem.question),
-          ),
-          !hasImage
-              ? SizedBox(width: 0.0, height: 0.0)
-              : Expanded(
-                  flex: 5,
-                  child: FutureBuilder<Uint8List?>(
-                    future: _getQuizImage(quizzItem.quizzImage),
-                    builder: (
-                      BuildContext context,
-                      AsyncSnapshot<Uint8List?> snapshot,
-                    ) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SiEkangLoader(30, 30);
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (snapshot.hasData) {
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: SiEkangColors.quizItemSelectedTextColor,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(16.0),
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: TopQuestionWidget(question: quizzItem.question),
+        ),
+        const SizedBox(width: 0.0, height: 8.0),
+        !hasImage
+            ? SizedBox(width: 0.0, height: 0.0)
+            : Expanded(
+                flex: 5,
+                child: FutureBuilder<Uint8List?>(
+                  future: context
+                      .read<QuizBloc>()
+                      .getQuizImage(quizzItem.quizzImage),
+                  builder: (
+                    BuildContext context,
+                    AsyncSnapshot<Uint8List?> snapshot,
+                  ) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SiEkangLoader(30, 30);
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: SiEkangColors.quizItemSelectedTextColor,
+                            width: 1.0,
                           ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Image.memory(snapshot.data!),
-                        );
-                      } else {
-                        return const Text('No data available.');
-                      }
-                    },
-                  ),
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Image.memory(snapshot.data!),
+                      );
+                    } else {
+                      return const Text('No data available.');
+                    }
+                  },
                 ),
-          Expanded(
-            flex: hasImage ? 5 : 10,
-            child: PossibleAnswersWidget(
-              chosenAnswer: context.read<QuizBloc>().quizChoice,
-              possibleAnswers: quizzItem.possibleAnswers,
-              onAnswerChanged: (newAnswer) {
-                setState(() {
-                  context.read<QuizBloc>().setQuizChoice(newAnswer);
-                });
-              },
-            ),
+              ),
+        const SizedBox(width: 0.0, height: 8.0),
+        Expanded(
+          flex: hasImage ? 5 : 7,
+          child: PossibleAnswersWidget(
+            quizHasImage: hasImage,
+            chosenAnswer: context.read<QuizBloc>().quizChoice,
+            possibleAnswers: quizzItem.possibleAnswers,
+            onAnswerChanged: (newAnswer) {
+              setState(() {
+                context.read<QuizBloc>().setQuizChoice(newAnswer);
+              });
+            },
           ),
-          Expanded(
-            flex: 3,
-            child: BottomValidateWidget(
-              correctAnswer: quizzItem.correctAnswer,
-              onCheckAnswer: (newState) {
-                Fimber.d(
-                    "onCheckAnswer() | chosen answer : ${context.read<QuizBloc>().quizChoice}, check answer state : $newState");
+        ),
+        Expanded(
+          flex: 2,
+          child: Center(
+              child: BottomValidateWidget(
+            correctAnswer: quizzItem.correctAnswer,
+            onCheckAnswer: (newState) {
+              Fimber.d(
+                  "onCheckAnswer() | chosen answer : ${context.read<QuizBloc>().quizChoice}, check answer state : $newState");
 
-                // Update the state of check answer
-                context.read<QuizCheckAnswerBloc>().add(
-                      CheckAnswerEvent(
-                        choice: context.read<QuizBloc>().quizChoice,
-                        correctAnswer: quizzItem.correctAnswer,
+              // Update the state of check answer
+              context.read<QuizCheckAnswerBloc>().add(
+                    CheckAnswerEvent(
+                      choice: context.read<QuizBloc>().quizChoice,
+                      correctAnswer: quizzItem.correctAnswer,
+                    ),
+                  );
+
+              // Play the audio
+              // playAudio(quizzItem.audioUrl);
+
+              // Reset the choice
+              // choice = '';
+            },
+            onNavigateToNextPage: () {
+              Fimber.d(
+                  "onNavigateToNextPage() | correct answer : ${quizzItem.correctAnswer}");
+
+              final bool isLastPage =
+                  context.read<QuizBloc>().currentQuizIndex + 1 ==
+                      widget.quizzes.length;
+
+              // Check if current page is the last page
+              if (isLastPage) {
+                Fimber.i("onNavigateToNextPage() | Quiz finished!");
+
+                //if (kDebugMode) {
+                //Navigator.of(context).pop();
+                // } else {
+                // TODO : Show a final screen
+                final int totalCorrectAnswers =
+                    context.read<QuizBloc>().totalCorrectAnswers;
+
+                final double successPercentage =
+                    context.read<QuizBloc>().getSuccessPercentage();
+
+                context.read<QuizBloc>().add(
+                      QuizFinishEvent(
+                        score: totalCorrectAnswers.toDouble(),
+                        successPercentage: successPercentage,
                       ),
                     );
+                //   Navigator.push(context, MaterialPageRoute(builder: (context) => QuizEnded(context.read<QuizBloc>().totalCorrectAnswers, context.read<QuizBloc>().getSuccessPercentage())));
+                // }
 
-                // Play the audio
-                // playAudio(quizzItem.audioUrl);
+                return;
+              }
 
-                // Reset the choice
-                // choice = '';
-              },
-              onNavigateToNextPage: () {
-                Fimber.d(
-                    "onNavigateToNextPage() | correct answer : ${quizzItem.correctAnswer}");
+              _navigateToNextPage();
 
-                final bool isLastPage =
-                    context.read<QuizBloc>().currentQuizIndex + 1 ==
-                        widget.quizzes.length;
+              // update progressbar
+              progressIndicatorController.value =
+                  progressIndicatorController.value + 0.1;
 
-                // Check if current page is the last page
-                if (isLastPage) {
-                  Fimber.i("onNavigateToNextPage() | Quiz finished!");
+              context.read<QuizBloc>().resetChoice();
+            },
+            enabled: context.read<QuizBloc>().quizChoice.trim().isNotEmpty,
+          )),
+        ),
+      ],
+    );
+  }
 
-                  //if (kDebugMode) {
-                  //Navigator.of(context).pop();
-                  // } else {
-                  // TODO : Show a final screen
-                  final int totalCorrectAnswers =
-                      context.read<QuizBloc>().totalCorrectAnswers;
+  Widget _buildQuizContent(BoxConstraints constraints) {
+    return SizedBox(
+      width: constraints.maxWidth,
+      height: constraints.maxHeight,
+      child: Column(
+        children: [
+          // Top Progress Bar
+          SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 32.0,
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  // source : https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
+                  child: LinearProgressIndicator(
+                    minHeight: 4.0,
+                    color: SiEkangColors.quizItemSelectedTextColor,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                        SiEkangColors.quizItemSelectedTextColor),
+                    value: progressIndicatorController.value + 0.1,
+                    semanticsLabel: 'Linear progress indicator',
+                  ),
+                ),
+              )),
 
-                  final double successPercentage =
-                      context.read<QuizBloc>().getSuccessPercentage();
+          // PageView quizz
+          Expanded(
+            flex: 1,
+            child: PageView.builder(
+              controller: controller,
+              // Disable scroll functionality
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (pageIndex) {
+                context.read<QuizBloc>().updateQuizIndex(pageIndex);
 
-                  context.read<QuizBloc>().add(
-                        QuizFinishEvent(
-                          score: totalCorrectAnswers.toDouble(),
-                          successPercentage: successPercentage,
-                        ),
-                      );
-                  //   Navigator.push(context, MaterialPageRoute(builder: (context) => QuizEnded(context.read<QuizBloc>().totalCorrectAnswers, context.read<QuizBloc>().getSuccessPercentage())));
-                  // }
-
-                  return;
+                if (pageIndex == widget.quizzes.length - 1) {
+                  canGoNext = false;
                 }
-
-                _navigateToNextPage();
-
-                // update progressbar
-                progressIndicatorController.value =
-                    progressIndicatorController.value + 0.1;
-
-                context.read<QuizBloc>().resetChoice();
               },
-              enabled: context.read<QuizBloc>().quizChoice.trim().isNotEmpty,
+              itemCount: widget.quizzes.length,
+              itemBuilder: (context, position) {
+                return Container(
+                  child: _createPage(
+                    page: position,
+                    quizzItem: widget.quizzes[position],
+                  ),
+                );
+              },
+              scrollDirection: Axis.horizontal,
             ),
-          ),
+          )
         ],
       ),
     );
@@ -355,45 +361,5 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
       duration: animationDuration,
       curve: Curves.decelerate,
     );
-  }
-
-  Future<Uint8List?> _getQuizImage(String imageName) async {
-    if (imageName.isEmpty) {
-      Log.e("getQuizImage", "url is empty");
-      return null;
-    }
-
-    // Create a storage reference from our app
-    final storageRef = FirebaseStorage.instance.ref();
-
-    // Create a reference with an initial file path and name
-    final pathReference = storageRef.child("images/$imageName");
-
-    try {
-      const oneMegabyte = 1024 * 1024;
-      final Uint8List? data = await pathReference.getData(5 * oneMegabyte);
-
-      if (null == data) {
-        Log.d(
-          "getQuizImage",
-          "Error while loading image.",
-          runtimeType.toString(),
-        );
-        return null;
-      }
-
-      // Data for "images/island.jpg" is returned, use this as needed.
-      return data;
-
-      // emit(state.copyWithState(newState: NotificationsLoadingImageSuccess(imageData: imageData)));
-    } on FirebaseException catch (exception, stacktrace) {
-      // Handle any errors.
-      Log.e(
-        "_getImagesFromFirebaseStorage",
-        "exception: $exception (stacktrace: ${stacktrace.toString()})",
-        runtimeType.toString(),
-      );
-      return null;
-    }
   }
 }

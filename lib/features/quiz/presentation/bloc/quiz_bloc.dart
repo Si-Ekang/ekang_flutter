@@ -1,5 +1,8 @@
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:ekang_flutter/core/utils/log.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
@@ -144,12 +147,22 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     totalCorrectAnswersInARow = 0;
   }
 
+  bool canGoNext() {
+    if(state is! QuizStartedState){
+      return false;
+    }
+    Log.d("canGoNext","currentQuizIndex : $currentQuizIndex, quiz length : ${(state as QuizStartedState).quizzes.length}");
+
+    return currentQuizIndex + 1 < (state as QuizStartedState).quizzes.length;
+  }
+
+
   void updateQuizIndex(int newIndex) {
     currentQuizIndex = newIndex;
   }
 
   void updateTotalQuestions(int count) {
-    this.totalQuestions = count;
+    totalQuestions = count;
   }
 
   void resetChoice() {
@@ -177,5 +190,46 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     }
 
     return (totalCorrectAnswers * 100) / totalQuestions;
+  }
+
+
+  Future<Uint8List?> getQuizImage(String imageName) async {
+    if (imageName.isEmpty) {
+      Log.e("getQuizImage", "url is empty");
+      return null;
+    }
+
+    // Create a storage reference from our app
+    final storageRef = FirebaseStorage.instance.ref();
+
+    // Create a reference with an initial file path and name
+    final pathReference = storageRef.child("images/$imageName");
+
+    try {
+      const oneMegabyte = 1024 * 1024;
+      final Uint8List? data = await pathReference.getData(5 * oneMegabyte);
+
+      if (null == data) {
+        Log.d(
+          "getQuizImage",
+          "Error while loading image.",
+          runtimeType.toString(),
+        );
+        return null;
+      }
+
+      // Data for "images/island.jpg" is returned, use this as needed.
+      return data;
+
+      // emit(state.copyWithState(newState: NotificationsLoadingImageSuccess(imageData: imageData)));
+    } on FirebaseException catch (exception, stacktrace) {
+      // Handle any errors.
+      Log.e(
+        "getQuizImage",
+        "exception: $exception (stacktrace: ${stacktrace.toString()})",
+        runtimeType.toString(),
+      );
+      return null;
+    }
   }
 }

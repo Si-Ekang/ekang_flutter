@@ -1,4 +1,4 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:ekang_flutter/core/theme/theme.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quiz_category.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
@@ -98,9 +98,10 @@ class _QuizCategoryChooserState extends State<QuizCategoryChooserWidget> {
                       child: Text(
                         choices[index].name,
                         style: TextStyle(
-                            color: (index == selectedIndex)
-                                ? selectedCardColor
-                                : Colors.black),
+                          color: (index == selectedIndex)
+                              ? selectedCardColor
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   ),

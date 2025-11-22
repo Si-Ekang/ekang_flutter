@@ -1,4 +1,5 @@
 import 'package:ekang_flutter/core/utils/log.dart';
+import 'package:ekang_flutter/core/theme/theme.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_check_answer_bloc.dart';
@@ -33,22 +34,22 @@ class _BottomValidateWidgetState extends State<BottomValidateWidget> {
   void initState() {
     super.initState();
 
-    Log.d('initState', 'init method',this.runtimeType.toString() );
+    Log.d('initState', 'init method', this.runtimeType.toString());
   }
 
   @override
   void didUpdateWidget(covariant BottomValidateWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    Log.d('didUpdateWidget', 'oldWidget : $oldWidget',this.runtimeType.toString() );
+    Log.d('didUpdateWidget', 'oldWidget : $oldWidget',
+        this.runtimeType.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QuizCheckAnswerBloc, QuizCheckAnswerState>(
       listener: (BuildContext context, QuizCheckAnswerState state) {
-        Fimber.i(
-            "_BottomValidateWidgetState | BlocConsumer.listener | state : $state");
+        Log.i("_BottomValidateWidgetState","BlocConsumer.listener | state : $state");
 
         // The switch statement evaluates the 'state' variable.
         switch (state) {
@@ -76,105 +77,138 @@ class _BottomValidateWidgetState extends State<BottomValidateWidget> {
             // The break statement exits the switch.
             break;
 
-          case QuizCheckAnswerErrorState _ :
+          case QuizCheckAnswerErrorState _:
             context.read<QuizBloc>().resetCorrectAnswerInARow();
             break;
         }
       },
       builder: (BuildContext context, QuizCheckAnswerState state) {
-        return Column(
-          children: [
-            AnimatedContainer(
-              duration: Duration(milliseconds: 550),
-              child: state is QuizCheckAnswerInitialState
-                  //context.read<QuizBloc>().showAnswerCheckResult
-                  ? SizedBox(width: 0, height: 0)
-                  : Card(
-                      child: Text(switch (state) {
-                      QuizCheckAnswerSuccessState() =>
-                        state.encouragementMessage,
-                      QuizCheckAnswerErrorState() => state.errorMessage,
-                      QuizCheckAnswerInitialState() => "",
-                      QuizCheckAnswerState() => "",
-                    })),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 4,
-              child: ElevatedButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(switch (state) {
-                    QuizCheckAnswerSuccessState() => SiEkangColors.green,
-                    QuizCheckAnswerErrorState() => SiEkangColors.red,
-                    QuizCheckAnswerState() =>
-                      Theme.of(context).colorScheme.primaryContainer
-                  }),
-                  fixedSize: WidgetStateProperty.all<Size>(
-                    const Size(72.0, 36.0),
-                  ),
-                ),
-                onPressed: !widget.enabled
-                    ? null
-                    : () {
-                        if (state is QuizCheckAnswerInitialState) {
-                          widget.onCheckAnswer(true);
 
-                          context.read<QuizCheckAnswerBloc>().add(
-                                CheckAnswerEvent(
-                                  choice: context.read<QuizBloc>().quizChoice,
-                                  correctAnswer: widget.correctAnswer,
-                                ),
-                              );
-                        } else {
-                          widget.onCheckAnswer(false);
+        Color buttonTextColor = switch (state) {
+          QuizCheckAnswerSuccessState() => Colors.white,
+          QuizCheckAnswerErrorState() => Colors.white,
+          QuizCheckAnswerInitialState() =>
+            AdaptiveTheme.of(context).theme.primaryColor,
+          QuizCheckAnswerState() => Colors.white,
+        };
 
-                          context
-                              .read<QuizCheckAnswerBloc>()
-                              .add(ResetCheckAnswerEvent());
+        return Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(color: _getContainerColor(state)),
+            child: Padding(
+                padding: EdgeInsetsGeometry.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 550),
+                      child: state is QuizCheckAnswerInitialState
+                          //context.read<QuizBloc>().showAnswerCheckResult
+                          ? SizedBox(width: 0, height: 0)
+                          : Text(_getEncouragementText(state),
+                              style: TextStyle(
+                                  color: _getButtonAndEncouragementTextColor(
+                                      state))),
+                    ),
+                    const SizedBox(height: 4.0),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all(
+                            _getButtonAndEncouragementTextColor(state),
+                          ),
+                          fixedSize: WidgetStateProperty.all<Size>(
+                            const Size(72.0, 36.0),
+                          ),
+                        ),
+                        onPressed: !widget.enabled
+                            ? null
+                            : () {
+                                if (state is QuizCheckAnswerInitialState) {
+                                  widget.onCheckAnswer(true);
 
-                          // perform navigate to new page
-                          // if (widget.canGoNext) {
-                          // _navigateToPage(pageViewIndex);
-                          widget.onNavigateToNextPage();
+                                  context.read<QuizCheckAnswerBloc>().add(
+                                        CheckAnswerEvent(
+                                          choice: context
+                                              .read<QuizBloc>()
+                                              .quizChoice,
+                                          correctAnswer: widget.correctAnswer,
+                                        ),
+                                      );
+                                } else {
+                                  widget.onCheckAnswer(false);
 
-                          // update progressbar
-                          // progressIndicatorController.value = progressIndicatorController.value + 0.1;
-                          /*} else {
+                                  context
+                                      .read<QuizCheckAnswerBloc>()
+                                      .add(ResetCheckAnswerEvent());
+
+                                  // perform navigate to new page
+                                  // if (widget.canGoNext) {
+                                  // _navigateToPage(pageViewIndex);
+                                  widget.onNavigateToNextPage();
+
+                                  // update progressbar
+                                  // progressIndicatorController.value = progressIndicatorController.value + 0.1;
+                                  /*} else {
                            */ /* if (kDebugMode) log("end quizz reached last page");
                             Navigator.of(context).pop();*/ /*
                           }*/
-                        }
-                      },
-                child: Text(
-                  switch (state) {
-                    QuizCheckAnswerSuccessState() => true ==
-                            context.read<QuizBloc>().state is! QuizStartedState
-                        ? "N/A"
-                        : context.read<QuizBloc>().currentQuizIndex + 1 ==
-                                (context.read<QuizBloc>().state as QuizStartedState)
-                                    .quizzes
-                                    .length
-                            ? "Next"
-                            : 'Finish',
-                    QuizCheckAnswerErrorState() => true ==
-                            context.read<QuizBloc>().state is! QuizStartedState
-                        ? "N/A"
-                        : context.read<QuizBloc>().currentQuizIndex + 1 ==
-                                (context.read<QuizBloc>().state as QuizStartedState)
-                                    .quizzes
-                                    .length
-                            ? "Next"
-                            : 'Finish',
-                    QuizCheckAnswerInitialState() => "Verify",
-                    QuizCheckAnswerState() => "Verify",
-                  },
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          ],
-        );
+                                }
+                              },
+                        child: Text(
+                          _getButtonText(state),
+                          maxLines: 1,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: buttonTextColor),
+                        ),
+                      ),
+                    )
+                  ],
+                )));
       },
     );
   }
+
+  Color _getContainerColor(QuizCheckAnswerState state) => switch (state) {
+        QuizCheckAnswerSuccessState() =>
+          SiEkangColors.green.withValues(alpha: 0.2),
+        QuizCheckAnswerErrorState() => SiEkangColors.red.withValues(alpha: 0.2),
+        QuizCheckAnswerState() =>
+          AdaptiveTheme.of(context).theme.scaffoldBackgroundColor
+      };
+
+  String _getEncouragementText(QuizCheckAnswerState state) => switch (state) {
+        QuizCheckAnswerSuccessState() => state.encouragementMessage,
+        QuizCheckAnswerErrorState() => state.errorMessage,
+        QuizCheckAnswerInitialState() => "",
+        QuizCheckAnswerState() => "",
+      };
+
+  Color _getButtonAndEncouragementTextColor(QuizCheckAnswerState state) =>
+      switch (state) {
+        QuizCheckAnswerSuccessState() => SiEkangColors.green,
+        QuizCheckAnswerErrorState() => SiEkangColors.red,
+        QuizCheckAnswerState() => Theme.of(context).colorScheme.primaryContainer
+      };
+
+  String _getButtonText(QuizCheckAnswerState state) => switch (state) {
+        QuizCheckAnswerSuccessState() =>
+          false == context.read<QuizBloc>().state is QuizStartedState
+              ? "N/A"
+              : context.read<QuizBloc>().canGoNext()
+                  ? "Next"
+                  : 'Finish',
+        QuizCheckAnswerErrorState() =>
+          false == context.read<QuizBloc>().state is QuizStartedState
+              ? "N/A"
+              : context.read<QuizBloc>().canGoNext()
+                  ? "Next"
+                  : 'Finish',
+        QuizCheckAnswerInitialState() => "Verify",
+        QuizCheckAnswerState() => "Verify",
+      };
 }
