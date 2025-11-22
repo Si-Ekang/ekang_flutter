@@ -1,7 +1,8 @@
 /*import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';*/
-import 'package:adaptive_theme/adaptive_theme.dart' as theme;
+
 import 'package:ekang_flutter/core/router/routes.dart' as siekang_router;
+import 'package:ekang_flutter/core/theme/theme.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -125,11 +126,11 @@ class _SiEkangAppState extends State<SiEkangApp> {
 
     return SiEkangAppWidget(
       child: Builder(builder: (context) {
-        return theme.AdaptiveTheme(
+        return AdaptiveTheme(
             debugShowFloatingThemeButton: false,
             light: _siEkangTheme.light(),
             dark: _siEkangTheme.dark(),
-            initial: theme.AdaptiveThemeMode.light,
+            initial: AdaptiveThemeMode.light,
             builder: (theme, darkTheme) => MaterialApp(
                   navigatorObservers: [routeObserver],
                   debugShowCheckedModeBanner: false,
