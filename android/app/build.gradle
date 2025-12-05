@@ -109,6 +109,6 @@ dependencies {
     implementation(libs.firebase.ads)
 
     // Firebase App Check
-    implementation(libs.firebase.appcheck.ktx)
+    implementation(libs.firebase.appcheck)
     implementation(libs.firebase.appcheck.debug)
 }
