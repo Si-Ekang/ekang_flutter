@@ -1,11 +1,11 @@
 ﻿question_id;question;image_url;possible_answers;correct_answer
-1;épervier;;obeng|kokös|sosoo|obam;obam
-2;kokös;;pigeon|perroquet|ndüin|otua;perroquet
-3;élat;;canard|mouette|oie|pigeon;oie
-4;nkang;;pigoen|pintade|poule|aigle;pintade
-5;oiseau;;anoan|oanan|an|anyüan;onoan
-6;caneton;;mwan-ku|akung|mwan-swa|obeng;mwan-swa
-7;okwè;;pie|colibri|perdrix|aigle;perdrix
-8;ndüin;;épervier|pigeon|aigle|corbeau;aigle
-9;obeng;;perdrix|oie|toucan|pigeon;pigeon
-10;zum;;coq|tourterelle|akung|pie;tourterelle
+1;"What does ""épervier"" mean in fang?";;obeng|kokös|sosoo|obam;obam
+2;"What does ""kokös"" mean in french?";;pigeon|perroquet|ndüin|otua;perroquet
+3;"What does ""élat"" mean in french?";;canard|mouette|oie|pigeon;oie
+4;"What does ""nkang"" mean in french";;pigoen|pintade|poule|aigle;pintade
+5;"What does ""oiseau"" mean in fang";;anoan|oanan|an|anyüan;onoan
+6;"What does ""caneton""mean in fang?";;mwan-ku|akung|mwan-swa|obeng;mwan-swa
+7;"What does ""okwè"" means in french";;pie|colibri|perdrix|aigle;perdrix
+8;"What does ""ndüin""mean in french";;épervier|pigeon|aigle|corbeau;aigle
+9;"What does ""obeng"" means in french";;perdrix|oie|toucan|pigeon;pigeon
+10;"What does ""zum""means in french";;coq|tourterelle|akung|pie;tourterelle
