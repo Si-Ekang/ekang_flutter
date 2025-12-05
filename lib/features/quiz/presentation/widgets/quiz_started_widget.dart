@@ -8,6 +8,7 @@ import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_check_answer_bloc.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/bottom_validate_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/possible_answers_widget.dart';
+import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_image_content_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/top_question_widget.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
@@ -24,7 +25,10 @@ class QuizStartedWidget extends StatefulWidget {
 }
 
 class _QuizStartedWidgetState extends State<QuizStartedWidget>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+    with
+        WidgetsBindingObserver,
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin {
   late AnimationController progressIndicatorController;
   final PageController controller = PageController();
   final animationDuration = const Duration(milliseconds: 500);
@@ -94,6 +98,8 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -144,6 +150,16 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     }
   }
 
+  /*Future<void> _precacheQuizImages(List<Quizz> quizzes) async {
+    for (final quiz in quizzes) {
+      if (quiz.quizzImage
+          .trim()
+          .isNotEmpty && context.mounted) {
+        await precacheImage(NetworkImage(context.read<QuizBloc>().getQuizImage(quiz.quizzImage)), context);
+      }
+    }
+  }
+*/
   Widget _createPage({required int page, required Quizz quizzItem}) {
     log("createPage() | page : $page, quizz : ${quizzItem.toString()}");
 
@@ -174,34 +190,8 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
             ? SizedBox(width: 0.0, height: 0.0)
             : Expanded(
                 flex: 5,
-                child: FutureBuilder<Uint8List?>(
-                  future: context
-                      .read<QuizBloc>()
-                      .getQuizImage(quizzItem.quizzImage),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<Uint8List?> snapshot,
-                  ) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SiEkangLoader(30, 30);
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: SiEkangColors.quizItemSelectedTextColor,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Image.memory(snapshot.data!),
-                      );
-                    } else {
-                      return const Text('No data available.');
-                    }
-                  },
+                child: QuizImageContentWidget(
+                  quizzImage: quizzItem.quizzImage,
                 ),
               ),
         const SizedBox(width: 0.0, height: 8.0),
@@ -245,18 +235,10 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
               Fimber.d(
                   "onNavigateToNextPage() | correct answer : ${quizzItem.correctAnswer}");
 
-              final bool isLastPage =
-                  context.read<QuizBloc>().currentQuizIndex + 1 ==
-                      widget.quizzes.length;
-
               // Check if current page is the last page
-              if (isLastPage) {
+              if (context.read<QuizBloc>().isLastPage()) {
                 Fimber.i("onNavigateToNextPage() | Quiz finished!");
 
-                //if (kDebugMode) {
-                //Navigator.of(context).pop();
-                // } else {
-                // TODO : Show a final screen
                 final int totalCorrectAnswers =
                     context.read<QuizBloc>().totalCorrectAnswers;
 
@@ -269,8 +251,6 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
                         successPercentage: successPercentage,
                       ),
                     );
-                //   Navigator.push(context, MaterialPageRoute(builder: (context) => QuizEnded(context.read<QuizBloc>().totalCorrectAnswers, context.read<QuizBloc>().getSuccessPercentage())));
-                // }
 
                 return;
               }
@@ -278,8 +258,10 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
               _navigateToNextPage();
 
               // update progressbar
-              progressIndicatorController.value =
-                  progressIndicatorController.value + 0.1;
+              final newProgress =
+                  (context.read<QuizBloc>().currentQuizIndex + 1) /
+                      context.read<QuizBloc>().totalQuestions;
+              progressIndicatorController.value = newProgress;
 
               context.read<QuizBloc>().resetChoice();
             },
@@ -323,8 +305,6 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
               // Disable scroll functionality
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (pageIndex) {
-                context.read<QuizBloc>().updateQuizIndex(pageIndex);
-
                 if (pageIndex == widget.quizzes.length - 1) {
                   canGoNext = false;
                 }
@@ -348,18 +328,28 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
 
   void _navigateToNextPage() {
     // update page index
-    context.read<QuizBloc>().incrementQuizIndex();
+    //context.read<QuizBloc>().incrementQuizIndex();
+    //context.read<QuizBloc>().updateQuizIndex(context.read<QuizBloc>().currentQuizIndex + 1);
+
+    if (null == controller.page) {
+      Log.e(
+          "_navigateToPage", "controller.page is null", runtimeType.toString());
+      return;
+    }
+
+    int nextPageIndex = controller.page!.toInt() + 1;
 
     Log.d(
       "_navigateToPage",
-      "index : ${context.read<QuizBloc>().currentQuizIndex}",
+      "next page index to navigate to : $nextPageIndex",
       runtimeType.toString(),
     );
 
-    controller.animateToPage(
-      context.read<QuizBloc>().currentQuizIndex,
-      duration: animationDuration,
-      curve: Curves.decelerate,
-    );
+    context.read<QuizBloc>().updateQuizIndex(nextPageIndex);
+
+    controller.nextPage(duration: animationDuration, curve: Curves.decelerate);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

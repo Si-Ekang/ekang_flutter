@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:ekang_flutter/core/utils/log.dart';
+import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ekang_flutter/core/utils/assets_utils.dart';
@@ -72,8 +73,6 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     Fimber.d("_loadQuiz() | csvQuizList : $csvQuizList");
 
-    // List<String> csvQuizList = List.of([Assets.csvQuizzAnimaux1, Assets.csvQuizzOiseaux]);
-
     final csvQuiz = 1 == csvQuizList.length
         ? csvQuizList.first
         : csvQuizList[Random().nextInt(csvQuizList.length - 1)];
@@ -90,6 +89,13 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     // Build quizz list items
     List<Quizz> list = Quizz.toQuizzList(questions);
+
+    list.forEach((quizz) async {
+      String? url = await getQuizImageAsDownloadURL(quizz.quizzImage);
+      if (null != url) {
+        NetworkImage(url);
+      }
+    });
 
     updateTotalQuestions(list.length);
 
@@ -116,19 +122,19 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       case QuizCategory.animals:
         return List.of([Assets.csvQuizzAnimaux1]);
       case QuizCategory.birds:
-        return List.of([Assets.csvQuizzOiseaux]);
+        return List.of([Assets.csvQuizzOiseaux, Assets.csvQuizzBirds1]);
       case QuizCategory.clothes:
         return null;
       case QuizCategory.home:
-        return null;
+        return List.of([Assets.csvQuizzHome, Assets.csvQuizzKitchen]);
       default:
         return null;
     }
   }
 
-  void incrementQuizIndex() {
+  /*void incrementQuizIndex() {
     currentQuizIndex++;
-  }
+  }*/
 
   void incrementCorrectAnswers() {
     totalCorrectAnswers++;
@@ -148,14 +154,18 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   }
 
   bool canGoNext() {
-    if(state is! QuizStartedState){
+    if (state is! QuizStartedState) {
       return false;
     }
-    Log.d("canGoNext","currentQuizIndex : $currentQuizIndex, quiz length : ${(state as QuizStartedState).quizzes.length}");
+    Log.d("canGoNext",
+        "currentQuizIndex : $currentQuizIndex, quiz length : ${(state as QuizStartedState).quizzes.length}");
 
     return currentQuizIndex + 1 < (state as QuizStartedState).quizzes.length;
   }
 
+  bool isLastPage() => (state is! QuizStartedState)
+      ? false
+      : currentQuizIndex + 1 == (state as QuizStartedState).quizzes.length;
 
   void updateQuizIndex(int newIndex) {
     currentQuizIndex = newIndex;
@@ -180,7 +190,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
   void resetCurrentQuizIndex() {
     // reset view pager index
-    currentQuizIndex = 1;
+    currentQuizIndex = 0;
   }
 
   double getSuccessPercentage() {
@@ -192,6 +202,18 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     return (totalCorrectAnswers * 100) / totalQuestions;
   }
 
+  Future<String?> getQuizImageAsDownloadURL(String imageName) async {
+    if (imageName.isEmpty) {
+      Log.e("getQuizImageAsDownloadURL", "url is empty");
+      return null;
+    }
+
+    // Create a storage reference from our app
+    final storageRef = FirebaseStorage.instance.ref();
+
+    // Create a reference with an initial file path and name
+    return storageRef.child("images/$imageName").getDownloadURL();
+  }
 
   Future<Uint8List?> getQuizImage(String imageName) async {
     if (imageName.isEmpty) {

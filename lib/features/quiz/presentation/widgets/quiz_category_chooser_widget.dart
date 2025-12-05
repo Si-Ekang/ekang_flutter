@@ -19,6 +19,7 @@ class _QuizCategoryChooserState extends State<QuizCategoryChooserWidget> {
   List<QuizCategory> choices = [
     QuizCategory.animals,
     QuizCategory.birds,
+    QuizCategory.home,
   ];
 
   @override
@@ -113,7 +114,10 @@ class _QuizCategoryChooserState extends State<QuizCategoryChooserWidget> {
   Widget _buildChoiceButton(BuildContext context) => SizedBox(
         width: double.infinity,
         height: 48.0,
-        child: MaterialButton(
+        child: ElevatedButton(
+          style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(
+                  Theme.of(context).colorScheme.primaryContainer)),
           onPressed: -1 == selectedIndex
               ? null
               : () async {
