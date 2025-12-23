@@ -37,7 +37,9 @@ class SiEkangApplication : FlutterApplication() {
         Log.d(SiEkangApplication::class.java.simpleName, "initMobileAds()")
         CoroutineScope(Dispatchers.IO).launch {
             // Initialize the Google Mobile Ads SDK on a background thread.
-            MobileAds.initialize(this@SiEkangApplication) { initializationStatus: InitializationStatus -> }
+            MobileAds.initialize(this@SiEkangApplication) { initializationStatus: InitializationStatus ->
+                //RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("E18917C9BA2DA30B0A87BDEE1437C5D4"))
+            }
         }
     }
 }

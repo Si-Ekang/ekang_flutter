@@ -1,13 +1,11 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:ekang_flutter/core/network/connectvity_controller.dart';
 import 'package:ekang_flutter/core/ui/snackbar_manager.dart';
 import 'package:ekang_flutter/core/utils/app_lifecycle_reactor.dart';
 import 'package:ekang_flutter/core/utils/constants.dart';
-import 'package:ekang_flutter/core/widgets/ads/ads_widget.dart';
-import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
+import 'package:ekang_flutter/core/utils/si_ekang_ads_manager.dart';
 import 'package:ekang_flutter/features/home/home.dart';
 import 'package:ekang_flutter/features/library/library.dart';
 import 'package:ekang_flutter/features/main/presentation/bloc/main_bloc.dart';
@@ -44,7 +42,7 @@ class _MainWidgetState extends State<MainWidget> {
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   late AppLifecycleReactor _appLifecycleReactor;
-  late AppOpenAdManager _appOpenAdManager;
+  late SiEkangAdsManager _adsManager;
 
   ///////////////////////////
   // Widgets
@@ -89,9 +87,8 @@ class _MainWidgetState extends State<MainWidget> {
     super.initState();
     connectivityController.init();
 
-    _appOpenAdManager = AppOpenAdManager();
-    _appLifecycleReactor =
-        AppLifecycleReactor(appOpenAdManager: _appOpenAdManager);
+    _adsManager = SiEkangAdsManager();
+    _appLifecycleReactor = AppLifecycleReactor(adsManager: _adsManager);
   }
 
   @override

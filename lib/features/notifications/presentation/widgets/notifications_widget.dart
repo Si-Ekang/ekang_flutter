@@ -1,12 +1,12 @@
 import 'package:ekang_flutter/core/utils/constants.dart';
-import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
+import 'package:ekang_flutter/core/utils/si_ekang_ads_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/notifications/data/model/whats_new_model.dart';
 import 'package:ekang_flutter/features/notifications/presentation/bloc/notifications_bloc.dart';
 import 'package:ekang_flutter/features/notifications/presentation/bloc/notifications_state.dart';
+import 'package:ekang_flutter/generated/assets.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ekang_flutter/generated/assets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotificationWidget extends StatefulWidget {
@@ -26,18 +26,25 @@ class NotificationWidget extends StatefulWidget {
 }
 
 class _NotificationState extends State<NotificationWidget> {
+  SiEkangAdsManager? _adsManager = null;
+
   @override
   void initState() {
     super.initState();
 
     context.read<NotificationsBloc>().add(NotificationsLoadImageEvent());
+
+    _adsManager = SiEkangAdsManager();
+    _adsManager?.updateRequestConfiguration(
+        [testDeviceSamsungGalaxyNote8, testDevice1, testDevice2, testDevice3]);
+    _adsManager?.loadAd();
   }
 
   @override
   void didUpdateWidget(covariant NotificationWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    AppOpenAdManager().showAdIfAvailable();
+    _adsManager?.showAdIfAvailable();
   }
 
   @override
@@ -84,7 +91,9 @@ class _NotificationState extends State<NotificationWidget> {
                   ),
             ElevatedButton(
               child: const Text('Notification route'),
-              onPressed: () {},
+              onPressed: () {
+                _adsManager?.showAdIfAvailable();
+              },
             ),
             switch (state) {
               NotificationsSuccess _ =>

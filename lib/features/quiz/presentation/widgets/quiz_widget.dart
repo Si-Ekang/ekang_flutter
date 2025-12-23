@@ -16,6 +16,9 @@ class QuizWidget extends StatefulWidget {
 }
 
 class _QuizState extends State<QuizWidget> {
+  /*@override
+  Widget build(BuildContext context) => AdsWidget();*/
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QuizBloc, QuizState>(
