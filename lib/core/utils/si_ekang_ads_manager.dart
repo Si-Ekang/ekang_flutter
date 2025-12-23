@@ -63,7 +63,7 @@ class SiEkangAdsManager {
     }
 
     InterstitialAd.load(
-      adUnitId: _testAdUnitId,
+      adUnitId: _adUnitId,
       request: request,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {

@@ -36,7 +36,7 @@ class _NotificationState extends State<NotificationWidget> {
 
     _adsManager = SiEkangAdsManager();
     _adsManager?.updateRequestConfiguration(
-        [testDeviceSamsungGalaxyNote8, testDevice1, testDevice2, testDevice3]);
+        [ testDevice1, testDevice2, testDevice3]);
     _adsManager?.loadAd();
   }
 

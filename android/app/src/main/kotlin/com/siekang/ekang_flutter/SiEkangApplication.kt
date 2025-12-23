@@ -1,8 +1,8 @@
 package com.siekang.ekang_flutter
 
-import android.app.Application
 import android.util.Log
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.firebase.FirebaseApp
 import io.flutter.app.FlutterApplication
@@ -36,10 +36,21 @@ class SiEkangApplication : FlutterApplication() {
     fun initMobileAds() {
         Log.d(SiEkangApplication::class.java.simpleName, "initMobileAds()")
         CoroutineScope(Dispatchers.IO).launch {
+
             // Initialize the Google Mobile Ads SDK on a background thread.
             MobileAds.initialize(this@SiEkangApplication) { initializationStatus: InitializationStatus ->
-                //RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("E18917C9BA2DA30B0A87BDEE1437C5D4"))
+                Log.d(
+                    SiEkangApplication::class.java.simpleName,
+                    "initMobileAds() | Mobile Ads SDK status: $initializationStatus"
+                )
             }
+
+            /*MobileAds.setRequestConfiguration(
+                RequestConfiguration
+                    .Builder()
+                    .setTestDeviceIds(listOf("E18917C9BA2DA30B0A87BDEE1437C5D4"))
+                    .build()
+            )*/
         }
     }
 }

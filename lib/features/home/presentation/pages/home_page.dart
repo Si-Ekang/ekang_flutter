@@ -1,5 +1,4 @@
 import 'package:ekang_flutter/core/utils/constants.dart';
-import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/quiz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
