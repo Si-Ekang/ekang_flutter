@@ -3,6 +3,7 @@ enum QuizCategory {
   birds,
   clothes,
   home,
+  food,
   none;
 }
 
@@ -17,6 +18,8 @@ extension ToQuizCategory on String {
         return QuizCategory.clothes;
       case "home":
         return QuizCategory.home;
+      case 'food':
+        return QuizCategory.food;
       default:
         return QuizCategory.none;
     }

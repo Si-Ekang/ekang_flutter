@@ -1,20 +1,19 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/core/utils/log.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ekang_flutter/core/utils/assets_utils.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
 import 'package:ekang_flutter/generated/assets.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fimber/fimber.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/quiz_category.dart';
 
 part 'quiz_event.dart';
-
 part 'quiz_state.dart';
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
@@ -127,6 +126,8 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
         return null;
       case QuizCategory.home:
         return List.of([Assets.csvQuizzHome, Assets.csvQuizzKitchen]);
+      case QuizCategory.food:
+        return List.of([Assets.csvQuizVegetables]);
       default:
         return null;
     }

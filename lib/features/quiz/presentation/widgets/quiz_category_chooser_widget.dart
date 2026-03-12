@@ -20,6 +20,7 @@ class _QuizCategoryChooserState extends State<QuizCategoryChooserWidget> {
     QuizCategory.animals,
     QuizCategory.birds,
     QuizCategory.home,
+    QuizCategory.food,
   ];
 
   @override
