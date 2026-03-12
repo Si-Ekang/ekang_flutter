@@ -47,19 +47,19 @@ dependencies:
   # Flutter BLOC (Business Logic Of Components)
   flutter_bloc: ^9.1.1
   bloc_pattern: ^3.0.1
-  equatable: ^2.0.7
+  equatable: ^2.0.8
   # generator
   dartz: ^0.10.1
 
   # Dependency injection
-  get_it: ^9.0.5
+  get_it: ^9.2.1
 
   # Shared Preferences
-  shared_preferences: ^2.5.3
+  shared_preferences: ^2.5.4
 
   # Google
   # Fonts
-  google_fonts: ^6.3.2
+  google_fonts: ^8.0.2
   # Sign-In
   google_sign_in: ^6.2.1
   flutter_signin_button: ^2.1.1
@@ -93,16 +93,16 @@ dependencies:
   flow_builder: ^0.1.0
 
   # go router
-  go_router: ^17.0.0
+  go_router: ^17.1.0
 
   # Lottie
   lottie: ^3.3.2
 
   # Text-To-Speech
-  flutter_tts: ^4.2.3
+  flutter_tts: ^4.2.5
 
   csv: ^6.0.0
-  http: ^1.5.0
+  http: ^1.6.0
   js: ^0.7.2
   just_audio: ^0.10.5
   rxdart: ^0.28.0
@@ -123,7 +123,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
   #freezed: ^2.5.8
-  build_runner: ^2.10.1
+  build_runner: ^2.12.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
