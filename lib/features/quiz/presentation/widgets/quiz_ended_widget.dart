@@ -48,7 +48,7 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
     _adsManager = AppOpenAdManager();
 
     Log.d("didUpdateWidget",
-        "score : ${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}");
+        "score : ${widget.score.toInt()} / ${context.read<QuizBloc>().state.quizzes.length}");
     Log.d("didUpdateWidget",
         "success percentage : ${widget.successPercentage.toInt()} %");
   }
@@ -100,7 +100,7 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
                     context: context,
                     segmentTitle: "Correct answers",
                     value:
-                        "${widget.score.toInt()} / ${context.read<QuizBloc>().totalQuestions}",
+                        "${widget.score.toInt()} / ${context.read<QuizBloc>().state.quizzes.length}",
                   ),
                   _buildStatisticSegment(
                     context: context,

@@ -1,12 +1,10 @@
 /// Importing necessary packages and modules.
 library routes;
 
+import 'package:ekang_flutter/core/di/injection.dart';
 import 'package:ekang_flutter/core/router/router_utils.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/library/library.dart';
-import 'package:ekang_flutter/features/notifications/data/data_sources/notifications_local_data_source.dart';
-import 'package:ekang_flutter/features/notifications/data/repositories/notifications_repository.dart';
-import 'package:ekang_flutter/features/notifications/domain/notifications_use_case.dart';
 import 'package:ekang_flutter/features/notifications/notifications.dart';
 import 'package:fimber/fimber.dart';
 
@@ -33,25 +31,15 @@ class Router {
       case MainPage.routeName:
         return RouterUtils.buildRouteGeneric3<MainBloc, LibraryBloc,
                 NotificationsBloc>(
-            blockForBloc1: () {
-              return MainBloc()..add(GetCategories());
-            },
-            blockForBloc2: () => LibraryBloc()..add(GetCsvLibrary()),
-            blockForBloc3: () => NotificationsBloc(
-                useCases: NotificationsUseCases(NotificationsRepositoryImpl(
-                    NotificationsLocalDataSource())))
-              ..add(NotificationsEvent()),
+            blockForBloc1: () => getIt<MainBloc>()..add(GetCategories()),
+            blockForBloc2: () => getIt<LibraryBloc>()..add(GetCsvLibrary()),
+            blockForBloc3: () => getIt<NotificationsBloc>()..add(NotificationsEvent()),
             child: const MainPage());
 
       /// If the route name is QuizPage.routeName, navigate to the QuizPage.
       case QuizPage.routeName:
-        return RouterUtils.buildRouteGeneric2<QuizBloc, QuizCheckAnswerBloc>(
-            blockForBloc1: () {
-              return QuizBloc()..add(LoadQuizChooserEvent());
-            },
-            blockForBloc2: () {
-              return QuizCheckAnswerBloc()..add(QuizEvent());
-            },
+        return RouterUtils.buildRouteGeneric<QuizBloc>(
+            block: () => getIt<QuizBloc>()..add(LoadQuizChooserEvent()),
             child: const QuizPage());
 
       /// If the route name is SettingsPage.routeName, navigate to the Settings page.

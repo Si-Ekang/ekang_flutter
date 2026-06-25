@@ -21,21 +21,21 @@ class _QuizState extends State<QuizWidget> {
     return BlocConsumer<QuizBloc, QuizState>(
       listener: (context, state) {},
       builder: (context, state) {
-        switch (state) {
-          case QuizLoadingState _:
-            return SiEkangLoader(30, 30);
-          case QuizLoadingErrorState _:
+        switch (state.status) {
+          case QuizStatus.loading:
+            return const SiEkangLoader(30, 30);
+          case QuizStatus.error:
             return QuizLoadingErrorWidget(
               onRetryCallback: (isRetry) {
                 context.read<QuizBloc>().add(LoadQuizEvent());
               },
             );
-          case QuizCategoryChooserState _:
-            return QuizCategoryChooserWidget();
-          case QuizStartedState _:
+          case QuizStatus.categoryChooser:
+            return const QuizCategoryChooserWidget();
+          case QuizStatus.started:
             return QuizStartedWidget(quizzes: state.quizzes);
 
-          case QuizEndedState _:
+          case QuizStatus.ended:
             return QuizEndedWidget(
               score: state.score,
               successPercentage: state.successPercentage,

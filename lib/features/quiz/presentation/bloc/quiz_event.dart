@@ -1,70 +1,62 @@
 part of 'quiz_bloc.dart';
 
-class QuizEvent extends Equatable {
+/// Base event class for all actions dispatched to the [QuizBloc].
+abstract class QuizEvent extends Equatable {
+  const QuizEvent();
+
   @override
   List<Object?> get props => [];
 }
 
-class LoadQuizChooserEvent extends QuizEvent {
-  @override
-  List<Object?> get props => [];
-}
+/// Dispatched to initialize and open the quiz category choosing screen.
+class LoadQuizChooserEvent extends QuizEvent {}
 
+/// Dispatched when the user selects a quiz category.
 class NavigateToQuizEvent extends QuizEvent {
+  /// The category name selected (e.g. "animals", "birds").
   final String quizCategoryChosen;
 
-  NavigateToQuizEvent({required this.quizCategoryChosen});
+  const NavigateToQuizEvent({required this.quizCategoryChosen});
 
   @override
   List<Object?> get props => [quizCategoryChosen];
 }
 
-class LoadQuizEvent extends QuizEvent {
+/// Dispatched to load questions from CSV assets for the selected category.
+class LoadQuizEvent extends QuizEvent {}
+
+/// Dispatched when the user taps on one of the possible answers.
+class SelectChoiceEvent extends QuizEvent {
+  /// The selected answer option text.
+  final String choice;
+
+  const SelectChoiceEvent({required this.choice});
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [choice];
 }
 
+/// Dispatched to verify the chosen answer against the correct one.
 class CheckAnswerEvent extends QuizEvent {
+  /// The selected answer option text.
   final String choice;
+  /// The correct answer text.
   final String correctAnswer;
 
-  CheckAnswerEvent({required this.choice, required this.correctAnswer});
+  const CheckAnswerEvent({required this.choice, required this.correctAnswer});
 
   @override
   List<Object?> get props => [choice, correctAnswer];
 }
 
-class ResetCheckAnswerEvent extends QuizEvent {
-  @override
-  List<Object?> get props => [];
-}
+/// Dispatched to reset validation states when navigating to a new question.
+class ResetCheckAnswerEvent extends QuizEvent {}
 
-class QuizStartedEvent extends QuizEvent {
-  final List<Quizz> quizzes;
-  final int currentQuizIndex;
-  final int totalQuestions;
-  final bool isLastQuestion;
-  final bool isFirstQuestion;
+/// Dispatched to proceed to the next question or complete the quiz if it's the last page.
+class NextQuestionRequestedEvent extends QuizEvent {}
 
-  QuizStartedEvent(this.quizzes, this.currentQuizIndex, this.totalQuestions,
-      {this.isLastQuestion = false, this.isFirstQuestion = false});
+/// Dispatched to reset the active quiz session and return to category selection.
+class ResetQuizEvent extends QuizEvent {}
 
-  @override
-  List<Object?> get props => [
-        quizzes,
-        currentQuizIndex,
-        totalQuestions,
-        isLastQuestion,
-        isFirstQuestion
-      ];
-}
-
-class QuizFinishEvent extends QuizEvent {
-  final double score;
-  final double successPercentage;
-
-  QuizFinishEvent({required this.score, required this.successPercentage});
-
-  @override
-  List<Object?> get props => [score, successPercentage];
-}
+/// Dispatched when the quiz ends and final results need to be computed.
+class QuizFinishEvent extends QuizEvent {}

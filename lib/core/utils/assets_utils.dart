@@ -9,7 +9,7 @@ class AssetsUtils {
 
   AssetsUtils._();
 
-  factory AssetsUtils() => AssetsUtils._instance ??= AssetsUtils();
+  factory AssetsUtils() => AssetsUtils._instance ??= AssetsUtils._();
 
   /*factory AssetsUtils() => _this;
   AssetsUtils._();

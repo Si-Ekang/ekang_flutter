@@ -10,77 +10,73 @@ import 'package:fimber/fimber.dart';
 import '../../data/models/quiz_category.dart';
 
 part 'quiz_event.dart';
-
 part 'quiz_state.dart';
 
+/// BLoC class responsible for managing the state transitions and core business logic
+/// of the Quiz feature.
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
-  String quizCategoryChosen = "".trim();
-
-  int totalCorrectAnswersInARow = 0;
-  int totalCorrectAnswers = 0;
-  int currentQuizIndex = 1;
-  int totalQuestions = 0;
-  String quizChoice = "".trim();
-
-  // bool isFirstQuestion = this.currentQuizIndex  == this.totalQuestions - 1 ;
-
-  QuizBloc() : super(QuizInitialState()) {
-    on<QuizEvent>((event, emit) {});
+  QuizBloc() : super(const QuizState()) {
     on<LoadQuizChooserEvent>(_loadQuizChooser);
     on<NavigateToQuizEvent>(_navigateToQuiz);
     on<LoadQuizEvent>(_loadQuiz);
-    on<QuizStartedEvent>(_startQuiz);
+    on<SelectChoiceEvent>(_selectChoice);
+    on<CheckAnswerEvent>(_checkAnswer);
+    on<ResetCheckAnswerEvent>(_resetCheckAnswer);
+    on<NextQuestionRequestedEvent>(_nextQuestion);
+    on<ResetQuizEvent>(_resetQuiz);
     on<QuizFinishEvent>(_quizEnded);
   }
 
   void _loadQuizChooser(
     LoadQuizChooserEvent event,
     Emitter<QuizState> emit,
-  ) async {
+  ) {
     Fimber.d("_loadQuizChooser()");
-
-    emit(state.copyWithState(newState: QuizCategoryChooserState()));
+    emit(state.copyWith(status: QuizStatus.categoryChooser));
   }
 
   void _navigateToQuiz(
     NavigateToQuizEvent event,
     Emitter<QuizState> emit,
-  ) async {
+  ) {
     Fimber.d("_navigateToQuiz()");
-    quizCategoryChosen = event.quizCategoryChosen;
+    emit(state.copyWith(quizCategoryChosen: event.quizCategoryChosen));
   }
 
   void _loadQuiz(LoadQuizEvent event, Emitter<QuizState> emit) async {
     Fimber.d("_loadQuiz()");
+    emit(state.copyWith(status: QuizStatus.loading));
 
     // Load csv based on quiz category chosen
     List<String>? csvQuizList = getQuizCategories(
-      quizCategoryChosen.toQuizCategory(),
+      state.quizCategoryChosen.toQuizCategory(),
     );
 
     if (null == csvQuizList) {
       Fimber.e("Failed to load CSV file");
       emit(
-        state.copyWithState(
-            newState: QuizLoadingErrorState(error: "Failed to load CSV file")),
+        state.copyWith(
+          status: QuizStatus.error,
+          errorMessage: "Failed to load CSV file",
+        ),
       );
       return;
     }
 
     Fimber.d("_loadQuiz() | csvQuizList : $csvQuizList");
 
-    // List<String> csvQuizList = List.of([Assets.csvQuizzAnimaux1, Assets.csvQuizzOiseaux]);
-
     final csvQuiz = 1 == csvQuizList.length
         ? csvQuizList.first
-        : csvQuizList[Random().nextInt(csvQuizList.length - 1)];
+        : csvQuizList[Random().nextInt(csvQuizList.length)];
     final questions = await AssetsUtils.loadCsv(csvQuiz);
 
     if (null == questions) {
       Fimber.e("Failed to load CSV file");
       emit(
-        state.copyWithState(
-            newState: QuizLoadingErrorState(error: "Failed to load CSV file")),
+        state.copyWith(
+          status: QuizStatus.error,
+          errorMessage: "Failed to load CSV file",
+        ),
       );
       return;
     }
@@ -88,22 +84,74 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     // Build quizz list items
     List<Quizz> list = Quizz.toQuizzList(questions);
 
-    updateTotalQuestions(list.length);
-
-    emit(state.copyWithState(newState: QuizStartedState(quizzes: list)));
+    emit(state.copyWith(
+      status: QuizStatus.started,
+      quizzes: list,
+      currentQuizIndex: 0,
+      totalCorrectAnswers: 0,
+      totalCorrectAnswersInARow: 0,
+      quizChoice: '',
+      checkStatus: QuizCheckStatus.initial,
+      checkAnswerMessage: '',
+    ));
   }
 
-  void _startQuiz(QuizStartedEvent event, Emitter<QuizState> emit) async {
-    Fimber.d("_startQuiz()");
+  void _selectChoice(SelectChoiceEvent event, Emitter<QuizState> emit) {
+    emit(state.copyWith(quizChoice: event.choice));
   }
 
-  void _quizEnded(QuizFinishEvent event, Emitter<QuizState> emit) async {
+  void _checkAnswer(CheckAnswerEvent event, Emitter<QuizState> emit) {
+    Fimber.d(
+        "_checkAnswer() | choice : ${event.choice}, correctAnswer : ${event.correctAnswer}");
+    final isCorrect = event.choice == event.correctAnswer;
+    final newCorrectAnswers = isCorrect ? state.totalCorrectAnswers + 1 : state.totalCorrectAnswers;
+    final newStreak = isCorrect ? state.totalCorrectAnswersInARow + 1 : 0;
+
+    emit(state.copyWith(
+      checkStatus: isCorrect ? QuizCheckStatus.success : QuizCheckStatus.error,
+      checkAnswerMessage: isCorrect
+          ? "Great! Continue like this!"
+          : "Wrong Answer!. The correct answer is ${event.correctAnswer}",
+      totalCorrectAnswers: newCorrectAnswers,
+      totalCorrectAnswersInARow: newStreak,
+    ));
+  }
+
+  void _resetCheckAnswer(ResetCheckAnswerEvent event, Emitter<QuizState> emit) {
+    emit(state.copyWith(
+      checkStatus: QuizCheckStatus.initial,
+      checkAnswerMessage: '',
+    ));
+  }
+
+  void _nextQuestion(NextQuestionRequestedEvent event, Emitter<QuizState> emit) {
+    final isLastPage = state.currentQuizIndex + 1 == state.quizzes.length;
+    if (isLastPage) {
+      add(QuizFinishEvent());
+    } else {
+      emit(state.copyWith(
+        currentQuizIndex: state.currentQuizIndex + 1,
+        quizChoice: '',
+        checkStatus: QuizCheckStatus.initial,
+        checkAnswerMessage: '',
+      ));
+    }
+  }
+
+  void _resetQuiz(ResetQuizEvent event, Emitter<QuizState> emit) {
+    emit(const QuizState(status: QuizStatus.categoryChooser));
+  }
+
+  void _quizEnded(QuizFinishEvent event, Emitter<QuizState> emit) {
     Fimber.d("_quizEnded()");
-    emit(state.copyWithState(
-      newState: QuizEndedState(
-        score: totalCorrectAnswers.toDouble(),
-        successPercentage: getSuccessPercentage(),
-      ),
+    final double successPercentage = state.quizzes.isEmpty
+        ? 0.0
+        : (state.totalCorrectAnswers * 100) / state.quizzes.length;
+
+    emit(state.copyWith(
+      status: QuizStatus.ended,
+      score: state.totalCorrectAnswers.toDouble(),
+      successPercentage: successPercentage,
     ));
   }
 
@@ -121,61 +169,5 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
       default:
         return null;
     }
-  }
-
-  void incrementQuizIndex() {
-    currentQuizIndex++;
-  }
-
-  void incrementCorrectAnswers() {
-    totalCorrectAnswers++;
-    Fimber.d(
-        "incrementCorrectAnswers() | total correct answers count : $totalCorrectAnswers");
-  }
-
-  void incrementCorrectAnswerInARow() {
-    totalCorrectAnswersInARow++;
-    Fimber.d(
-        "incrementCorrectAnswerInARow() | total correct answers in a row count : $totalCorrectAnswersInARow");
-  }
-
-  void resetCorrectAnswerInARow() {
-    Fimber.w("resetCorrectAnswerInARow()");
-    totalCorrectAnswersInARow = 0;
-  }
-
-  void updateQuizIndex(int newIndex) {
-    currentQuizIndex = newIndex;
-  }
-
-  void updateTotalQuestions(int count) {
-    this.totalQuestions = count;
-  }
-
-  void resetChoice() {
-    quizChoice = "".trim();
-  }
-
-  void setQuizChoice(String newValue) {
-    quizChoice = newValue.trim();
-  }
-
-  void resetBlocData() {
-    resetChoice();
-    resetCurrentQuizIndex();
-  }
-
-  void resetCurrentQuizIndex() {
-    // reset view pager index
-    currentQuizIndex = 1;
-  }
-
-  double getSuccessPercentage() {
-    if (0 == totalQuestions) {
-      Fimber.e("getSuccessPercentage() | total questions equals to 0");
-      return 0.0;
-    }
-
-    return (totalCorrectAnswers * 100) / totalQuestions;
   }
 }

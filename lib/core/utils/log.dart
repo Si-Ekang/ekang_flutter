@@ -16,6 +16,10 @@ class Log {
 
   static void d(String method, String message, [String? tag]) {
     if (kDebugMode) {
+      if (kIsWeb) {
+        log("${tag != null ? '[$tag] ' : ''}$method() | $message");
+        return;
+      }
       if (Platform.isAndroid) {
         if (null == tag) {
           Fimber.d("$method() | $message");
@@ -24,19 +28,24 @@ class Log {
             fimberLog.d("$method() | $message");
           });
         }
-      }
-      if (Platform.isIOS) {
+      } else if (Platform.isIOS) {
         if (null == tag) {
           Fimber.d("$method() | $message");
         } else {
           log("[$tag] $method() | $message");
         }
+      } else {
+        log("${tag != null ? '[$tag] ' : ''}$method() | $message");
       }
     }
   }
 
   static void e(String method, String message, [String? tag]) {
     if (kDebugMode) {
+      if (kIsWeb) {
+        log("[ERROR] ${tag != null ? '[$tag] ' : ''}$method() | $message");
+        return;
+      }
       if (Platform.isAndroid) {
         if (null == tag) {
           Fimber.e("$method() | $message");
@@ -45,19 +54,24 @@ class Log {
             fimberLog.e("$method() | $message");
           });
         }
-      }
-      if (Platform.isIOS) {
+      } else if (Platform.isIOS) {
         if (null == tag) {
           Fimber.d("$method() | $message");
         } else {
           log("[$tag] $method() | $message");
         }
+      } else {
+        log("[ERROR] ${tag != null ? '[$tag] ' : ''}$method() | $message");
       }
     }
   }
 
   static void i(String method, String message, [String? tag]) {
     if (kDebugMode) {
+      if (kIsWeb) {
+        log("[INFO] ${tag != null ? '[$tag] ' : ''}$method() | $message");
+        return;
+      }
       if (Platform.isAndroid) {
         if (null == tag) {
           Fimber.i("$method() | $message");
@@ -66,19 +80,24 @@ class Log {
             fimberLog.i("$method() | $message");
           });
         }
-      }
-      if (Platform.isIOS) {
+      } else if (Platform.isIOS) {
         if (null == tag) {
           Fimber.d("$method() | $message");
         } else {
           log("[$tag] $method() | $message");
         }
+      } else {
+        log("[INFO] ${tag != null ? '[$tag] ' : ''}$method() | $message");
       }
     }
   }
 
   static void w(String method, String message, [String? tag]) {
     if (kDebugMode) {
+      if (kIsWeb) {
+        log("[WARN] ${tag != null ? '[$tag] ' : ''}$method() | $message");
+        return;
+      }
       if (Platform.isAndroid) {
         if (null == tag) {
           Fimber.w("$method() | $message");
@@ -87,14 +106,16 @@ class Log {
             fimberLog.w("$method() | $message");
           });
         }
-        if (Platform.isIOS) {
-          if (null == tag) {
-            Fimber.d("$method() | $message");
-          } else {
-            log("[$tag] $method() | $message");
-          }
+      } else if (Platform.isIOS) {
+        if (null == tag) {
+          Fimber.d("$method() | $message");
+        } else {
+          log("[$tag] $method() | $message");
         }
+      } else {
+        log("[WARN] ${tag != null ? '[$tag] ' : ''}$method() | $message");
       }
     }
   }
 }
+
