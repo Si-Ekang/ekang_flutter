@@ -1,4 +1,6 @@
-import 'package:ekang_flutter/core/theme/theme.dart';
+import 'dart:developer';
+
+import 'package:adaptive_theme/adaptive_theme.dart' as theme;
 import 'package:ekang_flutter/core/utils/log.dart';
 import 'package:ekang_flutter/core/utils/si_ekang_ads_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
@@ -25,7 +27,7 @@ class QuizEndedWidget extends StatefulWidget {
 }
 
 class _QuizEndedWidgetState extends State<QuizEndedWidget> {
-  SiEkangAdsManager? _adsManager;
+  SiEkangAdsManager? _adsManager = null;
 
   @override
   void initState() {
@@ -72,15 +74,21 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
             children: [
               Text(
                 "Quiz terminé !",
-                style: AdaptiveTheme.of(context).theme.textTheme.displaySmall,
+                style: theme.AdaptiveTheme.of(context)
+                    .theme
+                    .textTheme
+                    .displaySmall,
               ),
 
-              SizedBox(height: 16.0),
+              SizedBox(
+                height: 16.0,
+              ),
 
               // Can display a Lottie animation
 
-              SizedBox(height: 16.0),
-
+              SizedBox(
+                height: 16.0,
+              ),
               // Display user statistics
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -104,8 +112,9 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
                       value: "2:30"),
                 ],
               ),
-
-              SizedBox(height: 16.0),
+              SizedBox(
+                height: 16.0,
+              ),
 
               // Close the screen
               ElevatedButton(

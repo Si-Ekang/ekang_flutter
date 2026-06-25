@@ -1,6 +1,8 @@
 /*import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';*/
 
+import 'dart:io';
+import 'package:ekang_flutter/core/di/injection.dart';
 import 'package:ekang_flutter/core/router/routes.dart' as siekang_router;
 import 'package:ekang_flutter/core/theme/theme.dart';
 import 'package:ekang_flutter/core/utils/si_ekang_ads_manager.dart';
@@ -30,8 +32,9 @@ void main() async {
   }
 
   initPlugins();
-  initFirebase();
+  await initFirebase();
   initMobileAds();
+  setupDependencyInjection();
 
   Fimber.d("main() | SiEkangApp successfully initialized");
 
@@ -43,7 +46,7 @@ void initPlugins() {
   WidgetsFlutterBinding.ensureInitialized();
 }
 
-void initFirebase() async {
+Future<void> initFirebase() async {
   // Initialize Firebase App
   await Firebase.initializeApp(
     name: "SiEkang",
@@ -97,7 +100,9 @@ void initFirebase() async {
 }
 
 void initMobileAds() {
-  MobileAds.instance.initialize();
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    MobileAds.instance.initialize();
+  }
 }
 
 class SiEkangApp extends StatefulWidget {
