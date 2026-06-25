@@ -2,11 +2,15 @@ import UIKit
 import Flutter
 import FirebaseCore
 
+
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-    override init() {
-        super.init()
-        self.initFirebase()
+    
+    func initFirebase(){
+        if FirebaseApp.app() == nil {
+            print("initFirebase() | Initializing Firebase...")
+            FirebaseApp.configure()
+        }
     }
     
     override func application(
@@ -15,14 +19,9 @@ import FirebaseCore
     ) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
         
-        initFirebase()
+        self.initFirebase()
         
-        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+        return  super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
-    func initFirebase(){
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-        }
-    }
 }

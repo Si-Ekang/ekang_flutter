@@ -1,9 +1,6 @@
-import 'dart:developer';
-
-import 'package:adaptive_theme/adaptive_theme.dart' as theme;
+import 'package:ekang_flutter/core/theme/theme.dart';
 import 'package:ekang_flutter/core/utils/log.dart';
-import 'package:ekang_flutter/core/widgets/ads/ads_widget.dart';
-import 'package:ekang_flutter/core/widgets/ads/app_open_ad_manager.dart';
+import 'package:ekang_flutter/core/utils/si_ekang_ads_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:fimber/fimber.dart';
@@ -28,7 +25,7 @@ class QuizEndedWidget extends StatefulWidget {
 }
 
 class _QuizEndedWidgetState extends State<QuizEndedWidget> {
-  AppOpenAdManager? _adsManager = null;
+  SiEkangAdsManager? _adsManager;
 
   @override
   void initState() {
@@ -45,7 +42,7 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
   void didUpdateWidget(covariant QuizEndedWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     Log.i("didUpdateWidget", "");
-    _adsManager = AppOpenAdManager();
+    _adsManager = SiEkangAdsManager();
 
     Log.d("didUpdateWidget",
         "score : ${widget.score.toInt()} / ${context.read<QuizBloc>().state.quizzes.length}");
@@ -75,21 +72,15 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
             children: [
               Text(
                 "Quiz terminé !",
-                style: theme.AdaptiveTheme.of(context)
-                    .theme
-                    .textTheme
-                    .displaySmall,
+                style: AdaptiveTheme.of(context).theme.textTheme.displaySmall,
               ),
 
-              SizedBox(
-                height: 16.0,
-              ),
+              SizedBox(height: 16.0),
 
               // Can display a Lottie animation
 
-              SizedBox(
-                height: 16.0,
-              ),
+              SizedBox(height: 16.0),
+
               // Display user statistics
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -113,9 +104,8 @@ class _QuizEndedWidgetState extends State<QuizEndedWidget> {
                       value: "2:30"),
                 ],
               ),
-              SizedBox(
-                height: 16.0,
-              ),
+
+              SizedBox(height: 16.0),
 
               // Close the screen
               ElevatedButton(

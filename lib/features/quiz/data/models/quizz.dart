@@ -29,6 +29,8 @@ class Quizz {
     this.possibleAnswers = (possibleAnswers as String).split('|').toList();
   }
 
+  bool hasImage() => quizzImage.trim().isNotEmpty;
+
   @override
   String toString() {
     return 'Quizz{id: $id, question: $question, quizzImage: $quizzImage, possibleAnswers: $possibleAnswers, correctAnswer: $correctAnswer}';

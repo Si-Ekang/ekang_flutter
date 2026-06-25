@@ -5,11 +5,12 @@ import 'package:ekang_flutter/core/utils/log.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:ekang_flutter/features/quiz/data/models/quizz.dart';
 import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:ekang_flutter/features/quiz/presentation/bloc/quiz_check_answer_bloc.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/bottom_validate_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/possible_answers_widget.dart';
+import 'package:ekang_flutter/features/quiz/presentation/widgets/quiz_image_content_widget.dart';
 import 'package:ekang_flutter/features/quiz/presentation/widgets/top_question_widget.dart';
 import 'package:fimber/fimber.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -24,10 +25,15 @@ class QuizStartedWidget extends StatefulWidget {
 }
 
 class _QuizStartedWidgetState extends State<QuizStartedWidget>
-    with WidgetsBindingObserver, TickerProviderStateMixin {
+    with
+        WidgetsBindingObserver,
+        TickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin {
   late AnimationController progressIndicatorController;
   final PageController controller = PageController();
   final animationDuration = const Duration(milliseconds: 500);
+
+  bool canGoNext = true;
 
   AudioPlayer? _player;
 
@@ -38,6 +44,8 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     Log.d('initState', 'init method', runtimeType.toString());
 
     progressIndicatorController = AnimationController(
+      /// [AnimationController]s can be created with `vsync: this` because of
+      /// [TickerProviderStateMixin].
       vsync: this,
       duration: const Duration(seconds: 5),
     )..addListener(() {
@@ -61,6 +69,9 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
+      // Release the player's resources when not in use. We use "stop" so that
+      // if the app resumes later, it will still remember what position to
+      // resume from.
       _player?.stop();
     }
   }
@@ -70,98 +81,46 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     Log.e("dispose", "");
 
     try {
-      context.read<QuizBloc>().add(ResetQuizEvent());
+      // reset view pager index
+      context.read<QuizBloc>().resetBlocData();
     } catch (error, stacktrace) {
       Log.e("dispose",
           "exception: $error (stacktrace: ${stacktrace.toString()})");
     }
 
+    canGoNext = true;
+
+    // Release decoders and buffers back to the operating system making them
+    // available for other apps to use.
     _player?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     Fimber.d("build() | data list length = : ${widget.quizzes.length}");
 
-    return BlocConsumer<QuizBloc, QuizState>(
-      listener: (context, state) {
-        // Animate page controller when the active page index changes in state
-        if (controller.hasClients && controller.page?.round() != state.currentQuizIndex) {
-          controller.animateToPage(
-            state.currentQuizIndex,
-            duration: animationDuration,
-            curve: Curves.decelerate,
-          );
-        }
-        // Update progress bar indicator value
-        if (state.quizzes.isNotEmpty) {
-          progressIndicatorController.value = state.currentQuizIndex / state.quizzes.length;
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: SiEkangColors.primaryDark,
-            title: const Text('Quiz', style: TextStyle(color: Colors.white)),
-            leading: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back)),
-          ),
-          body: LayoutBuilder(
-            builder: (context, constraints) => Center(
-              child: Row(
-                children: [
-                  Container(
-                    constraints: BoxConstraints(
-                        maxWidth: constraints.maxWidth >= 500
-                            ? 500
-                            : constraints.maxWidth),
-                    child: Column(
-                      children: [
-                        // Top Progress Bar
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 32.0,
-                            child: Center(
-                              child: Container(
-                                margin: const EdgeInsets.all(8.0),
-                                child: LinearProgressIndicator(
-                                  minHeight: 4.0,
-                                  color: SiEkangColors.quizItemSelectedTextColor,
-                                  valueColor: const AlwaysStoppedAnimation<Color>(
-                                      SiEkangColors.quizItemSelectedTextColor),
-                                  value: progressIndicatorController.value,
-                                  semanticsLabel: 'Linear progress indicator',
-                                ),
-                              ),
-                            )),
-
-                        // PageView quizz
-                        Expanded(
-                          child: PageView.builder(
-                            controller: controller,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: state.quizzes.length,
-                            itemBuilder: (context, position) {
-                              return createPage(
-                                position,
-                                state.quizzes[position],
-                                state,
-                              );
-                            },
-                            scrollDirection: Axis.horizontal,
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: SiEkangColors.primaryDark,
+        title: const Text('Quiz', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+            onPressed: () => {Navigator.of(context).pop()},
+            icon: const Icon(
+              Icons.arrow_back,
+              color: SiEkangColors.white,
+            )),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) => Center(
+          child: _buildQuizContent(constraints),
+        ),
+      ),
     );
   }
 
@@ -176,8 +135,11 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     _player = AudioPlayer();
 
     try {
+      // Inform the operating system of our app's audio attributes etc.
+      // We pick a reasonable default for an app that plays speech.
       final session = await AudioSession.instance;
       await session.configure(const AudioSessionConfiguration.speech());
+      // Listen to errors during playback.
       _player?.playbackEventStream.listen((event) {
         if (kDebugMode) log("event : $event");
       }, onError: (Object e, StackTrace stackTrace) {
@@ -188,102 +150,206 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
     }
   }
 
-  Widget createPage(int page, Quizz quizzItem, QuizState state) {
+  /*Future<void> _precacheQuizImages(List<Quizz> quizzes) async {
+    for (final quiz in quizzes) {
+      if (quiz.quizzImage
+          .trim()
+          .isNotEmpty && context.mounted) {
+        await precacheImage(NetworkImage(context.read<QuizBloc>().getQuizImage(quiz.quizzImage)), context);
+      }
+    }
+  }
+*/
+  Widget _createPage({required int page, required Quizz quizzItem}) {
     log("createPage() | page : $page, quizz : ${quizzItem.toString()}");
 
-    bool hasImage = quizzItem.quizzImage.trim().isNotEmpty;
+    canGoNext =
+        context.read<QuizBloc>().currentQuizIndex + 1 != widget.quizzes.length;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0, horizontal: 16.0),
+    if (context.read<QuizCheckAnswerBloc>().state
+        is! QuizCheckAnswerInitialState) {
+      // Reset the state when the bloc is not in QuizCheckAnswerInitialState
+      context.read<QuizCheckAnswerBloc>().add(ResetCheckAnswerEvent());
+    }
+
+    bool hasImage = quizzItem.hasImage();
+
+    // Source - https://stackoverflow.com/a/44578884
+    // Posted by Ram ch, modified by community. See post 'Timeline' for change history
+    // Retrieved 2025-11-16, License - CC BY-SA 4.0
+    //Uint8List? imageData = await _getQuizImage(quizzItem.quizzImage);
+
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: TopQuestionWidget(question: quizzItem.question),
+        ),
+        const SizedBox(width: 0.0, height: 8.0),
+        !hasImage
+            ? SizedBox(width: 0.0, height: 0.0)
+            : Expanded(
+                flex: 5,
+                child: QuizImageContentWidget(
+                  quizzImage: quizzItem.quizzImage,
+                ),
+              ),
+        const SizedBox(width: 0.0, height: 8.0),
+        Expanded(
+          flex: hasImage ? 5 : 7,
+          child: PossibleAnswersWidget(
+            quizHasImage: hasImage,
+            chosenAnswer: context.read<QuizBloc>().quizChoice,
+            possibleAnswers: quizzItem.possibleAnswers,
+            onAnswerChanged: (newAnswer) {
+              setState(() {
+                context.read<QuizBloc>().setQuizChoice(newAnswer);
+              });
+            },
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Center(
+              child: BottomValidateWidget(
+            correctAnswer: quizzItem.correctAnswer,
+            onCheckAnswer: (newState) {
+              Fimber.d(
+                  "onCheckAnswer() | chosen answer : ${context.read<QuizBloc>().quizChoice}, check answer state : $newState");
+
+              // Update the state of check answer
+              context.read<QuizCheckAnswerBloc>().add(
+                    CheckAnswerEvent(
+                      choice: context.read<QuizBloc>().quizChoice,
+                      correctAnswer: quizzItem.correctAnswer,
+                    ),
+                  );
+
+              // Play the audio
+              // playAudio(quizzItem.audioUrl);
+
+              // Reset the choice
+              // choice = '';
+            },
+            onNavigateToNextPage: () {
+              Fimber.d(
+                  "onNavigateToNextPage() | correct answer : ${quizzItem.correctAnswer}");
+
+              // Check if current page is the last page
+              if (context.read<QuizBloc>().isLastPage()) {
+                Fimber.i("onNavigateToNextPage() | Quiz finished!");
+
+                final int totalCorrectAnswers =
+                    context.read<QuizBloc>().totalCorrectAnswers;
+
+                final double successPercentage =
+                    context.read<QuizBloc>().getSuccessPercentage();
+
+                context.read<QuizBloc>().add(
+                      QuizFinishEvent(
+                        score: totalCorrectAnswers.toDouble(),
+                        successPercentage: successPercentage,
+                      ),
+                    );
+
+                return;
+              }
+
+              _navigateToNextPage();
+
+              // update progressbar
+              final newProgress =
+                  (context.read<QuizBloc>().currentQuizIndex + 1) /
+                      context.read<QuizBloc>().totalQuestions;
+              progressIndicatorController.value = newProgress;
+
+              context.read<QuizBloc>().resetChoice();
+            },
+            enabled: context.read<QuizBloc>().quizChoice.trim().isNotEmpty,
+          )),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuizContent(BoxConstraints constraints) {
+    return SizedBox(
+      width: constraints.maxWidth,
+      height: constraints.maxHeight,
       child: Column(
         children: [
-          Expanded(
-            flex: 1,
-            child: TopQuestionWidget(question: quizzItem.question),
-          ),
-          !hasImage
-              ? const SizedBox(width: 0.0, height: 0.0)
-              : Expanded(
-                  flex: 5,
-                  child: FutureBuilder<Uint8List?>(
-                    future: _getQuizImage(quizzItem.quizzImage),
-                    builder: (
-                      BuildContext context,
-                      AsyncSnapshot<Uint8List?> snapshot,
-                    ) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SiEkangLoader(30, 30);
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (snapshot.hasData) {
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                              color: SiEkangColors.quizItemSelectedTextColor,
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Image.memory(snapshot.data!),
-                        );
-                      } else {
-                        return const Text('No data available.');
-                      }
-                    },
+          // Top Progress Bar
+          SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: 32.0,
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.all(8.0),
+                  // source : https://stackoverflow.com/questions/49553402/how-to-determine-screen-height-and-width
+                  child: LinearProgressIndicator(
+                    minHeight: 4.0,
+                    color: SiEkangColors.quizItemSelectedTextColor,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                        SiEkangColors.quizItemSelectedTextColor),
+                    value: progressIndicatorController.value + 0.1,
+                    semanticsLabel: 'Linear progress indicator',
                   ),
                 ),
+              )),
+
+          // PageView quizz
           Expanded(
-            flex: hasImage ? 5 : 10,
-            child: PossibleAnswersWidget(
-              chosenAnswer: state.quizChoice,
-              possibleAnswers: quizzItem.possibleAnswers,
-              onAnswerChanged: (newAnswer) {
-                context.read<QuizBloc>().add(SelectChoiceEvent(choice: newAnswer));
+            flex: 1,
+            child: PageView.builder(
+              controller: controller,
+              // Disable scroll functionality
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (pageIndex) {
+                if (pageIndex == widget.quizzes.length - 1) {
+                  canGoNext = false;
+                }
               },
+              itemCount: widget.quizzes.length,
+              itemBuilder: (context, position) {
+                return Container(
+                  child: _createPage(
+                    page: position,
+                    quizzItem: widget.quizzes[position],
+                  ),
+                );
+              },
+              scrollDirection: Axis.horizontal,
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: BottomValidateWidget(
-              correctAnswer: quizzItem.correctAnswer,
-            ),
-          ),
+          )
         ],
       ),
     );
   }
 
-  Future<Uint8List?> _getQuizImage(String imageName) async {
-    if (imageName.isEmpty) {
-      Log.e("getQuizImage", "url is empty");
-      return null;
-    }
+  void _navigateToNextPage() {
+    // update page index
+    //context.read<QuizBloc>().incrementQuizIndex();
+    //context.read<QuizBloc>().updateQuizIndex(context.read<QuizBloc>().currentQuizIndex + 1);
 
-    final storageRef = FirebaseStorage.instance.ref();
-    final pathReference = storageRef.child("images/$imageName");
-
-    try {
-      const oneMegabyte = 1024 * 1024;
-      final Uint8List? data = await pathReference.getData(5 * oneMegabyte);
-
-      if (null == data) {
-        Log.d(
-          "getQuizImage",
-          "Error while loading image.",
-          runtimeType.toString(),
-        );
-        return null;
-      }
-
-      return data;
-    } on FirebaseException catch (exception, stacktrace) {
+    if (null == controller.page) {
       Log.e(
-        "_getImagesFromFirebaseStorage",
-        "exception: $exception (stacktrace: ${stacktrace.toString()})",
-        runtimeType.toString(),
-      );
-      return null;
+          "_navigateToPage", "controller.page is null", runtimeType.toString());
+      return;
     }
+
+    int nextPageIndex = controller.page!.toInt() + 1;
+
+    Log.d(
+      "_navigateToPage",
+      "next page index to navigate to : $nextPageIndex",
+      runtimeType.toString(),
+    );
+
+    context.read<QuizBloc>().updateQuizIndex(nextPageIndex);
+
+    controller.nextPage(duration: animationDuration, curve: Curves.decelerate);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

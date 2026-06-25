@@ -1,7 +1,9 @@
-import 'dart:io';
-import 'package:adaptive_theme/adaptive_theme.dart' as theme;
-import 'package:ekang_flutter/core/di/injection.dart';
+/*import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';*/
+
 import 'package:ekang_flutter/core/router/routes.dart' as siekang_router;
+import 'package:ekang_flutter/core/theme/theme.dart';
+import 'package:ekang_flutter/core/utils/si_ekang_ads_manager.dart';
 import 'package:ekang_flutter/core/widgets/widgets.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -28,9 +30,8 @@ void main() async {
   }
 
   initPlugins();
-  await initFirebase();
+  initFirebase();
   initMobileAds();
-  setupDependencyInjection();
 
   Fimber.d("main() | SiEkangApp successfully initialized");
 
@@ -42,7 +43,7 @@ void initPlugins() {
   WidgetsFlutterBinding.ensureInitialized();
 }
 
-Future<void> initFirebase() async {
+void initFirebase() async {
   // Initialize Firebase App
   await Firebase.initializeApp(
     name: "SiEkang",
@@ -65,36 +66,38 @@ Future<void> initFirebase() async {
     return true;
   };
 
-  try {
-    await FirebaseAppCheck.instance.activate(
-      // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
-      // argument for `webProvider`
-      webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
-      // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
-      // your preferred provider. Choose from:
-      // 1. Debug provider
-      // 2. Safety Net provider
-      // 3. Play Integrity provider
-      androidProvider: AndroidProvider.debug,
-      // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
-      // your preferred provider. Choose from:
-      // 1. Debug provider
-      // 2. Device Check provider
-      // 3. App Attest provider
-      // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
-      appleProvider: AppleProvider.appAttest,
-    );
-    Fimber.i("initFirebase() | FirebaseAppCheck activated");
-    await FirebaseAuth.instance.signInAnonymously();
-  } catch (error) {
+  await FirebaseAppCheck.instance
+      .activate(
+          // You can also use a `ReCaptchaEnterpriseProvider` provider instance as an
+          // argument for `webProvider`
+          webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+          // Default provider for Android is the Play Integrity provider. You can use the "AndroidProvider" enum to choose
+          // your preferred provider. Choose from:
+          // 1. Debug provider
+          // 2. Safety Net provider
+          // 3. Play Integrity provider
+          androidProvider: AndroidProvider.debug,
+          // Default provider for iOS/macOS is the Device Check provider. You can use the "AppleProvider" enum to choose
+          // your preferred provider. Choose from:
+          // 1. Debug provider
+          // 2. Device Check provider
+          // 3. App Attest provider
+          // 4. App Attest provider with fallback to Device Check provider (App Attest provider is only available on iOS 14.0+, macOS 14.0+)
+          appleProvider: AppleProvider.appAttest,
+          providerAndroid:
+              AndroidDebugProvider(debugToken: _FIREBASE_APPCHECK_DEBUG_TOKEN),
+          providerApple: const AppleAppAttestProvider())
+      .then((value) {
+    Fimber.i("initFirebase() | Firebase App Check activated");
+
+    FirebaseAuth.instance.signInAnonymously();
+  }, onError: (error) {
     Fimber.e("initFirebase() | error : ${error.toString()}");
-  }
+  });
 }
 
 void initMobileAds() {
-  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-    MobileAds.instance.initialize();
-  }
+  MobileAds.instance.initialize();
 }
 
 class SiEkangApp extends StatefulWidget {
@@ -115,6 +118,12 @@ class SiEkangApp extends StatefulWidget {
 
 class _SiEkangAppState extends State<SiEkangApp> {
   @override
+  void initState() {
+    super.initState();
+    SiEkangAdsManager().loadAd();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final brightness = View.of(context).platformDispatcher.platformBrightness;
 
@@ -126,11 +135,11 @@ class _SiEkangAppState extends State<SiEkangApp> {
 
     return SiEkangAppWidget(
       child: Builder(builder: (context) {
-        return theme.AdaptiveTheme(
+        return AdaptiveTheme(
             debugShowFloatingThemeButton: false,
             light: _siEkangTheme.light(),
             dark: _siEkangTheme.dark(),
-            initial: theme.AdaptiveThemeMode.light,
+            initial: AdaptiveThemeMode.light,
             builder: (theme, darkTheme) => MaterialApp(
                   navigatorObservers: [routeObserver],
                   debugShowCheckedModeBanner: false,

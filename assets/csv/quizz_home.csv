@@ -1,0 +1,6 @@
+question_id;question;image_url;possible_answers;correct_answer
+1;what is this?;table.jpg;wuna|tebele|etok|edong;tebele
+2;mbèny;porte.jpg;TRUE|FALSE;TRUE
+3;to'o;couteau.jpg;TRUE|FALSE;FALSE
+4;what is this?;louche.jpg;to'o|elum|okeng|mba to'o;mba to'o
+5;elum;fourchette.jpg;TRUE|FALSE;TRUE
