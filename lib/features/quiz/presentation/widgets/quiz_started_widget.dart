@@ -243,11 +243,8 @@ class _QuizStartedWidgetState extends State<QuizStartedWidget>
               },
             ),
           ),
-          Expanded(
-            flex: 3,
-            child: BottomValidateWidget(
-              correctAnswer: quizzItem.correctAnswer,
-            ),
+          BottomValidateWidget(
+            correctAnswer: quizzItem.correctAnswer,
           ),
         ],
       ),

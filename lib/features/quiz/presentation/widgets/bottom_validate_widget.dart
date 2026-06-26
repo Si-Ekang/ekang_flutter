@@ -31,6 +31,7 @@ class BottomValidateWidget extends StatelessWidget {
         }
 
         return Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Status Feedback Card
             AnimatedContainer(
